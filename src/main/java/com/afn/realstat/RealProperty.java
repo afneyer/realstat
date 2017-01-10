@@ -10,7 +10,7 @@ import javax.persistence.Id;
 import org.hibernate.mapping.Map;
 
 @Entity
-public class Realproperty {
+public class RealProperty {
 
 	@Id
 	@GeneratedValue
@@ -58,10 +58,10 @@ public class Realproperty {
 	
 	private Map fieldMap;
 
-	public Realproperty() {
+	public RealProperty() {
 	}
 
-	public Realproperty(String apn) {
+	public RealProperty(String apn) {
 		this.apn = apn;
 	}
 

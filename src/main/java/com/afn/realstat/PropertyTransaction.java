@@ -7,7 +7,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 @Entity
-public class PropTransactionRecord {
+public class PropertyTransaction {
 
 	@Id
 	private Long Id;
@@ -90,10 +90,10 @@ public class PropTransactionRecord {
 	private String Zip;
 	private String Zoning;
 
-	protected PropTransactionRecord() {
+	protected PropertyTransaction() {
 	}
 
-	public PropTransactionRecord(Long id) {
+	public PropertyTransaction(Long id) {
 		this.Id = id;
 	}
 

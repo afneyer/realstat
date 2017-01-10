@@ -54,10 +54,10 @@ public class Application {
 	}
 	
 	@Bean
-	public CommandLineRunner initialize(RealpropertyRepository repository) {
+	public CommandLineRunner initialize(RealPropertyRepository repository) {
 		return (args) -> {
 			// save a couple of customers
-			repository.save(new Realproperty("11-11-11"));
+			repository.save(new RealProperty("11-11-11"));
 			log.info("Test Saving Property 11-11-11");
 		};
 	}

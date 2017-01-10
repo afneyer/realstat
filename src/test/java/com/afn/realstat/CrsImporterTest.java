@@ -12,7 +12,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.afn.realstat.Application;
 import com.afn.realstat.CrsImporter;
-import com.afn.realstat.RealpropertyRepository;
+import com.afn.realstat.RealPropertyRepository;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = Application.class,
@@ -20,7 +20,7 @@ import com.afn.realstat.RealpropertyRepository;
 public class CrsImporterTest {
 	
 	 @Autowired
-	 private RealpropertyRepository repository;
+	 private RealPropertyRepository repository;
 	 
 	 @Autowired
 	 private CrsImporter importer;

@@ -30,7 +30,7 @@ public class CrsImporter {
 	/**
 	 * 
 	 */
-	@Autowired RealpropertyRepository repository;
+	@Autowired RealPropertyRepository repository;
 	
 	private static final Logger log = LoggerFactory.getLogger(Application.class);
 
@@ -78,8 +78,8 @@ public class CrsImporter {
 
 			header = mapHeader(header);
 
-			Realproperty property;
-			while ((property = beanReader.read(Realproperty.class, header, processors)) != null) {
+			RealProperty property;
+			while ((property = beanReader.read(RealProperty.class, header, processors)) != null) {
 				repository.save(property);
 				System.out.println(String.format("lineNo=%s, rowNo=%s, customer=%s", beanReader.getLineNumber(),
 						beanReader.getRowNumber(), property));

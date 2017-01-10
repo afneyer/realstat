@@ -27,20 +27,20 @@ public class DataConsistencyTests {
 	private static final Logger log = LoggerFactory.getLogger(Application.class);
 
     @Autowired
-    private RealpropertyRepository repository;
+    private RealPropertyRepository repository;
 
     @Test
     public void checkForDuplicateApnNumbers() {
         
     	long numRecs = repository.count();
-    	log.info("Realproperty record count = " + numRecs);
-    	List<Realproperty> properties = repository.findAll();
+    	log.info("RealProperty record count = " + numRecs);
+    	List<RealProperty> properties = repository.findAll();
 
     	
-    	HashMap<String, Realproperty> list = new HashMap<String, Realproperty>();
-    	List<Realproperty> dupApn = new ArrayList<Realproperty>();
+    	HashMap<String, RealProperty> list = new HashMap<String, RealProperty>();
+    	List<RealProperty> dupApn = new ArrayList<RealProperty>();
     	for (int i=0; i<properties.size(); i++) {
-    		Realproperty prop = properties.get(i);
+    		RealProperty prop = properties.get(i);
             String apn = prop.getApn();
     		if ( !list.containsKey(apn) ) {
     			list.put(apn, prop);	
@@ -48,7 +48,7 @@ public class DataConsistencyTests {
     			log.info("Duplicate APN Found:");
     			dupApn.add(prop);
     		}
-    		for (Realproperty dupProp : dupApn) {
+    		for (RealProperty dupProp : dupApn) {
     			// log.info("Duplicate APN" + dupApn );
     		}
     		assertEquals(0,dupApn.size());
