@@ -20,16 +20,29 @@ import org.supercsv.prefs.CsvPreference;
 
 import com.vaadin.spring.annotation.SpringComponent;
 
+/**
+ * @author Andreas
+ *
+ */
 @SpringComponent
 public class CrsImporter {
 	
+	/**
+	 * 
+	 */
 	@Autowired RealpropertyRepository repository;
 	
 	private static final Logger log = LoggerFactory.getLogger(Application.class);
 
+	/**
+	 * 
+	 */
 	public CrsImporter() {
 	}
 	
+	/**
+	 * @param crsFile
+	 */
 	public void importFile(File crsFile) {
 
 		try {
@@ -47,6 +60,10 @@ public class CrsImporter {
 		
 	}
 
+	/**
+	 * @param file
+	 * @throws Exception
+	 */
 	private void readWithCsvBeanReader( File file ) throws Exception {
 
 		ICsvBeanReader beanReader = null;
@@ -78,6 +95,9 @@ public class CrsImporter {
 
 	}
 
+	/**
+	 * @return
+	 */
 	private static CellProcessor[] getProcessors() {
 
 		final CellProcessor[] processors = new CellProcessor[] {
@@ -126,6 +146,10 @@ public class CrsImporter {
 		return processors;
 	}
 
+	/**
+	 * @param header
+	 * @return
+	 */
 	private static String[] mapHeader(String[] header) {
 
 		// translate each element of the header to the corresponding bean field
@@ -143,6 +167,14 @@ public class CrsImporter {
 		return header;
 	}
 
+	/**
+	 * @param str
+	 * @return
+	 */
+	/**
+	 * @param str
+	 * @return
+	 */
 	static String translateCrsFieldDefault(String str) {
 
 		String retStr = new String();
@@ -170,6 +202,12 @@ public class CrsImporter {
 		return retStr;
 	}
 
+	/**
+	 * @param bean
+	 * @param field
+	 * @param value
+	 * @throws Exception
+	 */
 	public void setFieldByString(Object bean, String field, String value) throws Exception {
 		Statement stmt;
 		stmt = new Statement(bean, field, new Object[] { value });
