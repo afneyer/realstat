@@ -25,15 +25,15 @@ public class CrsImporterTest {
 	 @Autowired
 	 private CrsImporter importer;
 
-	@Test
-	public void testTranslateCrsFieldDefault() {
+	 @Test
+	 public void testTranslateCsvFileDefault() {
 		
-	    assertEquals(CrsImporter.translateCrsFieldDefault("APN"),"apn");
-	    assertEquals(CrsImporter.translateCrsFieldDefault("Owner 1"),"owner1");
-	    assertEquals(CrsImporter.translateCrsFieldDefault("First Name"),"firstName");
-	    assertEquals(CrsImporter.translateCrsFieldDefault("First Name2"),"firstName2");
-	    assertEquals(CrsImporter.translateCrsFieldDefault("Total Square Footage"),"totalSquareFootage");
-	    assertEquals(CrsImporter.translateCrsFieldDefault("Lot Sq. Feet"),"lotSqFeet");
+	    assertEquals(CrsImporter.translateCsvFileFieldDefault("APN"),"apn");
+	    assertEquals(CrsImporter.translateCsvFileFieldDefault("Owner 1"),"owner1");
+	    assertEquals(CrsImporter.translateCsvFileFieldDefault("First Name"),"firstName");
+	    assertEquals(CrsImporter.translateCsvFileFieldDefault("First Name2"),"firstName2");
+	    assertEquals(CrsImporter.translateCsvFileFieldDefault("Total Square Footage"),"totalSquareFootage");
+	    assertEquals(CrsImporter.translateCsvFileFieldDefault("Lot Sq. Feet"),"lotSqFeet");
 
 	}
 

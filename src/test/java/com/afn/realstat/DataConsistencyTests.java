@@ -55,8 +55,4 @@ public class DataConsistencyTests {
     	}
     }
 
-    @Test
-    public void shouldFindTwoBauerCustomers() {
-        then(this.repository.findByLastNameStartsWithIgnoreCase("Bauer")).hasSize(2);
-    }
 }

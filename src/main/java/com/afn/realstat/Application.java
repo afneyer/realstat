@@ -16,6 +16,8 @@ public class Application {
 	public static void main(String[] args) {
 		SpringApplication.run(Application.class);
 	}
+	
+	/* TODO remove
 
 	@Bean
 	public CommandLineRunner loadData(CustomerRepository repository) {
@@ -53,6 +55,10 @@ public class Application {
 		};
 	}
 	
+	*/
+	
+/* TODO remove eventually
+	
 	@Bean
 	public CommandLineRunner initialize(RealPropertyRepository repository) {
 		return (args) -> {
@@ -61,5 +67,15 @@ public class Application {
 			log.info("Test Saving Property 11-11-11");
 		};
 	}
+	
+	@Bean
+	public CommandLineRunner initial(PropertyTransactionRepository repository) {
+		return (args) -> {
+			// save a couple of customers
+			repository.save(new PropertyTransaction(0));
+			log.info("0");
+		};
+	}
+*/
 
 }

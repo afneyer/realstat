@@ -10,11 +10,7 @@ import javax.persistence.Id;
 import org.hibernate.mapping.Map;
 
 @Entity
-public class RealProperty {
-
-	@Id
-	@GeneratedValue
-	private Long id;
+public class RealProperty extends AbstractEntity{
 
 	private String owner1;
 	private String title;
@@ -55,8 +51,6 @@ public class RealProperty {
 	private Double lotSqFeet;
 	private String lotDimensions;
 	private String censusTract;
-	
-	private Map fieldMap;
 
 	public RealProperty() {
 	}
@@ -71,18 +65,12 @@ public class RealProperty {
 				apn, propertyAddress, propertyCity, propertyState, propertyZip);
 	}
 	
+	
+	
 	public void setFieldByString(Object bean, String field, String value ) throws Exception {
 		Statement stmt;
 		stmt = new Statement(bean, field, new Object[]{value});
 		stmt.execute();
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
 	}
 
 	public String getOwner1() {

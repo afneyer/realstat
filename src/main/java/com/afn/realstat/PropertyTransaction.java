@@ -7,10 +7,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 @Entity
-public class PropertyTransaction {
+public class PropertyTransaction extends AbstractEntity {
 
-	@Id
-	private Long Id;
+	private Integer MlsNo;
 	private String Status;
 	private String Dom;
 	private String Address;
@@ -21,44 +20,44 @@ public class PropertyTransaction {
 	private Double SalesPrice;
 	private String BuildingType;
 	private Double Sqft;
-	private Long Bedrooms;
-	private Long Baths;
-	private Long BathsPartial;
+	private Integer Bedrooms;
+	private Integer Baths;
+	private Integer BathsPartial;
 	private String Gar;
-	private Long Garsp;
+	private Integer Garsp;
 	private Date Yrblt;
 	private Double Acres;
 	private Double LotSqft;
 	private Double HoaFee;
-	private Double HoaFeesFreq;
+	private String HoaFeesFreq;
 	private Date CloseDate;
-	private Long Age;
-	private Long Apn;
+	private Integer Age;
+	private String Apn;
 	private String CensusTract;
-	private Double CityTransferTax;
+	private String CityTransferTax;
 	private String PropClass;
 	private String CoListAgentBreNum;
 	private String CoSellAgentBreNum;
 	private Double CompToSellingOffice;
 	private String CompType;
 	private String County;
-	private Long CumulativeDomls;
-	private Long DaysOnMls;
+	private Integer CumulativeDomls;
+	private Integer DaysOnMls;
 	private Date GeneralDate;
 	private String DistNeighborhoodSubdiv;
 	private String DualVariable;
-	private Double Fireplaces;
+	private Integer Fireplaces;
 	private String FloorUnitIsOn;
 	private String ForeclosureStatus;
 	private String Hoa;
 	private String HowSold;
 	private Date InputDate;
-	private Long ListPriceSqft;
+	private Double ListPriceSqft;
 	private String ListAgentBreNum;
 	private Date ListDate;
 	private String ListingBrokerBreNumber;
 	private String ListingType;
-	private Long NumberOfOffers;
+	private Integer NumberOfOffers;
 	private Date OffMarketDate;
 	private Double OriginalPrice;
 	private Date PendingDate;
@@ -70,7 +69,7 @@ public class PropertyTransaction {
 	private Double Price;
 	private Date PriceDate;
 	private Double PriceSqft;
-	private Long RoomsTotal;
+	private Integer RoomsTotal;
 	private Double SalePriceSqft;
 	private Double SaleCoop;
 	private Double SaleLastListPrice;
@@ -80,35 +79,27 @@ public class PropertyTransaction {
 	private String SoldAgentBreNum;
 	private String TaxId;
 	private Double TicPercentOwnerOffered;
-	private Long UnitsInComplex;
+	private Integer UnitsInComplex;
 	private Date UpdateDate;
 	private String Source;
 	private String SpecialInformation;
 	private String State;
 	private Date StatusDate;
-	private Long Stories;
+	private String Stories;
 	private String Zip;
 	private String Zoning;
 
-	protected PropertyTransaction() {
+	public PropertyTransaction() {
 	}
 
-	public PropertyTransaction(Long id) {
-		this.Id = id;
+	public PropertyTransaction(Integer id) {
+		this.MlsNo = id;
 	}
 
 	@Override
 	public String toString() {
 		return String.format("PropTransaction [id=%d, Address='%s', Unit='%s', City='%s',Zip='%s']", 
-				Id, Address, Unit, City, Zip);
-	}
-
-	public Long getId() {
-		return Id;
-	}
-
-	public void setId(Long id) {
-		Id = id;
+				MlsNo, Address, Unit, City, Zip);
 	}
 
 	public String getStatus() {
@@ -191,27 +182,27 @@ public class PropertyTransaction {
 		Sqft = sqft;
 	}
 
-	public Long getBedrooms() {
+	public Integer getBedrooms() {
 		return Bedrooms;
 	}
 
-	public void setBedrooms(Long bedrooms) {
+	public void setBedrooms(Integer bedrooms) {
 		Bedrooms = bedrooms;
 	}
 
-	public Long getBaths() {
+	public Integer getBaths() {
 		return Baths;
 	}
 
-	public void setBaths(Long baths) {
+	public void setBaths(Integer baths) {
 		Baths = baths;
 	}
 
-	public Long getBathsPartial() {
+	public Integer getBathsPartial() {
 		return BathsPartial;
 	}
 
-	public void setBathsPartial(Long bathsPartial) {
+	public void setBathsPartial(Integer bathsPartial) {
 		BathsPartial = bathsPartial;
 	}
 
@@ -223,11 +214,11 @@ public class PropertyTransaction {
 		Gar = gar;
 	}
 
-	public Long getGarsp() {
+	public Integer getGarsp() {
 		return Garsp;
 	}
 
-	public void setGarsp(Long garsp) {
+	public void setGarsp(Integer garsp) {
 		Garsp = garsp;
 	}
 
@@ -263,11 +254,11 @@ public class PropertyTransaction {
 		HoaFee = hoaFee;
 	}
 
-	public Double getHoaFeesFreq() {
+	public String getHoaFeesFreq() {
 		return HoaFeesFreq;
 	}
 
-	public void setHoaFeesFreq(Double hoaFeesFreq) {
+	public void setHoaFeesFreq(String hoaFeesFreq) {
 		HoaFeesFreq = hoaFeesFreq;
 	}
 
@@ -279,19 +270,19 @@ public class PropertyTransaction {
 		CloseDate = closeDate;
 	}
 
-	public Long getAge() {
+	public Integer getAge() {
 		return Age;
 	}
 
-	public void setAge(Long age) {
+	public void setAge(Integer age) {
 		Age = age;
 	}
 
-	public Long getApn() {
+	public String getApn() {
 		return Apn;
 	}
 
-	public void setApn(Long apn) {
+	public void setApn(String apn) {
 		Apn = apn;
 	}
 
@@ -303,11 +294,11 @@ public class PropertyTransaction {
 		CensusTract = censusTract;
 	}
 
-	public Double getCityTransferTax() {
+	public String getCityTransferTax() {
 		return CityTransferTax;
 	}
 
-	public void setCityTransferTax(Double cityTransferTax) {
+	public void setCityTransferTax(String cityTransferTax) {
 		CityTransferTax = cityTransferTax;
 	}
 
@@ -359,19 +350,19 @@ public class PropertyTransaction {
 		County = county;
 	}
 
-	public Long getCumulativeDomls() {
+	public Integer getCumulativeDomls() {
 		return CumulativeDomls;
 	}
 
-	public void setCumulativeDomls(Long cumulativeDomls) {
+	public void setCumulativeDomls(Integer cumulativeDomls) {
 		CumulativeDomls = cumulativeDomls;
 	}
 
-	public Long getDaysOnMls() {
+	public Integer getDaysOnMls() {
 		return DaysOnMls;
 	}
 
-	public void setDaysOnMls(Long daysOnMls) {
+	public void setDaysOnMls(Integer daysOnMls) {
 		DaysOnMls = daysOnMls;
 	}
 
@@ -399,11 +390,11 @@ public class PropertyTransaction {
 		DualVariable = dualVariable;
 	}
 
-	public Double getFireplaces() {
+	public Integer getFireplaces() {
 		return Fireplaces;
 	}
 
-	public void setFireplaces(Double fireplaces) {
+	public void setFireplaces(Integer fireplaces) {
 		Fireplaces = fireplaces;
 	}
 
@@ -447,11 +438,11 @@ public class PropertyTransaction {
 		InputDate = inputDate;
 	}
 
-	public Long getListPriceSqft() {
+	public Double getListPriceSqft() {
 		return ListPriceSqft;
 	}
 
-	public void setListPriceSqft(Long listPriceSqft) {
+	public void setListPriceSqft(Double listPriceSqft) {
 		ListPriceSqft = listPriceSqft;
 	}
 
@@ -487,11 +478,11 @@ public class PropertyTransaction {
 		ListingType = listingType;
 	}
 
-	public Long getNumberOfOffers() {
+	public Integer getNumberOfOffers() {
 		return NumberOfOffers;
 	}
 
-	public void setNumberOfOffers(Long numberOfOffers) {
+	public void setNumberOfOffers(Integer numberOfOffers) {
 		NumberOfOffers = numberOfOffers;
 	}
 
@@ -583,11 +574,11 @@ public class PropertyTransaction {
 		PriceSqft = priceSqft;
 	}
 
-	public Long getRoomsTotal() {
+	public Integer getRoomsTotal() {
 		return RoomsTotal;
 	}
 
-	public void setRoomsTotal(Long roomsTotal) {
+	public void setRoomsTotal(Integer roomsTotal) {
 		RoomsTotal = roomsTotal;
 	}
 
@@ -663,11 +654,11 @@ public class PropertyTransaction {
 		TicPercentOwnerOffered = ticPercentOwnerOffered;
 	}
 
-	public Long getUnitsInComplex() {
+	public Integer getUnitsInComplex() {
 		return UnitsInComplex;
 	}
 
-	public void setUnitsInComplex(Long unitsInComplex) {
+	public void setUnitsInComplex(Integer unitsInComplex) {
 		UnitsInComplex = unitsInComplex;
 	}
 
@@ -711,11 +702,11 @@ public class PropertyTransaction {
 		StatusDate = statusDate;
 	}
 
-	public Long getStories() {
+	public String getStories() {
 		return Stories;
 	}
 
-	public void setStories(Long stories) {
+	public void setStories(String stories) {
 		Stories = stories;
 	}
 
@@ -735,6 +726,12 @@ public class PropertyTransaction {
 		Zoning = zoning;
 	}
 
-	
-	
+	public Integer getMlsNo() {
+		return MlsNo;
+	}
+
+	public void setMlsNo(Integer mlsNo) {
+		MlsNo = mlsNo;
+	}
+
 }

@@ -7,6 +7,8 @@ import javax.persistence.Id;
 @Entity
 public class Customer {
 
+	
+	
 	@Id
 	@GeneratedValue
 	private Long id;

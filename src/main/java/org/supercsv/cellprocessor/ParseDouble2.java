@@ -8,8 +8,11 @@ package org.supercsv.cellprocessor;
 	import org.supercsv.util.CsvContext;
 
 	/**
-	 * Custom cell processor that removes commas first (as used to separate thousands) before calling
+	 * Custom cell processor that removes commas and $signs before calling
 	 * the standard ParseDouble CellProcessor
+	 * 
+	 * e.g. 100,000 -> 100000
+	 * 		$200,000 - 200000
 	 */
 	public class ParseDouble2 extends CellProcessorAdaptor {
 	        
@@ -29,6 +32,9 @@ package org.supercsv.cellprocessor;
 	                // remove commas
 	                String newValue = new String( value.toString() );
 	                newValue = newValue.replaceAll(",","");
+	                newValue = newValue.replaceAll("\\$","");
+	                newValue = newValue.replaceAll(" ","");
+	                newValue = newValue.replaceAll("\\%","");
 	                
 	                // call standard cell parseDouble() CellProcessor
 	                ParseDouble parseDouble = new ParseDouble();
