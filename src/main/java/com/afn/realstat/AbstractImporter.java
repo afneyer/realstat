@@ -21,7 +21,7 @@ import com.vaadin.spring.annotation.SpringComponent;
 @SpringComponent
 public abstract class AbstractImporter {
 	
-	@Autowired RealPropertyRepository repository;
+	// @Autowired RealPropertyRepository repository;
 	
 	private static final Logger log = LoggerFactory.getLogger(Application.class);
 
@@ -52,8 +52,8 @@ public abstract class AbstractImporter {
 		
 		// print all records
 		// CustomerRepository repository;
-		log.info( new Long(repository.count()).toString() );
-		log.info("After all records have been read");
+		// log.info( new Long(repository.count()).toString() );
+		// log.info("After all records have been read");
 			
 	}
 

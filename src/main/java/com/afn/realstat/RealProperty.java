@@ -3,15 +3,24 @@ package com.afn.realstat;
 import java.beans.Statement;
 import java.util.Date;
 
+import javax.annotation.Generated;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
+import javax.persistence.metamodel.StaticMetamodel;
 
 import org.hibernate.mapping.Map;
-
+import org.springframework.beans.factory.annotation.Autowired;
+    
 @Entity
-public class RealProperty extends AbstractEntity{
+@Table(uniqueConstraints=@UniqueConstraint(columnNames = {"apn"}))
 
+@Generated(value = "org.hibernate.jpamodelgen.JPAMetaModelEntityProcessor")
+@StaticMetamodel(RealProperty.class)
+public class RealProperty extends AbstractEntity{
+	
 	private String owner1;
 	private String title;
 	private String firstName;
@@ -51,7 +60,7 @@ public class RealProperty extends AbstractEntity{
 	private Double lotSqFeet;
 	private String lotDimensions;
 	private String censusTract;
-
+	
 	public RealProperty() {
 	}
 
@@ -385,4 +394,9 @@ public class RealProperty extends AbstractEntity{
 		this.censusTract = censusTract;
 	}
 
+	/* TODO remove
+	public void test() {
+		Long l = RealProperty_
+	}
+	*/
 }
