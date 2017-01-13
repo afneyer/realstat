@@ -4,8 +4,6 @@ import java.beans.Statement;
 import java.io.File;
 import java.io.FileReader;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.supercsv.cellprocessor.ift.CellProcessor;
 import org.supercsv.io.CsvBeanReader;
 import org.supercsv.io.ICsvBeanReader;
@@ -22,7 +20,8 @@ public abstract class AbstractImporter {
 	
 	// @Autowired RealPropertyRepository repository;
 	
-	private static final Logger log = LoggerFactory.getLogger(Application.class);
+
+	// private static final Logger log = LoggerFactory.getLogger(Application.class);
 
 	/**
 	 * 
@@ -30,9 +29,6 @@ public abstract class AbstractImporter {
 	public AbstractImporter() {
 	}
 
-	
-	// public AbstractImporter() {
-	
 	/**
 	 * @param crsFile
 	 */

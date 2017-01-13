@@ -12,9 +12,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 @SpringBootTest(classes = Application.class,
         webEnvironment = SpringBootTest.WebEnvironment.NONE)
 public class MlsImporterTest {
-	
-	 @Autowired
-	 private PropertyTransactionRepository repository;
 	 
 	 @Autowired
 	 private MlsImporter importer;

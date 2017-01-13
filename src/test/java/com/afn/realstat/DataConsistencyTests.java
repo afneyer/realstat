@@ -44,7 +44,7 @@ public class DataConsistencyTests {
     			dupApn.add(prop);
     		}
     		for (RealProperty dupProp : dupApn) {
-    			// log.info("Duplicate APN" + dupApn );
+    			log.info("Duplicate APN" + dupProp );
     		}
     		assertEquals(0,dupApn.size());
     	}

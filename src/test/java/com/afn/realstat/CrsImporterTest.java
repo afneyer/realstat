@@ -14,9 +14,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 @SpringBootTest(classes = Application.class,
         webEnvironment = SpringBootTest.WebEnvironment.NONE)
 public class CrsImporterTest {
-	
-	 @Autowired
-	 private RealPropertyRepository repository;
 	 
 	 @Autowired
 	 private CrsImporter importer;

@@ -24,6 +24,7 @@ import com.vaadin.ui.themes.ValoTheme;
  */
 @SpringComponent
 @UIScope
+@SuppressWarnings("serial")
 public class CustomerEditor extends VerticalLayout {
 
 	private final CustomerRepository repository;
