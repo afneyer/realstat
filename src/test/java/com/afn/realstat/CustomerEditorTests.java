@@ -1,5 +1,8 @@
 package com.afn.realstat;
 
+import static org.mockito.BDDMockito.then;
+import static org.mockito.Matchers.argThat;
+
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
 import org.junit.Test;
@@ -7,13 +10,6 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-
-import com.afn.realstat.Customer;
-import com.afn.realstat.CustomerEditor;
-import com.afn.realstat.CustomerRepository;
-
-import static org.mockito.BDDMockito.then;
-import static org.mockito.Matchers.argThat;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CustomerEditorTests {

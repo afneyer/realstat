@@ -1,5 +1,7 @@
 package com.afn.realstat;
 
+import static org.assertj.core.api.BDDAssertions.then;
+
 import javax.annotation.PostConstruct;
 
 import org.junit.Before;
@@ -12,14 +14,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.afn.realstat.Customer;
-import com.afn.realstat.CustomerEditor;
-import com.afn.realstat.CustomerRepository;
-import com.afn.realstat.VaadinUI;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.spring.boot.VaadinAutoConfiguration;
-
-import static org.assertj.core.api.BDDAssertions.then;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = VaadinUITests.Config.class,

@@ -3,7 +3,6 @@ package com.afn.realstat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.supercsv.cellprocessor.Optional;
 import org.supercsv.cellprocessor.ParseDate;
-import org.supercsv.cellprocessor.ParseDouble;
 import org.supercsv.cellprocessor.ParseDouble2;
 import org.supercsv.cellprocessor.ParseInt;
 import org.supercsv.cellprocessor.StrReplace;

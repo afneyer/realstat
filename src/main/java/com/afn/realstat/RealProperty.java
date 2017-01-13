@@ -5,14 +5,10 @@ import java.util.Date;
 
 import javax.annotation.Generated;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.persistence.metamodel.StaticMetamodel;
 
-import org.hibernate.mapping.Map;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
     
 @Entity
