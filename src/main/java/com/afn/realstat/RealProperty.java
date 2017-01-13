@@ -4,6 +4,7 @@ import java.beans.Statement;
 import java.util.Date;
 
 import javax.annotation.Generated;
+import javax.persistence.Basic;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -32,7 +33,7 @@ public class RealProperty extends AbstractEntity{
 	private String ownerCity;
 	private String ownerState;
 	private String ownerZip;
-	private String apn;
+	@Basic(optional=false) private String apn;
 	private String improvementType;
 	private String landUse;
 	private String propertyAddress;

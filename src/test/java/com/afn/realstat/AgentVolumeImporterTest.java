@@ -18,8 +18,7 @@ public class AgentVolumeImporterTest {
 
 	@Test
 	public void testImportFile() {
-		File file = new File("C:\\afndev\\apps\\realstat\\testdata","AgentVolumeExportTest50.csv");
-
+		File file = new File("C:\\afndev\\apps\\realstat\\testdata","AgentVolumeExportTest20.csv");
 		importer.importFile(file);
 	}
 }

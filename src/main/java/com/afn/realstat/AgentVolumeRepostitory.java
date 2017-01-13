@@ -7,8 +7,8 @@ import org.slf4j.LoggerFactory;
 
 public interface AgentVolumeRepostitory extends AbstractEntityRepository<AgentVolume> {
 
-	List<AgentVolume> findByBreNo(String breNo);
+	// List<AgentVolume> findByBreNo(String breNo);
 	
-	public static final Logger log = LoggerFactory.getLogger(Application.class);
+	// public static final Logger log = LoggerFactory.getLogger(Application.class);
 	
 }

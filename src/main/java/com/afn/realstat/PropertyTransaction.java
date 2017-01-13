@@ -2,6 +2,7 @@ package com.afn.realstat;
 
 import java.util.Date;
 
+import javax.persistence.Basic;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -12,7 +13,7 @@ import org.springframework.data.domain.Example;
 @Table(uniqueConstraints=@UniqueConstraint(columnNames = {"MlsNo"}))
 public class PropertyTransaction extends AbstractEntity {
 
-	private Integer MlsNo;
+	@Basic(optional=false) private Integer MlsNo;
 	private String Status;
 	private String Dom;
 	private String Address;

@@ -4,7 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.supercsv.cellprocessor.Optional;
 import org.supercsv.cellprocessor.ParseDate;
 import org.supercsv.cellprocessor.ParseDouble;
+import org.supercsv.cellprocessor.ParseDouble2;
 import org.supercsv.cellprocessor.ParseInt;
+import org.supercsv.cellprocessor.ParseInt2;
 import org.supercsv.cellprocessor.ift.CellProcessor;
 
 import com.vaadin.spring.annotation.SpringComponent;
@@ -23,7 +25,7 @@ public class AgentVolumeImporter extends AbstractImporter {
 	// private static final Logger log = LoggerFactory.getLogger(Application.class);
 
 	public AgentVolumeImporter() {
-		entityClass = RealProperty.class;
+		entityClass = AgentVolume.class;
 	}
 	
 
@@ -34,19 +36,18 @@ public class AgentVolumeImporter extends AbstractImporter {
 
 		final CellProcessor[] processors = new CellProcessor[] {
 
-				new Optional(), // Agent Raw
-				new Optional(), // Office Raw
-				new Optional(), // BreNo
 				new Optional(new ParseDate("YYYY")), // Year
-				new Optional(new ParseInt()), // Units Listed
-				new Optional(new ParseDouble()), // Volume Listed
-				new Optional(new ParseInt()), // Units Sold
-				new Optional(new ParseDouble()), // Volume Sold
-				new Optional(new ParseInt()), // Units Total
-				new Optional(new ParseDouble()), // Volume Total
-				new Optional(new ParseDouble()), // % MLS Volume
-				new Optional(new ParseDouble()), // Avg Ttl Price
-				new Optional(new ParseDouble()), // Avg DOM
+				new Optional(), // Agent Raw
+				new Optional(), // Office Raw	
+				new Optional(new ParseInt2()), // Units Listed
+				new Optional(new ParseDouble2()), // Volume Listed
+				new Optional(new ParseInt2()), // Units Sold
+				new Optional(new ParseDouble2()), // Volume Sold
+				new Optional(new ParseInt2()), // Units Total
+				new Optional(new ParseDouble2()), // Volume Total
+				new Optional(new ParseDouble2()), // % MLS Volume
+				new Optional(new ParseDouble2()), // Avg Ttl Price
+				new Optional(new ParseDouble2()), // Avg DOM
 				
 		};
 
@@ -79,7 +80,8 @@ public class AgentVolumeImporter extends AbstractImporter {
 	}
 
 	protected void saveOrUpdateEntity(AbstractEntity e) {
-		AgentVolume rp = (AgentVolume)e;
-		repository.saveOrUpdate(rp);
+		AgentVolume av = (AgentVolume)e;
+		av.setBreNo( av.extractBrefromAgentRaw() );
+		repository.saveOrUpdate(av);
 	}
 }

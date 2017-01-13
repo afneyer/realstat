@@ -2,6 +2,7 @@ package com.afn.realstat;
 
 import java.util.Date;
 
+import javax.persistence.Basic;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -9,19 +10,19 @@ import javax.persistence.UniqueConstraint;
 import org.springframework.data.domain.Example;
 
 @Entity
-@Table(uniqueConstraints=@UniqueConstraint(columnNames = {"BreNo"}))
+@Table(uniqueConstraints=@UniqueConstraint(columnNames = {"BreNo","Year"}))
 public class AgentVolume extends AbstractEntity {
 
-	private String BreNo;
-	private Date Year;
+	@Basic(optional=false) private String BreNo;
+	@Basic(optional=false) private Date Year;
 	private Integer UnitsListed;
 	private Double VolumeListed;
 	private Integer UnitsSold;
 	private Double VolumeSold;
 	private Integer UnitsTotal;
 	private Double VolumeTotal;
-	private String AgentRawFormat;
-	private String OfficeRawFormat;
+	private String AgentRaw;
+	private String OfficeRaw;
 	private Double PercentMlsVolume;
 	private Double AvgTtlPrice;
 	private Double AvgDom;
@@ -29,14 +30,15 @@ public class AgentVolume extends AbstractEntity {
 	public AgentVolume() {
 	}
 
-	public AgentVolume(String id) {
+	public AgentVolume(String id, Date year) {
 		this.BreNo = id;
+		this.Year = year;
 	}
 
 	@Override
 	public String toString() {
 		return String.format("AgentVolume [Bre='%s', Year='%s',  AgentRaw='%s', OfficeRaw='%s', UnitsTotal='%s', VolumeTotal='%s',]", 
-				BreNo, Year, AgentRawFormat, OfficeRawFormat, UnitsTotal, VolumeTotal);
+				BreNo, Year, AgentRaw, OfficeRaw, UnitsTotal, VolumeTotal);
 	}
 	
 	@Override
@@ -45,9 +47,17 @@ public class AgentVolume extends AbstractEntity {
 	
 	@Override
 	public Example<AbstractEntity> getRefExample() {
-		Example<AbstractEntity> e = Example.of( new AgentVolume(this.getBreNo()));
+		Example<AbstractEntity> e = Example.of( new AgentVolume(getBreNo(), getYear()));
 		return e;
 	}
+	
+	public String extractBrefromAgentRaw() {
+		String agr = getAgentRaw();
+		String bre = agr.replaceAll("[A-Z,a-z,\\-, ]","");
+		return bre;
+	}
+	
+	// All getters and setters
 
 	public String getBreNo() {
 		return BreNo;
@@ -113,20 +123,20 @@ public class AgentVolume extends AbstractEntity {
 		VolumeTotal = volumeTotal;
 	}
 
-	public String getAgentRawFormat() {
-		return AgentRawFormat;
+	public String getAgentRaw() {
+		return AgentRaw;
 	}
 
-	public void setAgentRawFormat(String agentRawFormat) {
-		AgentRawFormat = agentRawFormat;
+	public void setAgentRaw(String agentRaw) {
+		AgentRaw = agentRaw;
 	}
 
-	public String getOfficeRawFormat() {
-		return OfficeRawFormat;
+	public String getOfficeRaw() {
+		return OfficeRaw;
 	}
 
-	public void setOfficeRawFormat(String officeRawFormat) {
-		OfficeRawFormat = officeRawFormat;
+	public void setOfficeRaw(String officeRaw) {
+		OfficeRaw = officeRaw;
 	}
 	
 	public Double getPercentMlsVolume() {
@@ -152,4 +162,6 @@ public class AgentVolume extends AbstractEntity {
 	public void setAvgDom(Double avgDom) {
 		AvgDom = avgDom;
 	}
+
+	
 }
