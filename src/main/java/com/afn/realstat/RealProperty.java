@@ -13,6 +13,7 @@ import javax.persistence.metamodel.StaticMetamodel;
 
 import org.hibernate.mapping.Map;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
     
 @Entity
 @Table(uniqueConstraints=@UniqueConstraint(columnNames = {"apn"}))
@@ -74,7 +75,15 @@ public class RealProperty extends AbstractEntity{
 				apn, propertyAddress, propertyCity, propertyState, propertyZip);
 	}
 	
+	@Override
+	public Example<AbstractEntity> getRefExample() {
+		Example<AbstractEntity> e = Example.of( new RealProperty(this.getApn()));
+		return e;
+	}
 	
+	@Override
+	public void saveOrUpdate() {
+	}
 	
 	public void setFieldByString(Object bean, String field, String value ) throws Exception {
 		Statement stmt;
@@ -393,6 +402,8 @@ public class RealProperty extends AbstractEntity{
 	public void setCensusTract(String censusTract) {
 		this.censusTract = censusTract;
 	}
+
+	
 
 	/* TODO remove
 	public void test() {

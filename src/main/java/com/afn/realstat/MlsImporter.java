@@ -155,8 +155,9 @@ public class MlsImporter extends AbstractImporter {
 		return header;
 	}
 
-	protected void saveEntity(AbstractEntity e) {
-		repository.save((PropertyTransaction) e);	
+	protected void saveOrUpdateEntity(AbstractEntity e) {
+		PropertyTransaction pt = (PropertyTransaction) e;
+		repository.saveOrUpdate(pt);
 	}
 
 }

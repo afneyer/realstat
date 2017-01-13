@@ -12,7 +12,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.afn.realstat.Application;
 import com.afn.realstat.CrsImporter;
-import com.afn.realstat.RealPropertyRepository;
+import com.afn.realstat.RealPropertyRepositoryTest;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = Application.class,

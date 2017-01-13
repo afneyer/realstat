@@ -1,5 +1,7 @@
 package com.afn.realstat;
 
+import javax.persistence.EntityManager;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.supercsv.cellprocessor.Optional;
 import org.supercsv.cellprocessor.ParseDate;
@@ -104,8 +106,8 @@ public class CrsImporter extends AbstractImporter {
 		return header;
 	}
 
-	protected void saveEntity(AbstractEntity e) {
-		repository.save((RealProperty) e);	
+	protected void saveOrUpdateEntity(AbstractEntity e) {
+		RealProperty rp = (RealProperty)e;
+		repository.saveOrUpdate(rp);
 	}
-
 }

@@ -8,6 +8,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import org.springframework.data.domain.Example;
+
 @Entity
 @Table(uniqueConstraints=@UniqueConstraint(columnNames = {"MlsNo"}))
 public class PropertyTransaction extends AbstractEntity {
@@ -104,7 +106,17 @@ public class PropertyTransaction extends AbstractEntity {
 		return String.format("PropTransaction [id=%d, Address='%s', Unit='%s', City='%s',Zip='%s']", 
 				MlsNo, Address, Unit, City, Zip);
 	}
-
+	
+	@Override
+	public void saveOrUpdate() {
+	}
+	
+	@Override
+	public Example<AbstractEntity> getRefExample() {
+		Example<AbstractEntity> e = Example.of( new PropertyTransaction(this.getMlsNo()));
+		return e;
+	}
+	
 	public String getStatus() {
 		return Status;
 	}
@@ -736,5 +748,8 @@ public class PropertyTransaction extends AbstractEntity {
 	public void setMlsNo(Integer mlsNo) {
 		MlsNo = mlsNo;
 	}
+	
+
+
 
 }

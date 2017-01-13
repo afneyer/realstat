@@ -78,7 +78,7 @@ public abstract class AbstractImporter {
 
 			AbstractEntity entity;
 			while ((entity = (AbstractEntity) beanReader.read(entityClass, header, processors)) != null) {
-				saveEntity(entity);
+				saveOrUpdateEntity(entity);
 				System.out.println(String.format("lineNo=%s, rowNo=%s, customer=%s", beanReader.getLineNumber(),
 						beanReader.getRowNumber(), entity));
 			}
@@ -93,7 +93,7 @@ public abstract class AbstractImporter {
 
 	}
 	
-	protected abstract void saveEntity( AbstractEntity e);
+	protected abstract void saveOrUpdateEntity( AbstractEntity e);
 	
 	// abstract void readAndSaveNextEntity( CsvBeanReader r );
 
