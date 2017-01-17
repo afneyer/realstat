@@ -19,6 +19,7 @@ import org.springframework.data.domain.Example;
 @StaticMetamodel(RealProperty.class)
 public class RealProperty extends AbstractEntity{
 	
+	@Basic(optional=false) private String apn;
 	private String owner1;
 	private String title;
 	private String firstName;
@@ -33,7 +34,6 @@ public class RealProperty extends AbstractEntity{
 	private String ownerCity;
 	private String ownerState;
 	private String ownerZip;
-	@Basic(optional=false) private String apn;
 	private String improvementType;
 	private String landUse;
 	private String propertyAddress;
