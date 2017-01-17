@@ -119,6 +119,7 @@ public abstract class AbstractImporter {
 		str = str.replaceAll("\\$", " Price ");
 		str = str.replaceAll("\\/", " ");
 		str = str.replaceAll("\\.", " ");
+		str = str.replaceAll("\\-", " ");
 		str = str.replaceAll("  ", " ");
 				
 		// make it all lower case
