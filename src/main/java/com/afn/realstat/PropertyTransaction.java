@@ -4,6 +4,8 @@ import java.util.Date;
 
 import javax.persistence.Basic;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
@@ -14,6 +16,8 @@ import org.springframework.data.domain.Example;
 public class PropertyTransaction extends AbstractEntity {
 
 	@Basic(optional=false) private Integer MlsNo;
+	@ManyToOne(fetch=FetchType.LAZY)
+	private RealProperty property;
 	private String Status;
 	private String Dom;
 	private String Address;
@@ -42,7 +46,7 @@ public class PropertyTransaction extends AbstractEntity {
 	private String PropClass;
 	private String CoListAgentBreNum;
 	private String CoSellAgentBreNum;
-	private Double CompToSellingOffice;
+	private String CompToSellingOffice;
 	private String CompType;
 	private String County;
 	private Integer CumulativeDomls;
@@ -75,7 +79,7 @@ public class PropertyTransaction extends AbstractEntity {
 	private Double PriceSqft;
 	private Integer RoomsTotal;
 	private Double SalePriceSqft;
-	private Double SaleCoop;
+	private String SaleCoop;
 	private Double SaleLastListPrice;
 	private Double SaleOriginalPrice;
 	private String SaleRent;
@@ -92,6 +96,14 @@ public class PropertyTransaction extends AbstractEntity {
 	private String Stories;
 	private String Zip;
 	private String Zoning;
+	private String CoListAgentName;
+	private String CoListAgentLicenseId;
+	private String CoSellAgentName;
+	private String CoSellAgentLicenseId;
+	private String ListingAgentName;
+	private String ListingAgentLicenseId;
+	private String SellingAgent1Name;
+	private String SellingAgent1LicenseId;
 
 	public PropertyTransaction() {
 	}
@@ -340,11 +352,11 @@ public class PropertyTransaction extends AbstractEntity {
 		CoSellAgentBreNum = coSellAgentBreNum;
 	}
 
-	public Double getCompToSellingOffice() {
+	public String getCompToSellingOffice() {
 		return CompToSellingOffice;
 	}
 
-	public void setCompToSellingOffice(Double compToSellingOffice) {
+	public void setCompToSellingOffice(String compToSellingOffice) {
 		CompToSellingOffice = compToSellingOffice;
 	}
 
@@ -604,11 +616,11 @@ public class PropertyTransaction extends AbstractEntity {
 		SalePriceSqft = salePriceSqft;
 	}
 
-	public Double getSaleCoop() {
+	public String getSaleCoop() {
 		return SaleCoop;
 	}
 
-	public void setSaleCoop(Double saleCoop) {
+	public void setSaleCoop(String saleCoop) {
 		SaleCoop = saleCoop;
 	}
 
@@ -747,8 +759,77 @@ public class PropertyTransaction extends AbstractEntity {
 	public void setMlsNo(Integer mlsNo) {
 		MlsNo = mlsNo;
 	}
+
+	public RealProperty getProperty() {
+		return property;
+	}
+
+	public void setProperty(RealProperty property) {
+		this.property = property;
+	}
+
+	public String getCoListAgentName() {
+		return CoListAgentName;
+	}
+
+	public void setCoListAgentName(String coListAgentName) {
+		CoListAgentName = coListAgentName;
+	}
+
+	public String getCoListAgentLicenseId() {
+		return CoListAgentLicenseId;
+	}
+
+	public void setCoListAgentLicenseId(String coListAgentLicenseId) {
+		CoListAgentLicenseId = coListAgentLicenseId;
+	}
+
+	public String getCoSellAgentName() {
+		return CoSellAgentName;
+	}
+
+	public void setCoSellAgentName(String coSellAgentName) {
+		CoSellAgentName = coSellAgentName;
+	}
+
+	public String getCoSellAgentLicenseId() {
+		return CoSellAgentLicenseId;
+	}
+
+	public void setCoSellAgentLicenseId(String coSellAgentLicenseId) {
+		CoSellAgentLicenseId = coSellAgentLicenseId;
+	}
+
+	public String getListingAgentName() {
+		return ListingAgentName;
+	}
+
+	public void setListingAgentName(String listingAgentName) {
+		ListingAgentName = listingAgentName;
+	}
+
+	public String getListingAgentLicenseId() {
+		return ListingAgentLicenseId;
+	}
+
+	public void setListingAgentLicenseId(String listingAgentLicenseId) {
+		ListingAgentLicenseId = listingAgentLicenseId;
+	}
+
+	public String getSellingAgent1Name() {
+		return SellingAgent1Name;
+	}
+
+	public void setSellingAgent1Name(String sellingAgent1Name) {
+		SellingAgent1Name = sellingAgent1Name;
+	}
+
+	public String getSellingAgent1LicenseId() {
+		return SellingAgent1LicenseId;
+	}
+
+	public void setSellingAgent1LicenseId(String sellingAgent1LicenseId) {
+		SellingAgent1LicenseId = sellingAgent1LicenseId;
+	}
 	
-
-
-
 }

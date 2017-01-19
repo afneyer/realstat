@@ -15,6 +15,7 @@ public class AgentVolume extends AbstractEntity {
 
 	@Basic(optional=false) private String BreNo;
 	@Basic(optional=false) private Date Year;
+	private Integer Rank;
 	private Integer UnitsListed;
 	private Double VolumeListed;
 	private Integer UnitsSold;
@@ -161,6 +162,14 @@ public class AgentVolume extends AbstractEntity {
 
 	public void setAvgDom(Double avgDom) {
 		AvgDom = avgDom;
+	}
+
+	public Integer getRank() {
+		return Rank;
+	}
+
+	public void setRank(Integer rank) {
+		Rank = rank;
 	}
 
 	

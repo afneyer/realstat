@@ -1,0 +1,18 @@
+<persistence xmlns="http://java.sun.com/xml/ns/persistence"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd"
+	version="2.0">
+	<persistence-unit name="default">
+		<provider>org.hibernate.ejb.HibernatePersistence</provider>
+		<!-- <jta-data-source>"default</jta-data-source> -->
+		<!-- <mapping-file>ormap.xml</mapping-file> <jar-file>MyApp.jar</jar-file> 
+			<class>org.acme.Employee</class> <class>org.acme.Person</class> <class>org.acme.Address</class> -->
+		<properties>
+			<property name="hibernate.dialect" value="org.hibernate.dialect.MySQL5Dialect" />
+			<property name="hibernate.connection.driver_class" value="com.mysql.jdbc.Driver" />
+			<property name="hibernate.connection.URL" value="jdbc:mysql://localhost:3306/test" />
+			<property name="hibernate.connection.username" value="root" />
+			<property name="hibernate.connection.password" value="admin" />
+		</properties>
+	</persistence-unit>
+</persistence>

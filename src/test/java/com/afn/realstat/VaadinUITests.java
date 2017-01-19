@@ -101,11 +101,11 @@ public class VaadinUITests {
 
         @PostConstruct
         public void initializeData() {
-            this.repository.save(new Customer("Jack", "Bauer"));
-            this.repository.save(new Customer("Chloe", "O'Brian"));
-            this.repository.save(new Customer("Kim", "Bauer"));
-            this.repository.save(new Customer("David", "Palmer"));
-            this.repository.save(new Customer("Michelle", "Dessler"));
+            // this.repository.save(new Customer("Jack", "Bauer"));
+            // this.repository.save(new Customer("Chloe", "O'Brian"));
+            // this.repository.save(new Customer("Kim", "Bauer"));
+            // this.repository.save(new Customer("David", "Palmer"));
+            // this.repository.save(new Customer("Michelle", "Dessler"));
         }
 
     }

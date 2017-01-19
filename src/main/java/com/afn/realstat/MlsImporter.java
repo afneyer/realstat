@@ -3,6 +3,7 @@ package com.afn.realstat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.supercsv.cellprocessor.Optional;
 import org.supercsv.cellprocessor.ParseDate;
+import org.supercsv.cellprocessor.ParseDate2;
 import org.supercsv.cellprocessor.ParseDouble2;
 import org.supercsv.cellprocessor.ParseInt;
 import org.supercsv.cellprocessor.StrReplace;
@@ -39,7 +40,7 @@ public class MlsImporter extends AbstractImporter {
 
 		final CellProcessor[] processors = new CellProcessor[] {
 
-				new Optional(new ParseInt()), // MLS No
+				new ParseInt(), // MLS No
 				new Optional(), // Status
 				new Optional(), // DOM
 				new Optional(), // Address
@@ -55,7 +56,7 @@ public class MlsImporter extends AbstractImporter {
 				new Optional(new ParseInt()), // Baths Partial
 				new Optional(), // Gar
 				new Optional(new ParseInt()), // GarSp
-				new Optional(new ParseDate("yyyy")), // YrBlt
+				new Optional(new ParseDate2("yyyy")), // YrBlt
 				new Optional(new ParseDouble2()), // Acres
 				new Optional(new ParseDouble2()), // Lot SqFt
 				new Optional(new ParseDouble2()), // HOA Fee
@@ -68,7 +69,7 @@ public class MlsImporter extends AbstractImporter {
 				new Optional(), // Class
 				new Optional(), // Co List Agent BRE Num.
 				new Optional(), // Co Sell Agent BRE Num.
-				new Optional(new ParseDouble2()), // Comp to Selling Office
+				new Optional(), // Comp to Selling Office
 				new Optional(), // Comp Type
 				new Optional(), // County
 				new Optional(new ParseInt()), // Cumulative DOMLS
@@ -101,7 +102,7 @@ public class MlsImporter extends AbstractImporter {
 				new Optional(new ParseDouble2()), // Price/SqFt
 				new Optional(new ParseInt()), // Rooms Total
 				new Optional(new ParseDouble2()), // Sale $/SqFt
-				new Optional(new ParseDouble2()), // Sale COOP
+				new Optional(), // Sale COOP
 				new Optional(new ParseDouble2()), // Sale/Last List $
 				new Optional(new ParseDouble2()), // Sale/Original $
 				new Optional(), // Sale/Rent
@@ -118,6 +119,14 @@ public class MlsImporter extends AbstractImporter {
 				new Optional(), // Stories
 				new Optional(), // Zip
 				new Optional(), // Zoning
+				new Optional(), // Co-List Agent - Agent Name
+				new Optional(), // Co-List Agent - License ID
+				new Optional(), // Co-Sell Agent - Agent Name
+				new Optional(), // Co-Sell Agent - License ID
+				new Optional(), // Listing Agent - Agent Name
+				new Optional(), // Listing Agent - License ID
+				new Optional(), // Selling Agent 1 - Agent Name
+				new Optional(), // Selling Agent 1 - License ID
 		};
 
 		return processors;
@@ -142,6 +151,18 @@ public class MlsImporter extends AbstractImporter {
 				break;
 			case "SP":
 				header[i] = "salesPrice";
+				break;
+			case "Co-List Agent - Agent Name":
+				header[i] = "coListAgentName";
+				break;
+			case "Co-Sell Agent - Agent Name":
+				header[i] = "coSellAgentName";
+				break;
+			case "Listing Agent - Agent Name":
+				header[i] = "listingAgentName";
+				break;
+			case "Selling Agent 1 - Agent Name":
+				header[i] = "sellingAgent1Name";
 				break;
 			case "Class":
 				header[i] = "propClass";

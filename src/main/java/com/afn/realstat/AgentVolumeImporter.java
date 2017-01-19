@@ -37,6 +37,7 @@ public class AgentVolumeImporter extends AbstractImporter {
 		final CellProcessor[] processors = new CellProcessor[] {
 
 				new Optional(new ParseDate("YYYY")), // Year
+				new Optional(new ParseInt2()), // Ranking
 				new Optional(), // Agent Raw
 				new Optional(), // Office Raw	
 				new Optional(new ParseInt2()), // Units Listed
@@ -69,8 +70,11 @@ public class AgentVolumeImporter extends AbstractImporter {
 			
 			// special translations
 			switch (header[i]) {
-			case "Owner 1":
-				header[i] = "owner1";
+			case "Agent":
+				header[i] = "AgentRaw";
+				break;
+			case "Office":
+				header[i] = "OfficeRaw";
 				break;
 			default:
 				header[i] = translateCsvFileFieldDefault(header[i]);
