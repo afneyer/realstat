@@ -41,6 +41,7 @@ public class PropertyTransaction extends AbstractEntity {
 	private Date CloseDate;
 	private Integer Age;
 	private String Apn;
+	private String ApnClean;
 	private String CensusTract;
 	private String CityTransferTax;
 	private String PropClass;
@@ -310,6 +311,14 @@ public class PropertyTransaction extends AbstractEntity {
 
 	public void setApn(String apn) {
 		Apn = apn;
+	}
+
+	public String getApnClean() {
+		return ApnClean;
+	}
+
+	public void setApnClean(String apnClean) {
+		ApnClean = apnClean;
 	}
 
 	public String getCensusTract() {

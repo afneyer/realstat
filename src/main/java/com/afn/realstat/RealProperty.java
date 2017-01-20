@@ -20,6 +20,7 @@ import org.springframework.data.domain.Example;
 public class RealProperty extends AbstractEntity{
 	
 	@Basic(optional=false) private String apn;
+	private String apnClean;
 	private String owner1;
 	private String title;
 	private String firstName;
@@ -206,6 +207,14 @@ public class RealProperty extends AbstractEntity{
 
 	public void setApn(String apn) {
 		this.apn = apn;
+	}
+
+	public String getApnClean() {
+		return apnClean;
+	}
+
+	public void setApnClean(String apnClean) {
+		this.apnClean = apnClean;
 	}
 
 	public String getImprovementType() {
