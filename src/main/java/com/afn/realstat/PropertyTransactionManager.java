@@ -85,9 +85,10 @@ public class PropertyTransactionManager {
 	public void iterateAll()
 	{
 	    int offset = 0;
+	    int batchSize = 100;
 
 	    List<PropertyTransaction> listPt;
-	    listPt = getAllPropertyTransactionsIterable(offset, 100);
+	    listPt = getAllPropertyTransactionsIterable(offset, batchSize);
 	    while (listPt.size() > 0)
 	    {
 	        getEntityManager().getTransaction().begin();
@@ -99,7 +100,8 @@ public class PropertyTransactionManager {
 	        getEntityManager().flush();
 	        getEntityManager().clear();
 	        getEntityManager().getTransaction().commit();
-	        offset += listPt.size();
+	        offset += batchSize;
+	        listPt = getAllPropertyTransactionsIterable(offset, batchSize);
 	    }
 	}
 }
