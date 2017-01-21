@@ -17,15 +17,12 @@ import org.springframework.test.context.junit4.SpringRunner;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = Application.class,
         webEnvironment = SpringBootTest.WebEnvironment.NONE)
-public class PropertyTransactionManagerTest {
+public class RealPropertyManagerTest {
 
-	@Autowired
-	PropertyTransactionManager pm;
-	
 	@Test
 	public void testIteraction() {
-		PropertyTransactionManager pm = new PropertyTransactionManager();
-		pm.iterateAll();
+		RealPropertyManager mgr = new RealPropertyManager();
+		mgr.iterateAll();
 		
 	}
 }

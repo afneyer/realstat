@@ -1,6 +1,7 @@
 package com.afn.realstat;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Basic;
 import javax.persistence.Entity;
@@ -9,11 +10,15 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Example;
 
 @Entity
 @Table(uniqueConstraints=@UniqueConstraint(columnNames = {"MlsNo"}))
 public class PropertyTransaction extends AbstractEntity {
+	
+	public static final Logger log = LoggerFactory.getLogger(Application.class);
 
 	@Basic(optional=false) private Integer MlsNo;
 	@ManyToOne(fetch=FetchType.LAZY)
@@ -127,6 +132,32 @@ public class PropertyTransaction extends AbstractEntity {
 	public Example<AbstractEntity> getRefExample() {
 		Example<AbstractEntity> e = Example.of( new PropertyTransaction(this.getMlsNo()));
 		return e;
+	}
+	
+	public RealProperty linkPropertyTransactionToRealProperty() {
+		RealProperty property = null;
+		RealPropertyManager rpm = new RealPropertyManager();
+		List<RealProperty> list = rpm.findByApnClean(ApnClean);
+		if ( list.size() == 0 ) {
+			// no corresponding property found
+			log.info("No property found by APN for propertyTransaction = " + this.toString() );
+			return property;
+		};
+		
+		if ( list.size() == 1 ) {
+			property = list.get(0);
+			this.property = property;
+			log.info("Property Transaction Linked = " + this.toString());
+			return property;
+		}
+		
+		for (RealProperty p : list) {
+		   log.info("Need address comparison! pt = " + this.toString() + "rp = " + p.toString() );
+			return property;
+		}
+		
+		log.info("No property found for Address propertyTransaction = " + this.toString() );
+		return null;	
 	}
 	
 	public String getStatus() {
@@ -311,14 +342,15 @@ public class PropertyTransaction extends AbstractEntity {
 
 	public void setApn(String apn) {
 		Apn = apn;
+		this.setApnClean(apn);
 	}
 
 	public String getApnClean() {
 		return ApnClean;
 	}
 
-	public void setApnClean(String apnClean) {
-		ApnClean = apnClean;
+	public void setApnClean(String apn) {
+		this.ApnClean = RealStatUtil.cleanApn(apn);
 	}
 
 	public String getCensusTract() {

@@ -11,8 +11,10 @@ public interface RealPropertyRepository extends AbstractEntityRepository<RealPro
 
 	List<RealProperty> findByApn(String apn);
 	
-	public static final Logger log = LoggerFactory.getLogger(Application.class);
+	List<RealProperty> findByApnClean(String ApnClean);
 	
+	public static final Logger log = LoggerFactory.getLogger(Application.class);
+
 	
 
 	/* TOOD remove

@@ -20,11 +20,13 @@ import org.springframework.stereotype.Repository;
 @Repository
 @Transactional
 @Component
-public class RealPropertyTransactionManager {
+public class RealPropertyManager {
 
 	public static final Logger log = LoggerFactory.getLogger(Application.class);
 
-	private static final String PERSISTENT_UNIT_NAME = "default";
+	@Autowired
+	RealPropertyRepository repository;
+
 
 	// define a map of properties as you would in the xml-file
 
@@ -36,9 +38,7 @@ public class RealPropertyTransactionManager {
 	private static PersistenceProvider provider = new HibernatePersistenceProvider();
 	private static EntityManagerFactory entityManagerFactory = provider.createEntityManagerFactory("default", prop);
 
-	@Autowired
-	private PropertyTransactionRepository repository;
-
+	
 	// @PersistenceContext (unitName = "afn1Persistence")
 	// private EntityManagerFactory entityManagerFactory;
 
@@ -63,17 +63,17 @@ public class RealPropertyTransactionManager {
 	// private EntityManager em;
 	// *
 
-	public RealPropertyTransactionManager() {
+	public RealPropertyManager() {
 		em = entityManagerFactory.createEntityManager();
 		log.info("Entity Manager em= " + em.toString() + " created");
 	}
 
-	private List<PropertyTransaction> getAllPropertyTransactionsIterable(int offset, int max) {
-		final TypedQuery<PropertyTransaction> tq = em.createQuery("SELECT pt FROM PropertyTransaction pt",
-				PropertyTransaction.class);
+	private List<RealProperty> getAllEntitiesIterable(int offset, int max) {
+		final TypedQuery<RealProperty> tq = em.createQuery("SELECT rp FROM RealProperty rp",
+				RealProperty.class);
 		tq.setFirstResult(offset);
 		tq.setMaxResults(max);
-		List<PropertyTransaction> result = tq.getResultList();
+		List<RealProperty> result = tq.getResultList();
 
 		return result;
 	}
@@ -82,19 +82,26 @@ public class RealPropertyTransactionManager {
 		int offset = 0;
 		int batchSize = 100;
 
-		List<PropertyTransaction> listPt;
-		listPt = getAllPropertyTransactionsIterable(offset, batchSize);
-		while (listPt.size() > 0) {
+		List<RealProperty> listEntity;
+		listEntity = getAllEntitiesIterable(offset, batchSize);
+		while (listEntity.size() > 0) {
 			getEntityManager().getTransaction().begin();
-			for (PropertyTransaction pt : listPt) {
-				log.info("iterating over pt: Offset = " + offset + " PT=" + pt.toString());
+			for (RealProperty entity : listEntity) {
+				log.info("iterating over Entity: Offset = " + offset + " EntityId =" + entity.toString());
+				entity.setApnClean(entity.getApn());
+				log.info("set RealProperty.apnClean to: " + entity.getApnClean() );
 			}
 
 			getEntityManager().flush();
 			getEntityManager().clear();
 			getEntityManager().getTransaction().commit();
 			offset += batchSize;
-			listPt = getAllPropertyTransactionsIterable(offset, batchSize);
+			listEntity = getAllEntitiesIterable(offset, batchSize);
 		}
+	}
+	
+	public List<RealProperty> findByApnClean( String apn ) {
+		List<RealProperty> rp = repository.findByApnClean(apn);
+		return rp;
 	}
 }

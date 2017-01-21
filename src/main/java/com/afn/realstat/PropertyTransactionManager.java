@@ -95,6 +95,8 @@ public class PropertyTransactionManager {
 	        for (PropertyTransaction pt : listPt)
 	        {
 	            log.info("iterating over pt: Offset = " + offset + " PT=" + pt.toString());
+	            // pt.setApnClean(RealStatUtil.cleanApn(pt.getApn()));
+	            RealProperty rp = pt.linkPropertyTransactionToRealProperty();
 	        }
 
 	        getEntityManager().flush();

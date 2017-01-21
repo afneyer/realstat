@@ -207,14 +207,15 @@ public class RealProperty extends AbstractEntity{
 
 	public void setApn(String apn) {
 		this.apn = apn;
+		this.setApnClean(apn);
 	}
 
 	public String getApnClean() {
 		return apnClean;
 	}
 
-	public void setApnClean(String apnClean) {
-		this.apnClean = apnClean;
+	public void setApnClean(String apn) {
+		this.apnClean = RealStatUtil.cleanApn(apn);
 	}
 
 	public String getImprovementType() {
