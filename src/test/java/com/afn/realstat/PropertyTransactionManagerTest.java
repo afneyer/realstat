@@ -24,7 +24,6 @@ public class PropertyTransactionManagerTest {
 	
 	@Test
 	public void testIteraction() {
-		PropertyTransactionManager pm = new PropertyTransactionManager();
 		pm.iterateAll();
 		
 	}

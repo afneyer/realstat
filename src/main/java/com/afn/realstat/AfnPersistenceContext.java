@@ -2,6 +2,7 @@ package com.afn.realstat;
 
 import java.util.Properties;
 
+import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -58,6 +59,10 @@ class AfnPersistenceContext {
 
 	@Bean( name = "entityManagerFactory")
 	public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
+		
+		HibernateJpaVendorAdapter hjva = new HibernateJpaVendorAdapter();
+	    hjva.setDatabase(Database.MYSQL);
+	    // hjva.setGen
 
 		LocalContainerEntityManagerFactoryBean factory = 
 				new LocalContainerEntityManagerFactoryBean();
@@ -68,7 +73,7 @@ class AfnPersistenceContext {
 		// factory.setPersistenceUnitPostProcessors(postProcessors);
 	    // factory.setPersistenceUnitName("default");
 	    factory.setPackagesToScan(getClass().getPackage().getName(),"com.afn.realstat");
-	    HibernateJpaVendorAdapter hjva = new HibernateJpaVendorAdapter();
+	    // HibernateJpaVendorAdapter hjva = new HibernateJpaVendorAdapter();
 		factory.setJpaVendorAdapter(hjva);
 	    factory.setJpaDialect(new HibernateJpaDialect());
 	    factory.setPersistenceProviderClass(org.hibernate.jpa.HibernatePersistenceProvider.class);  
@@ -103,15 +108,13 @@ class AfnPersistenceContext {
         // properties.setProperty("hibernate.archive.autodetection", "class");
         return properties;
      }
+
 	/*
-	
-	@Bean 
-	PlatformTransactionManager transactionManager() {
-		JpaTransactionManager txManager = new JpaTransactionManager();
-		txManager.setEntityManagerFactory((EntityManagerFactory) entityManagerFactory());
+	@Bean
+	PlatformTransactionManager transactionManager( EntityManagerFactory emf) {
+		JpaTransactionManager txManager = new JpaTransactionManager( emf );
 		return txManager;
 	}
-	
 	*/
 	
 	/**
