@@ -15,7 +15,6 @@ import org.springframework.data.domain.Example;
 @Entity
 @Table(uniqueConstraints=@UniqueConstraint(columnNames = {"apn"}))
 
-@Generated(value = "org.hibernate.jpamodelgen.JPAMetaModelEntityProcessor")
 @StaticMetamodel(RealProperty.class)
 public class RealProperty extends AbstractEntity{
 	
