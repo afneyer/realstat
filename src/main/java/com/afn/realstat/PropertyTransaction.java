@@ -17,14 +17,15 @@ import org.springframework.data.annotation.Transient;
 import org.springframework.data.domain.Example;
 
 @Entity
-@Table(uniqueConstraints=@UniqueConstraint(columnNames = {"MlsNo"}))
+@Table(name="property_transaction", uniqueConstraints=@UniqueConstraint(columnNames = {"MlsNo"}))
 public class PropertyTransaction extends AbstractEntity {
 	
 	public static final Logger log = LoggerFactory.getLogger(Application.class);
 
 	@Basic(optional=false) private Integer MlsNo;
-	@ManyToOne(fetch=FetchType.LAZY)
-	private RealProperty property;
+	@ManyToOne
+	private RealProperty realProperty;
+	
 	private String Status;
 	private String Dom;
 	private String Address;
@@ -48,7 +49,7 @@ public class PropertyTransaction extends AbstractEntity {
 	private Date CloseDate;
 	private Integer Age;
 	private String Apn;
-	private String ApnClean;
+	private String apnClean;
 	private String CensusTract;
 	private String CityTransferTax;
 	private String PropClass;
@@ -324,11 +325,11 @@ public class PropertyTransaction extends AbstractEntity {
 	}
 
 	public String getApnClean() {
-		return ApnClean;
+		return apnClean;
 	}
 
 	public void setApnClean(String apn) {
-		this.ApnClean = RealStatUtil.cleanApn(apn);
+		this.apnClean = RealStatUtil.cleanApn(apn);
 	}
 
 	public String getCensusTract() {
@@ -779,12 +780,12 @@ public class PropertyTransaction extends AbstractEntity {
 		MlsNo = mlsNo;
 	}
 
-	public RealProperty getProperty() {
-		return property;
+	public RealProperty getRealProperty() {
+		return realProperty;
 	}
 
-	public void setProperty(RealProperty property) {
-		this.property = property;
+	public void setRealProperty(RealProperty realProperty) {
+		this.realProperty = realProperty;
 	}
 
 	public String getCoListAgentName() {

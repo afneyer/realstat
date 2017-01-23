@@ -13,11 +13,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 @Component
 public class PropertyTransactionManager {
 	
-	public static final Logger log = LoggerFactory.getLogger(Application.class);
+	public static final Logger importLog = LoggerFactory.getLogger("import");
 	
 	@Autowired
 	PropertyTransactionRepository repository;
@@ -31,11 +35,14 @@ public class PropertyTransactionManager {
 	@PersistenceUnit
 	EntityManagerFactory emf;
 	
+	@Autowired
+	PlatformTransactionManager ptm;
+	
     
 	public PropertyTransactionManager() {
 	}
 
-	private List<PropertyTransaction> getAllPropertyTransactionsIterable(int offset, int max)
+	public List<PropertyTransaction> getAllPropertyTransactionsIterable(int offset, int max)
 	{
 		final TypedQuery<PropertyTransaction> tq = em.createQuery("SELECT pt FROM PropertyTransaction pt", PropertyTransaction.class);
 		tq.setFirstResult(offset);
@@ -45,6 +52,7 @@ public class PropertyTransactionManager {
 	    return result;
 	}
 	
+	// @Transactional
 	public void iterateAll()
 	{
 	    int offset = 0;
@@ -55,8 +63,15 @@ public class PropertyTransactionManager {
 	    listPt = getAllPropertyTransactionsIterable(offset, batchSize);
 	    while (listPt.size() > 0)
 	    {
+	    	
 	        //tm.getTransaction(null);
-	        performEntityAction(listPt);
+	    	// DefaultTransactionDefinition dtd = new DefaultTransactionDefinition();
+	    	// dtd.setPropagationBehavior(Propagation.REQUIRES_NEW.value());
+	    	// TransactionStatus ts = ptm.getTransaction(dtd);
+	    	performEntityAction(listPt);
+	    	repository.save(listPt);
+            // ts.flush();
+	        // ptm.commit(ts);
 
 	        //em.flush();
 	        //em.clear();
@@ -66,40 +81,41 @@ public class PropertyTransactionManager {
 	    }
 	}
 	
-	@Transactional
 	public void performEntityAction( List< PropertyTransaction> entityList ) {
 		for (PropertyTransaction pt : entityList)
         {
-            log.info("iterating over PT=" + pt.toString());
-            RealProperty rp = linkPropertyTransactionToRealProperty( pt );
+			
+			// DebugUtils.transactionRequired("PropertyTransactionManager.performEntityAction");
+            importLog.info("iterating over PT=" + pt.toString());
+            linkPropertyTransactionToRealProperty( pt );
+            // TODO remove the following line
+            pt.setState("CA");
+            
         }
 		
 	}
 	
-	public RealProperty linkPropertyTransactionToRealProperty( PropertyTransaction pt ) {
+	@Transactional
+	public void linkPropertyTransactionToRealProperty( PropertyTransaction pt ) {
 		
-		RealProperty property = null;
+		RealProperty rp = null;
 		List<RealProperty> list = rpRepo.findByApnClean(pt.getApnClean());
 		
 		if (list.size() == 0) {
 			// no corresponding property found
-			log.info("No property found by APN for propertyTransaction = " + this.toString() );
-			return property;
+			importLog.info("No property found by APN for propertyTransaction = " + pt.toString() );
 		}
 	
 		if ( list.size() == 1 ) {
-			property = list.get(0);
-			pt.setProperty(property);
-			log.info("Property Transaction Linked = " + this.toString());
-			return property;
+			rp = list.get(0);
+			pt.setRealProperty(rp);
+			importLog.info("Property Transaction Linked = " + pt.toString());
 		}
 		
-		for (RealProperty rp : list) {
-		   log.info("Need address comparison! pt = " + this.toString() + "rp = " + rp.toString() );
-		   return property;
+		for (RealProperty rp1 : list) {
+		   importLog.info("Need address comparison! pt = " + pt.toString() + "rp = " + rp1.toString() );
 		}
 		
-		log.info("No property found for Address propertyTransaction = " + this.toString() );
-		return null;	
+		importLog.info("No property found for Address propertyTransaction = " + pt.toString() );
 	}
 }

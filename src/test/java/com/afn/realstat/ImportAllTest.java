@@ -29,9 +29,9 @@ public class ImportAllTest {
 		    // 
 			file = new File("C:\\afndev\\apps\\realstat\\data","MLSExport - 94611_0-1500.csv");
 			mlsImporter.importFile(file);
-			// file = new File("C:\\afndev\\apps\\realstat\\data","CRSPropertyExport - 94611_0-1500.csv");
-			// crsImporter.importFile(file);
-			// file = new File("C:\\afndev\\apps\\realstat\\data","Paragon-Volume-Ranking---Agent-Within-MLS-2012-01-12 - 2017-01-12.csv");
-			// agvImporter.importFile(file);
+			 file = new File("C:\\afndev\\apps\\realstat\\data","CRSPropertyExport - 94611_0-1500.csv");
+			 crsImporter.importFile(file);
+			 file = new File("C:\\afndev\\apps\\realstat\\data","Paragon-Volume-Ranking---Agent-Within-MLS-2012-01-12 - 2017-01-12.csv");
+			 agvImporter.importFile(file);
 		}
 }

@@ -23,7 +23,7 @@ public class PropertyTransactionManagerTest {
 	PropertyTransactionManager pm;
 	
 	@Test
-	public void testIteraction() {
+	public void testIteration() {
 		pm.iterateAll();
 		
 	}

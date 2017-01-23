@@ -10,7 +10,7 @@ import javax.persistence.UniqueConstraint;
 import org.springframework.data.domain.Example;
 
 @Entity
-@Table(uniqueConstraints=@UniqueConstraint(columnNames = {"BreNo","Year"}))
+@Table(name="agent_volume",uniqueConstraints=@UniqueConstraint(columnNames = {"BreNo","Year"}))
 public class AgentVolume extends AbstractEntity {
 
 	@Basic(optional=false) private String BreNo;

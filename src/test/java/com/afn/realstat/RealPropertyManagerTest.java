@@ -6,6 +6,7 @@ import java.io.File;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.List;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,10 +20,51 @@ import org.springframework.test.context.junit4.SpringRunner;
         webEnvironment = SpringBootTest.WebEnvironment.NONE)
 public class RealPropertyManagerTest {
 
+	@Autowired
+	RealPropertyManager rpmgr;
+	
+	@Autowired
+	PropertyTransactionManager ptmgr;
+	
+	@Autowired
+	PropertyTransactionRepository ptRepo;
+	
+	@SuppressWarnings("unused")
 	@Test
-	public void testIteraction() {
-		RealPropertyManager mgr = new RealPropertyManager();
-		mgr.iterateAll();
+	public void testPropertyTransactionLinking() {
+		String apnClean = "1311287";
+		
+		// find RealProperty
+		List<RealProperty> rpList = rpmgr.findByApnClean(apnClean);
+		RealProperty rp = null;
+		if ( rpList.size() == 1 ) {
+			rp = rpList.get(0);
+		} 
+		if (rp == null) {
+			fail("no RealProperty found for apnClean=" + apnClean);
+		}
+		
+		
+		// find PropertyTransaction
+		List<PropertyTransaction> ptList = ptRepo.findByApnClean(apnClean);
+		PropertyTransaction pt = null;
+		if (ptList.size() == 1 ) {
+			pt = ptList.get(0);
+		}
+		if (pt == null) {
+			fail("no PropertyTransaction found for apnClean=" + apnClean);
+		}
+		
+		assertEquals( pt.getApnClean(), rp.getApnClean());
 		
 	}
+	
+	
+//	@Test
+//	public void testIteraction() {
+//		
+//		rpmgr.iterateAll();
+//		
+//	}
+
 }

@@ -13,9 +13,8 @@ import javax.persistence.metamodel.StaticMetamodel;
 import org.springframework.data.domain.Example;
     
 @Entity
-@Table(uniqueConstraints=@UniqueConstraint(columnNames = {"apn"}))
+@Table(name="real_property", uniqueConstraints=@UniqueConstraint(columnNames = {"apn"}))
 
-@StaticMetamodel(RealProperty.class)
 public class RealProperty extends AbstractEntity{
 	
 	@Basic(optional=false) private String apn;
