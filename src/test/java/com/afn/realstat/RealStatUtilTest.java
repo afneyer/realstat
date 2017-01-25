@@ -17,6 +17,7 @@ public class RealStatUtilTest {
 		assertEquals("100815085", RealStatUtil.cleanApn("10081508500"));
 		assertEquals(null, RealStatUtil.cleanApn(null));
 		assertEquals(null, RealStatUtil.cleanApn("NOT FOUND IN PUB"));
+		assertEquals("48e732287", RealStatUtil.cleanApn("048E732208700"));
 		
 		ParseDouble2 parser = new ParseDouble2();
 

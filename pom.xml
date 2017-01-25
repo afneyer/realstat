@@ -65,8 +65,6 @@
     <artifactId>super-csv</artifactId>
     <version>2.4.0</version>
 </dependency>
-        
-    </dependencies>
 
     <build>
         <plugins>
@@ -77,4 +75,11 @@
         </plugins>
     </build>
 
+    <dependency>
+    	<groupId>com.skovalenko.geocoder.address_parser</groupId>
+    	<artifactId>us_address_parser</artifactId>
+    	<version>1.0</version>
+    </dependency>
+    
+    </dependencies>
 </project>

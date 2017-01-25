@@ -1,45 +1,43 @@
 package com.afn.realstat;
 
+import com.skovalenko.geocoder.address_parser.ParsedUsAddress;
+import com.skovalenko.geocoder.address_parser.UnparsedAddress;
+import com.skovalenko.geocoder.address_parser.us.UsAddressParser;
+
 public class Address {
 	
-	
-	private String street;
-	private String unit;
-	private String city;
-	private String zip;
-	
-	public Address (String street, String unit, String city, String zip) {
-		this.street = street;
-		this.unit = unit;
-		this.city = city;
-		this.zip = zip;
-	}
+	private static char FIELD_SEP = '|';
 	
 	
-	public String getStreet() {
-		return street;
+	@SuppressWarnings("unused")
+	private ParsedUsAddress parsedAddress;
+		
+	public Address () {
+	};
+	
+	public Address(String streetUnit, String city, String zip) {
+		UnparsedAddress upa = new UnparsedAddress(streetUnit, city, zip);
+		UsAddressParser parser = new UsAddressParser();
+		parsedAddress = parser.parse(upa);
 	}
-	public void setStreet(String street) {
-		this.street = street;
+	
+	public String getCleanAddress () {
+		StringBuffer sb = new StringBuffer();
+		sb.append(parsedAddress.getFullStreet());
+		sb.append(FIELD_SEP);
+		sb.append(parsedAddress.getCity());
+		sb.append(FIELD_SEP);
+		sb.append(parsedAddress.getState());
+		sb.append(FIELD_SEP);
+		sb.append(parsedAddress.getZip());
+		return sb.toString();
 	}
-	public String getUnit() {
-		return unit;
-	}
-	public void setUnit(String unit) {
-		this.unit = unit;
-	}
-	public String getCity() {
-		return city;
-	}
-	public void setCity(String city) {
-		this.city = city;
-	}
-	public String getZip() {
-		return zip;
-	}
-	public void setZip(String zip) {
-		this.zip = zip;
-	}
+
+	
+
+
+	
+	
 	
 
 }

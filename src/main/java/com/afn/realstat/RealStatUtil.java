@@ -18,6 +18,7 @@ public class RealStatUtil {
 		outStr = outStr.toLowerCase();
 		outStr = outStr.replaceAll("-", "");
 		outStr = outStr.replaceAll("00$", "");
+		outStr = outStr.replaceAll("^0", "");
 		
 		if (outStr.startsWith("not")) {
 			return null;

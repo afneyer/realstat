@@ -14,9 +14,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 @Component
 public class PropertyTransactionManager {
@@ -61,15 +58,24 @@ public class PropertyTransactionManager {
 	    List<PropertyTransaction> listPt;
 	    
 	    listPt = getAllPropertyTransactionsIterable(offset, batchSize);
-	    while (listPt.size() > 0)
+	    while (listPt.size() > 0 && offset < 500)
 	    {
 	    	
-	        //tm.getTransaction(null);
+	        //tm.getTransaction(null); TODO
 	    	// DefaultTransactionDefinition dtd = new DefaultTransactionDefinition();
 	    	// dtd.setPropagationBehavior(Propagation.REQUIRES_NEW.value());
 	    	// TransactionStatus ts = ptm.getTransaction(dtd);
 	    	performEntityAction(listPt);
-	    	repository.save(listPt);
+	    	
+	    	// Print this out
+//	    	int i = 0; TODO
+//	    	for  (PropertyTransaction pt : listPt) {
+//	    		String state = pt.getState();
+//	    		importLog.info("Offset = " + offset + " listIndex = " + i + " state = " + state + " pt = " + pt.toString() );
+//	    		i++;
+//	    	}
+//	    	
+//	    	repository.save(listPt);
             // ts.flush();
 	        // ptm.commit(ts);
 
@@ -82,15 +88,15 @@ public class PropertyTransactionManager {
 	}
 	
 	public void performEntityAction( List< PropertyTransaction> entityList ) {
+		
+		int i = 0;
 		for (PropertyTransaction pt : entityList)
         {
 			
 			// DebugUtils.transactionRequired("PropertyTransactionManager.performEntityAction");
-            importLog.info("iterating over PT=" + pt.toString());
+            importLog.info("index =" + i + " iterating over PT=" + pt.toString());
             linkPropertyTransactionToRealProperty( pt );
-            // TODO remove the following line
-            pt.setState("CA");
-            
+            i++;     
         }
 		
 	}
@@ -99,23 +105,28 @@ public class PropertyTransactionManager {
 	public void linkPropertyTransactionToRealProperty( PropertyTransaction pt ) {
 		
 		RealProperty rp = null;
-		List<RealProperty> list = rpRepo.findByApnClean(pt.getApnClean());
+		String apnClean = RealStatUtil.cleanApn(pt.getApn());
+		List<RealProperty> list = rpRepo.findByApnClean(apnClean);
 		
 		if (list.size() == 0) {
 			// no corresponding property found
 			importLog.info("No property found by APN for propertyTransaction = " + pt.toString() );
+			return;
 		}
 	
 		if ( list.size() == 1 ) {
 			rp = list.get(0);
 			pt.setRealProperty(rp);
 			importLog.info("Property Transaction Linked = " + pt.toString());
+			return;
 		}
 		
 		for (RealProperty rp1 : list) {
 		   importLog.info("Need address comparison! pt = " + pt.toString() + "rp = " + rp1.toString() );
+		   return;
 		}
 		
 		importLog.info("No property found for Address propertyTransaction = " + pt.toString() );
+		return;
 	}
 }
