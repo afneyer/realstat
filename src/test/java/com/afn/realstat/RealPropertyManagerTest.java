@@ -1,18 +1,14 @@
 package com.afn.realstat;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
-import java.io.File;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.List;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
@@ -29,7 +25,6 @@ public class RealPropertyManagerTest {
 	@Autowired
 	PropertyTransactionRepository ptRepo;
 	
-	@SuppressWarnings("unused")
 	@Test
 	public void testPropertyTransactionLinking() {
 		String apnClean = "1311287";
@@ -60,11 +55,9 @@ public class RealPropertyManagerTest {
 	}
 	
 	
-//	@Test
-//	public void testIteraction() {
-//		
-//		rpmgr.iterateAll();
-//		
-//	}
+	@Test
+	public void testIteration() {		
+		rpmgr.iterateAll();
+	}
 
 }

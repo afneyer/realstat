@@ -13,8 +13,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
-import org.springframework.orm.jpa.vendor.Database;
-import org.springframework.orm.jpa.vendor.HibernateJpaDialect;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
@@ -29,7 +27,6 @@ class AfnPersistenceContext {
 	
 	@Bean
 	public DataSource afn1DataSource() {
-		// TODO existing dataSource ??
 		DriverManagerDataSource datasource = new DriverManagerDataSource();
         datasource.setDriverClassName(com.mysql.jdbc.Driver.class.getName());
         datasource.setUrl("jdbc:mysql://localhost:3306/test");

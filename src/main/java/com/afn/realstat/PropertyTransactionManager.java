@@ -58,7 +58,7 @@ public class PropertyTransactionManager {
 	    List<PropertyTransaction> listPt;
 	    
 	    listPt = getAllPropertyTransactionsIterable(offset, batchSize);
-	    while (listPt.size() > 0 && offset < 500)
+	    while (listPt.size() > 0)
 	    {
 	    	
 	        //tm.getTransaction(null); TODO
@@ -75,7 +75,7 @@ public class PropertyTransactionManager {
 //	    		i++;
 //	    	}
 //	    	
-//	    	repository.save(listPt);
+ 	    	repository.save(listPt);
             // ts.flush();
 	        // ptm.commit(ts);
 
@@ -96,6 +96,7 @@ public class PropertyTransactionManager {
 			// DebugUtils.transactionRequired("PropertyTransactionManager.performEntityAction");
             importLog.info("index =" + i + " iterating over PT=" + pt.toString());
             linkPropertyTransactionToRealProperty( pt );
+            // repository.save(pt)
             i++;     
         }
 		
@@ -107,26 +108,58 @@ public class PropertyTransactionManager {
 		RealProperty rp = null;
 		String apnClean = RealStatUtil.cleanApn(pt.getApn());
 		List<RealProperty> list = rpRepo.findByApnClean(apnClean);
-		
-		if (list.size() == 0) {
-			// no corresponding property found
-			importLog.info("No property found by APN for propertyTransaction = " + pt.toString() );
-			return;
-		}
-	
+			
 		if ( list.size() == 1 ) {
 			rp = list.get(0);
 			pt.setRealProperty(rp);
-			importLog.info("Property Transaction Linked = " + pt.toString());
+			importLog.info("Property Transaction Linked By APN= " + pt.toString());
 			return;
 		}
 		
+		if (list.size() == 0) {
+			// no corresponding property found
+			importLog.warn("No property found by APN=" + pt.getApn() + " apnClean =" + apnClean + " for propertyTransaction = " + pt.toString() );
+			this.linkPropertyTransactionToRealPropertyByAddress(pt);
+			return;
+		}
+
 		for (RealProperty rp1 : list) {
-		   importLog.info("Need address comparison! pt = " + pt.toString() + "rp = " + rp1.toString() );
+		   importLog.warn("Multiple properties by APN! pt = " + pt.toString() + "rp = " + rp1.toString() );
+		   this.linkPropertyTransactionToRealPropertyByAddress(pt);
 		   return;
 		}
 		
-		importLog.info("No property found for Address propertyTransaction = " + pt.toString() );
-		return;
 	}
+	
+	@Transactional
+public void linkPropertyTransactionToRealPropertyByAddress( PropertyTransaction pt ) {
+		
+		RealProperty rp = null;
+		Address adrClean = new Address( pt.getAddress(), pt.getUnit(), pt.getCity(), pt.getZip());
+		String adrCleanStr = adrClean.getCleanAddress();
+		List<RealProperty> list = rpRepo.findByAddressClean(adrCleanStr);
+		
+		if ( list.size() == 1 ) {
+			rp = list.get(0);
+			pt.setRealProperty(rp);
+			importLog.warn("Property Transaction Linked By Address= " + pt.toString());
+			return;
+		}
+		
+		if (list.size() == 0) {
+			// no corresponding property found
+			importLog.warn("No property found by Adress");
+			importLog.warn("raw Address=" + adrClean.getRawAddress());
+			importLog.warn("clean Address" + adrClean.getCleanAddress());
+			importLog.warn("prop trans=" + pt.toString());
+			return;
+		}
+	
+		for (RealProperty rp1 : list) {
+		   importLog.warn("Multiple properties by Adress! pt = " + pt.toString() + "rp = " + rp1.toString() );
+		   return;
+		}
+		
+	}
+	
 }

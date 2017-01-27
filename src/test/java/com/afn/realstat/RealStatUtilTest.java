@@ -11,13 +11,17 @@ public class RealStatUtilTest {
 	@Test
 	public void testCleanApn() {
 		
-		assertEquals("48d730422", RealStatUtil.cleanApn("48D-7304-22"));
+		assertEquals("48D730422", RealStatUtil.cleanApn("48D-7304-22"));
 		assertEquals("12987253", RealStatUtil.cleanApn("12-987-253"));
-		assertEquals("48g7448133", RealStatUtil.cleanApn("48G-7448-13-3"));
-		assertEquals("100815085", RealStatUtil.cleanApn("10081508500"));
+		assertEquals("48G7448133", RealStatUtil.cleanApn("48G-7448-13-3"));
+		assertEquals("1081585", RealStatUtil.cleanApn("10081508500"));
+		assertEquals("108155", RealStatUtil.cleanApn("10081500500"));
 		assertEquals(null, RealStatUtil.cleanApn(null));
 		assertEquals(null, RealStatUtil.cleanApn("NOT FOUND IN PUB"));
-		assertEquals("48e732287", RealStatUtil.cleanApn("048E732208700"));
+		assertEquals("48E732287", RealStatUtil.cleanApn("048E732208700"));
+		assertEquals("48F73779", RealStatUtil.cleanApn("048F737700900"));
+		
+		
 		
 		ParseDouble2 parser = new ParseDouble2();
 

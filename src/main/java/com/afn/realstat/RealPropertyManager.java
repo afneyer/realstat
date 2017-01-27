@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class RealPropertyManager {
 
-	public static final Logger log = LoggerFactory.getLogger(Application.class);
+	public static final Logger log = LoggerFactory.getLogger("import");
 
 	@Autowired
 	RealPropertyRepository repository;
@@ -53,6 +53,8 @@ public class RealPropertyManager {
 				log.info("iterating over Entity: Offset = " + offset + " EntityId =" + entity.toString());
 				entity.setApnClean(entity.getApn());
 				log.info("set RealProperty.apnClean to: " + entity.getApnClean() );
+				entity.setAddressClean();
+				log.info("set RealProperty.addressClean to: " + entity.getAddressClean() );
 			}
 			offset += batchSize;
 			listEntity = getAllEntitiesIterable(offset, batchSize);

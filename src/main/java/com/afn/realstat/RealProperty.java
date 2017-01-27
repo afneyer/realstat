@@ -3,21 +3,23 @@ package com.afn.realstat;
 import java.beans.Statement;
 import java.util.Date;
 
-import javax.annotation.Generated;
 import javax.persistence.Basic;
 import javax.persistence.Entity;
+import javax.persistence.Index;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
-import javax.persistence.metamodel.StaticMetamodel;
 
 import org.springframework.data.domain.Example;
-    
-@Entity
-@Table(name="real_property", uniqueConstraints=@UniqueConstraint(columnNames = {"apn"}))
 
-public class RealProperty extends AbstractEntity{
-	
-	@Basic(optional=false) private String apn;
+@Entity
+@Table(name = "real_property", uniqueConstraints = @UniqueConstraint(columnNames = { "apn" }), indexes = {
+		@Index(name = "idx_apnClean", columnList = "apnClean"),
+		@Index(name = "idx_addressClean", columnList = "addressClean") })
+
+public class RealProperty extends AbstractEntity {
+
+	@Basic(optional = false)
+	private String apn;
 	private String apnClean;
 	private String owner1;
 	private String title;
@@ -39,6 +41,7 @@ public class RealProperty extends AbstractEntity{
 	private String propertyCity;
 	private String propertyState;
 	private String propertyZip;
+	private String addressClean;
 	private Double totalSquareFootage;
 	private Date lastSaleDate;
 	private Double lastSaleAmount;
@@ -57,7 +60,7 @@ public class RealProperty extends AbstractEntity{
 	private Double lotSqFeet;
 	private String lotDimensions;
 	private String censusTract;
-	
+
 	public RealProperty() {
 	}
 
@@ -67,23 +70,23 @@ public class RealProperty extends AbstractEntity{
 
 	@Override
 	public String toString() {
-		return String.format("Property [apn=%s, address=%s, city=%s, state=%s, zip=%s']", 
-				apn, propertyAddress, propertyCity, propertyState, propertyZip);
+		return String.format("Property [apn=%s, address=%s, city=%s, state=%s, zip=%s']", apn, propertyAddress,
+				propertyCity, propertyState, propertyZip);
 	}
-	
+
 	@Override
 	public Example<AbstractEntity> getRefExample() {
-		Example<AbstractEntity> e = Example.of( new RealProperty(this.getApn()));
+		Example<AbstractEntity> e = Example.of(new RealProperty(this.getApn()));
 		return e;
 	}
-	
+
 	@Override
 	public void saveOrUpdate() {
 	}
-	
-	public void setFieldByString(Object bean, String field, String value ) throws Exception {
+
+	public void setFieldByString(Object bean, String field, String value) throws Exception {
 		Statement stmt;
-		stmt = new Statement(bean, field, new Object[]{value});
+		stmt = new Statement(bean, field, new Object[] { value });
 		stmt.execute();
 	}
 
@@ -264,6 +267,32 @@ public class RealProperty extends AbstractEntity{
 		this.propertyZip = propertyZip;
 	}
 
+	public String getAddressClean() {
+		return addressClean;
+	}
+
+	public void setAddressClean() {
+		Address adr = new Address(this.getPropertyAddress(), this.getPropertyCity(), this.getPropertyZip());
+
+		// if it's a condo we want to make sure that the address has a unit
+		// number associated with it
+		if (this.getLandUse().equals("Residential Condominium")){
+			if (adr.hasUnitInfo()) {
+				this.addressClean = adr.getCleanAddress();
+			} else {
+				// if the owner is in the same building and has some unit info
+				// try to use that address
+				// Note: this may not be always reliable
+				Address adrOwner = new Address(this.getOwnerAddress(), this.getOwnerCity(), this.getPropertyZip());
+				if (adrOwner.isInSameBuilding(adr)) {
+					this.addressClean = adrOwner.getCleanAddress();
+				}
+			}
+		} else {
+			this.addressClean = adr.getCleanAddress();
+		}
+	}
+
 	public Double getTotalSquareFootage() {
 		return totalSquareFootage;
 	}
@@ -408,11 +437,7 @@ public class RealProperty extends AbstractEntity{
 		this.censusTract = censusTract;
 	}
 
-	
-
-	/* TODO remove
-	public void test() {
-		Long l = RealProperty_
-	}
-	*/
+	/*
+	 * TODO remove public void test() { Long l = RealProperty_ }
+	 */
 }
