@@ -6,7 +6,6 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.text.WordUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Example;
@@ -30,10 +29,17 @@ public class Agent extends AbstractEntity {
 	private String officePhone;
 	private String type;
 	private String status;
-	@Basic(optional = false)
 	private String license;
 
 	public Agent() {
+	}
+	
+	/*
+	 * This constructor is private and only used to generate the reference example for saveOrUpdate (see below)
+	 * TODO needs better solution with callback
+	 */
+	private Agent(String userCode) {
+		this.userCode = userCode;
 	}
 
 	public Agent(String userCode, String agentName) {
@@ -49,6 +55,12 @@ public class Agent extends AbstractEntity {
 
 	private void cleanUpFields() {
 		cleanUserCode();
+		PersName pn = new PersName(agentName);
+		this.firstName = pn.getFirstName();
+		this.lastName = pn.getLastName();
+		this.middleName = pn.getMiddleName();
+		this.middleInitial = pn.getMiddleInitial();
+
 		extractFirstMiddleLast();
 		cleanLicense();
 	}
@@ -56,7 +68,7 @@ public class Agent extends AbstractEntity {
 	private void cleanLicense() {
 		if (license != null && !license.isEmpty()) {
 			license = license.replaceAll("[A-Za-z]", "");
-			license = StringUtils.stripStart(license,"0");	
+			license = StringUtils.stripStart(license, "0");
 		}
 	}
 
@@ -66,57 +78,11 @@ public class Agent extends AbstractEntity {
 
 	private void extractFirstMiddleLast() {
 
-		// split by comma
-		String[] nameParts = agentName.split(",");
-		// TODO process non-comma formats
-		if (nameParts.length == 2) {
-			
-			lastName = WordUtils.capitalize(StringUtils.trim(nameParts[0]).toLowerCase());
-
-			// split by blank
-			String firstMiddle = nameParts[1];
-			firstMiddle = firstMiddle.replaceAll("  ", " ");
-			firstMiddle = StringUtils.trim(firstMiddle);
-			String[] nameParts2 = firstMiddle.split(" ");
-
-			switch (nameParts2.length) {
-			case 1:
-				firstName = WordUtils.capitalizeFully(StringUtils.trim(nameParts2[0]));
-				middleName = null;
-				middleInitial = null;
-				break;
-			case 2:
-				firstName = WordUtils.capitalizeFully(StringUtils.trim(nameParts2[0]));
-				middleName = WordUtils.capitalizeFully(StringUtils.trim(nameParts2[1]));
-				cleanMiddleName();
-				extractMiddleInitial();
-				break;
-			default:
-				log.warn("Unparseable Agent Name " + agentName);
-				break;
-			}
-
-		} else {
-			log.warn("Not yet implemented Parse Agent Name " + agentName);
-		}
-		
-	}
-	
-	private void cleanMiddleName() {
-		middleName = middleName.replaceAll("[.]","");
-		
-	}
-
-	private void extractMiddleInitial() {
-
-		if (middleName == null || middleName.isEmpty() ) {
-			middleInitial = null;
-			return;
-		} 
-	    if (middleName.length() >= 1) {
-	    	middleInitial = middleName.substring(0,1);
-	    	return;
-	    }
+		PersName pn = new PersName(agentName);
+		this.firstName = pn.getFirstName();
+		this.lastName = pn.getLastName();
+		this.middleName = pn.getMiddleName();
+		this.middleInitial = pn.getMiddleInitial();
 	}
 
 	@Override
@@ -130,14 +96,9 @@ public class Agent extends AbstractEntity {
 
 	@Override
 	public Example<AbstractEntity> getRefExample() {
-		Example<AbstractEntity> e = Example.of(new Agent(getUserCode(), getAgentName()));
+		Example<AbstractEntity> e = Example.of(new Agent(getUserCode()));
 		return e;
 	}
-
-	/*
-	 * public String extractBrefromAgentRaw() { String agr = getAgentRaw();
-	 * String bre = agr.replaceAll("[A-Z,a-z,\\-, ]",""); return bre; }
-	 */
 
 	// All getters and setters
 
