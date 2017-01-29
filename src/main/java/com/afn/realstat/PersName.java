@@ -25,10 +25,12 @@ public class PersName {
 	// and back and capitalizing it.
 	public PersName(String rawName) {
 		this.rawName = rawName;
-	    normalizedName = StringUtils.trim(rawName).replaceAll(" +", " ");
-	    normalizedName = WordUtils.capitalizeFully((this.normalizedName).toLowerCase(),' ','-','\'');
-		normalizedName = normalizeName(this.normalizedName);
-		PersonName pn = new PersonName(this.normalizedName);
+		normalizedName = rawName;
+		normalizedName = normalizedName.replaceAll("\\.",". ");
+	    normalizedName = StringUtils.trim(normalizedName).replaceAll(" +", " ");
+	    normalizedName = WordUtils.capitalizeFully((normalizedName).toLowerCase(),' ','-','\'');
+		normalizedName = normalizeName(normalizedName);
+		PersonName pn = new PersonName(normalizedName);
 		lastName = pn.familyName();
 		extractFirstMiddle(pn.givenNames());
 
@@ -52,7 +54,15 @@ public class PersName {
 	}
 
 	private void extractFirstMiddle(String firstMiddle) {
+		
+		// don't do anything if firstMiddle is null
+		if (firstMiddle == null) {
+			log.warn("Cannot parse first or middle name of: " + rawName);
+			return;
+		}
+		
 		// split by blank
+		firstMiddle = firstMiddle.replaceAll("\\.", " ");
 		firstMiddle = firstMiddle.replaceAll("  ", " ");
 		firstMiddle = StringUtils.trim(firstMiddle);
 		String[] nameParts2 = firstMiddle.split(" ");
@@ -71,7 +81,7 @@ public class PersName {
 			extractMiddleInitial();
 			break;
 		default:
-			log.warn("Unparseable Agent Name " + rawName);
+			log.warn("Cannot parse first or middle name of: " + rawName);
 			break;
 		}
 	}
@@ -128,6 +138,10 @@ public class PersName {
 			middleInitial = middleName.substring(0, 1);
 			return;
 		}
+	}
+	
+	public Boolean isValidName() {
+		return (firstName!=null && lastName != null);
 	}
 
 	public String getRawName() {

@@ -70,6 +70,7 @@ public class AgentImporter extends AbstractImporter {
 
 	protected void saveOrUpdateEntity(AbstractEntity e) {
 		Agent a = (Agent)e;
+		a.cleanUpFields();
 		agentRep.saveOrUpdate(a);
 	}
 }

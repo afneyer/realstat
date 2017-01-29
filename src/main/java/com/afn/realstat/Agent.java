@@ -53,14 +53,8 @@ public class Agent extends AbstractEntity {
 		cleanUpFields();
 	}
 
-	private void cleanUpFields() {
+	public void cleanUpFields() {
 		cleanUserCode();
-		PersName pn = new PersName(agentName);
-		this.firstName = pn.getFirstName();
-		this.lastName = pn.getLastName();
-		this.middleName = pn.getMiddleName();
-		this.middleInitial = pn.getMiddleInitial();
-
 		extractFirstMiddleLast();
 		cleanLicense();
 	}
@@ -77,7 +71,6 @@ public class Agent extends AbstractEntity {
 	}
 
 	private void extractFirstMiddleLast() {
-
 		PersName pn = new PersName(agentName);
 		this.firstName = pn.getFirstName();
 		this.lastName = pn.getLastName();

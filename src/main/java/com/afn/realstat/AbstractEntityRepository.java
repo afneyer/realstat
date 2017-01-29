@@ -10,11 +10,11 @@ import org.springframework.data.repository.NoRepositoryBean;
 
 @NoRepositoryBean
 public interface AbstractEntityRepository<T extends AbstractEntity> extends JpaRepository<T, Long> {
- 
+
 	public static final Logger log = LoggerFactory.getLogger(Application.class);
-	
+
 	public default void saveOrUpdate(T newEntity) {
-		
+
 		List<T> existingEntities = getExistingEntities(newEntity);
 		if (existingEntities.size() > 1) {
 			log.error("Non-unique entries for table " + newEntity.getClass().getName() + "field apn");
@@ -26,6 +26,7 @@ public interface AbstractEntityRepository<T extends AbstractEntity> extends JpaR
 				newEntity.setId(existingEntity.getId());
 			}
 		}
+
 		this.save(newEntity);
 
 	}
@@ -37,5 +38,5 @@ public interface AbstractEntityRepository<T extends AbstractEntity> extends JpaR
 		List<T> list = this.findAll(example);
 		return list;
 	}
-	
+
 }

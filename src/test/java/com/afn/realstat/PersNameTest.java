@@ -1,6 +1,7 @@
 package com.afn.realstat;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.log;
 
 import org.junit.Test;
@@ -14,8 +15,8 @@ public class PersNameTest {
 	@Test
 	public void nameLibraryTest() {
 		
-		javatools.parsers.Name.PersonName n;
-		
+		javatools.parsers.Name.PersonName n;// split by blank
+
 		n = new javatools.parsers.Name.PersonName("Sergio Vieira de Mello");
 		assertEquals("Sergio Vieira Mello", n.normalize());
 		assertEquals("Mello", n.familyName());
@@ -51,7 +52,19 @@ public class PersNameTest {
 	public void testConstructor() {
 
 		PersName n;
-
+		
+		n = new PersName("- NO DRE# REQUIRED,");
+		assertEquals("- No Dre# Required,",n.getNormalizedName());
+		assertFalse(n.isValidName());
+		
+		
+		n = new PersName("PERRYMAN, C.J.");
+		assertEquals("C. J. Perryman",n.getNormalizedName());
+		assertEquals("C",n.getFirstName());
+		assertEquals("J", n.getMiddleName());
+		assertEquals("J", n.getMiddleInitial());
+		assertEquals("Perryman", n.getLastName());
+		
 		n = new PersName("MALONEY, NANCY A. A");
 		assertEquals("Nancy A. A Maloney",n.getNormalizedName());
 		assertEquals("Nancy",n.getFirstName());

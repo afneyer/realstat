@@ -12,4 +12,11 @@ select apn,propertyAddress, addressClean from real_property p where
 addressClean in 
 ( select addressClean from real_property group by addressClean having count(addressClean)>1 );
 */
+/*--
+--select count(*) from property_transaction where realProperty_id is not null;
+--select count(*) from property_transaction;
+--select count(*) from real_property;*/
+
+drop table agent;
+
 

@@ -4,6 +4,8 @@ import java.beans.Statement;
 import java.io.File;
 import java.io.FileReader;
 
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 import org.supercsv.cellprocessor.ift.CellProcessor;
 import org.supercsv.io.CsvBeanReader;
 import org.supercsv.io.ICsvBeanReader;
@@ -17,12 +19,11 @@ import com.vaadin.spring.annotation.SpringComponent;
  */
 @SpringComponent
 public abstract class AbstractImporter {
-	
+
 	// @Autowired RealPropertyRepository repository;
+
+	private static final Logger importLog = LoggerFactory.getLogger("import");
 	
-
-	// private static final Logger log = LoggerFactory.getLogger(Application.class);
-
 	/**
 	 * 
 	 */
@@ -32,10 +33,10 @@ public abstract class AbstractImporter {
 	/**
 	 * @param crsFile
 	 */
-	
+
 	@SuppressWarnings("rawtypes")
 	Class entityClass;
-	
+
 	public void importFile(File importFile) {
 
 		try {
@@ -44,12 +45,12 @@ public abstract class AbstractImporter {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		// print all records
 		// CustomerRepository repository;
 		// log.info( new Long(repository.count()).toString() );
 		// log.info("After all records have been read");
-			
+
 	}
 
 	/**
@@ -73,57 +74,63 @@ public abstract class AbstractImporter {
 
 			AbstractEntity entity;
 			while ((entity = (AbstractEntity) beanReader.read(entityClass, header, processors)) != null) {
+				importLog.info( "Importer before saving or updating entity:");
+				importLog.info( "   Csv Line Nbr  =" + beanReader.getLineNumber());
+				importLog.info( "   Csv Row Nbr   =" + beanReader.getRowNumber());
+				importLog.info( "   Entity Class  =" + entityClass);
+				importLog.info( "   Entity String =" + entity);
 				saveOrUpdateEntity(entity);
-				System.out.println(String.format("lineNo=%s, rowNo=%s, customer=%s", beanReader.getLineNumber(),
-						beanReader.getRowNumber(), entity));
 			}
 
 		}
 
-		finally {
-			if (beanReader != null) {
-				beanReader.close();
-			}
+	finally
+
+	{
+		if (beanReader != null) {
+			beanReader.close();
 		}
+	}
 
 	}
-	
-	protected abstract void saveOrUpdateEntity( AbstractEntity e);
-	
+
+	protected abstract void saveOrUpdateEntity(AbstractEntity e);
+
 	// abstract void readAndSaveNextEntity( CsvBeanReader r );
 
 	/**
 	 * @return
 	 */
 	protected abstract CellProcessor[] getProcessors();
-	
+
 	/**
 	 * @param header
 	 * @return
 	 */
 	protected abstract String[] mapHeader(String[] header);
-	
+
 	/**
 	 * @param inStr
-	 * Field to be translated from a CSV file header field into a entity field
-	 * If the default translator does not work the field can also be mapped individually;
+	 *            Field to be translated from a CSV file header field into a
+	 *            entity field If the default translator does not work the field
+	 *            can also be mapped individually;
 	 * @return
 	 */
 	static String translateCsvFileFieldDefault(String inStr) {
 
 		String str = inStr;
 		String retStr = new String();
-		
-        str = str.replaceAll("\\(Y\\/N\\)", " ");
+
+		str = str.replaceAll("\\(Y\\/N\\)", " ");
 		str = str.replaceAll("\\%", " Percent ");
 		str = str.replaceAll("\\$", " Price ");
 		str = str.replaceAll("\\/", " ");
 		str = str.replaceAll("\\.", " ");
 		str = str.replaceAll("\\-", " ");
 		str = str.replaceAll("  ", " ");
-				
+
 		// make it all lower case
-		str = str.toLowerCase();	
+		str = str.toLowerCase();
 
 		// change all characters after blank to upper case and remove blank
 		char previous = '#';
@@ -145,6 +152,7 @@ public abstract class AbstractImporter {
 	/**
 	 * Utility method to set a field of an entity based on a field value
 	 * (probably already exists somewhere)
+	 * 
 	 * @param bean
 	 * @param field
 	 * @param value
