@@ -26,7 +26,7 @@ public class PersName {
 	public PersName(String rawName) {
 		this.rawName = rawName;
 	    normalizedName = StringUtils.trim(rawName).replaceAll(" +", " ");
-	    normalizedName = WordUtils.capitalizeFully((this.normalizedName).toLowerCase());
+	    normalizedName = WordUtils.capitalizeFully((this.normalizedName).toLowerCase(),' ','-','\'');
 		normalizedName = normalizeName(this.normalizedName);
 		PersonName pn = new PersonName(this.normalizedName);
 		lastName = pn.familyName();
@@ -63,7 +63,8 @@ public class PersName {
 			middleName = null;
 			middleInitial = null;
 			break;
-		case 2:
+		// for 3 given names ignore the last element for now TODO: review
+		case 2: case 3:
 			firstName = StringUtils.trim(nameParts2[0]);
 			middleName = StringUtils.trim(nameParts2[1]);
 			cleanMiddleName();

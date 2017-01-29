@@ -51,6 +51,27 @@ public class PersNameTest {
 	public void testConstructor() {
 
 		PersName n;
+
+		n = new PersName("MALONEY, NANCY A. A");
+		assertEquals("Nancy A. A Maloney",n.getNormalizedName());
+		assertEquals("Nancy",n.getFirstName());
+		assertEquals("A", n.getMiddleName());
+		assertEquals("A", n.getMiddleInitial());
+		assertEquals("Maloney", n.getLastName());
+		
+		n = new PersName("O'MELAY, TATIANA");
+		assertEquals("Tatiana O'Melay", n.getNormalizedName());
+		assertEquals("Tatiana", n.getFirstName());
+		assertEquals(null, n.getMiddleName());
+		assertEquals(null, n.getMiddleInitial());
+		assertEquals("O'Melay", n.getLastName());
+		
+		n = new PersName("HARPER-COTTON, FREDRIC");
+		assertEquals("Fredric Harper-Cotton", n.getNormalizedName());
+		assertEquals("Fredric", n.getFirstName());
+		assertEquals(null, n.getMiddleName());
+		assertEquals(null, n.getMiddleInitial());
+		assertEquals("Harper-Cotton", n.getLastName());
 		
 		n = new PersName("Neyer, Andreas");
 		assertEquals("Andreas Neyer", n.getNormalizedName());
@@ -115,6 +136,9 @@ public class PersNameTest {
 		assertEquals("Felix", n.getMiddleName());
 		assertEquals("F", n.getMiddleInitial());
 		assertEquals("Neyer", n.getLastName());
+		
+		
+		
 	}
 
 }
