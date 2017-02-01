@@ -1,5 +1,7 @@
 package com.afn.realstat;
 
+import static org.junit.Assert.assertNotNull;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
 import org.slf4j.LoggerFactory;
@@ -26,17 +28,21 @@ public class PersName {
 	public PersName(String rawName) {
 		this.rawName = rawName;
 		normalizedName = rawName;
-		normalizedName = normalizedName.replaceAll("\\.",". ");
-	    normalizedName = StringUtils.trim(normalizedName).replaceAll(" +", " ");
-	    normalizedName = WordUtils.capitalizeFully((normalizedName).toLowerCase(),' ','-','\'');
-		normalizedName = normalizeName(normalizedName);
-		PersonName pn = new PersonName(normalizedName);
-		lastName = pn.familyName();
-		extractFirstMiddle(pn.givenNames());
+		if (normalizedName != null) {
+			normalizedName = normalizedName.replaceAll("\\.", ". ");
+			normalizedName = StringUtils.trim(normalizedName).replaceAll(" +", " ");
+			normalizedName = WordUtils.capitalizeFully((normalizedName).toLowerCase(), ' ', '-', '\'');
+			normalizedName = normalizeName(normalizedName);
+			PersonName pn = new PersonName(normalizedName);
+			lastName = pn.familyName();
+			extractFirstMiddle(pn.givenNames());
+		}
 
 	}
 
 	private String normalizeName(String raw) {
+		
+		assertNotNull(raw);
 		String[] nameParts = raw.split(",");
 
 		switch (nameParts.length) {
@@ -54,13 +60,13 @@ public class PersName {
 	}
 
 	private void extractFirstMiddle(String firstMiddle) {
-		
+
 		// don't do anything if firstMiddle is null
 		if (firstMiddle == null) {
 			log.warn("Cannot parse first or middle name of: " + rawName);
 			return;
 		}
-		
+
 		// split by blank
 		firstMiddle = firstMiddle.replaceAll("\\.", " ");
 		firstMiddle = firstMiddle.replaceAll("  ", " ");
@@ -74,7 +80,8 @@ public class PersName {
 			middleInitial = null;
 			break;
 		// for 3 given names ignore the last element for now TODO: review
-		case 2: case 3:
+		case 2:
+		case 3:
 			firstName = StringUtils.trim(nameParts2[0]);
 			middleName = StringUtils.trim(nameParts2[1]);
 			cleanMiddleName();
@@ -139,9 +146,9 @@ public class PersName {
 			return;
 		}
 	}
-	
+
 	public Boolean isValidName() {
-		return (firstName!=null && lastName != null);
+		return (firstName != null && lastName != null);
 	}
 
 	public String getRawName() {

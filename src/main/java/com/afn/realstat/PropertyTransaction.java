@@ -21,6 +21,14 @@ public class PropertyTransaction extends AbstractEntity {
 	@Basic(optional=false) private Integer MlsNo;
 	@ManyToOne
 	private RealProperty realProperty;
+	@ManyToOne
+	private Agent listingAgent;
+	@ManyToOne
+	private Agent listingAgent2;
+	@ManyToOne
+	private Agent sellingAgent;
+	@ManyToOne
+	private Agent sellingAgent2;
 	
 	private String Status;
 	private String Dom;
@@ -109,6 +117,7 @@ public class PropertyTransaction extends AbstractEntity {
 	private String ListingAgentLicenseId;
 	private String SellingAgent1Name;
 	private String SellingAgent1LicenseId;
+	
 
 	public PropertyTransaction() {
 	}
@@ -846,6 +855,38 @@ public class PropertyTransaction extends AbstractEntity {
 
 	public void setSellingAgent1LicenseId(String sellingAgent1LicenseId) {
 		SellingAgent1LicenseId = sellingAgent1LicenseId;
+	}
+
+	public Agent getListingAgent() {
+		return listingAgent;
+	}
+
+	public void setListingAgent(Agent listingAgent) {
+		this.listingAgent = listingAgent;
+	}
+
+	public Agent getListingAgent2() {
+		return listingAgent2;
+	}
+
+	public void setListingAgent2(Agent listingAgent2) {
+		this.listingAgent2 = listingAgent2;
+	}
+
+	public Agent getSellingAgent() {
+		return sellingAgent;
+	}
+
+	public void setSellingAgent(Agent sellingAgent) {
+		this.sellingAgent = sellingAgent;
+	}
+
+	public Agent getSellingAgent2() {
+		return sellingAgent2;
+	}
+
+	public void setSellingAgent2(Agent sellingAgent2) {
+		this.sellingAgent2 = sellingAgent2;
 	}
 	
 }
