@@ -13,33 +13,33 @@ import org.springframework.data.domain.Example;
 @Table(name="agent_volume",uniqueConstraints=@UniqueConstraint(columnNames = {"BreNo","Year"}))
 public class AgentVolume extends AbstractEntity {
 
-	@Basic(optional=false) private String BreNo;
-	@Basic(optional=false) private Date Year;
-	private Integer Rank;
-	private Integer UnitsListed;
-	private Double VolumeListed;
-	private Integer UnitsSold;
-	private Double VolumeSold;
-	private Integer UnitsTotal;
-	private Double VolumeTotal;
-	private String AgentRaw;
-	private String OfficeRaw;
-	private Double PercentMlsVolume;
-	private Double AvgTtlPrice;
-	private Double AvgDom;
+	@Basic(optional=false) private String breNo;
+	@Basic(optional=false) private Date year;
+	private Integer rank;
+	private Integer unitsListed;
+	private Double volumeListed;
+	private Integer unitsSold;
+	private Double volumeSold;
+	private Integer unitsTotal;
+	private Double volumeTotal;
+	private String agentRaw;
+	private String officeRaw;
+	private Double percentMlsVolume;
+	private Double avgTtlPrice;
+	private Double avgDom;
 
 	public AgentVolume() {
 	}
 
 	public AgentVolume(String id, Date year) {
-		this.BreNo = id;
-		this.Year = year;
+		this.breNo = id;
+		this.year = year;
 	}
 
 	@Override
 	public String toString() {
 		return String.format("AgentVolume [Bre='%s', Year='%s',  AgentRaw='%s', OfficeRaw='%s', UnitsTotal='%s', VolumeTotal='%s',]", 
-				BreNo, Year, AgentRaw, OfficeRaw, UnitsTotal, VolumeTotal);
+				breNo, year, agentRaw, officeRaw, unitsTotal, volumeTotal);
 	}
 	
 	@Override
@@ -61,115 +61,115 @@ public class AgentVolume extends AbstractEntity {
 	// All getters and setters
 
 	public String getBreNo() {
-		return BreNo;
+		return breNo;
 	}
 
 	public void setBreNo(String breNo) {
-		BreNo = breNo;
+		this.breNo = breNo;
 	}
 
 	public Date getYear() {
-		return Year;
+		return year;
 	}
 
 	public void setYear(Date year) {
-		Year = year;
+		this.year = year;
 	}
 
 	public Integer getUnitsListed() {
-		return UnitsListed;
+		return unitsListed;
 	}
 
 	public void setUnitsListed(Integer unitsListed) {
-		UnitsListed = unitsListed;
+		this.unitsListed = unitsListed;
 	}
 
 	public Double getVolumeListed() {
-		return VolumeListed;
+		return volumeListed;
 	}
 
 	public void setVolumeListed(Double volumeListed) {
-		VolumeListed = volumeListed;
+		this.volumeListed = volumeListed;
 	}
 
 	public Integer getUnitsSold() {
-		return UnitsSold;
+		return unitsSold;
 	}
 
 	public void setUnitsSold(Integer unitsSold) {
-		UnitsSold = unitsSold;
+		this.unitsSold = unitsSold;
 	}
 
 	public Double getVolumeSold() {
-		return VolumeSold;
+		return volumeSold;
 	}
 
 	public void setVolumeSold(Double volumeSold) {
-		VolumeSold = volumeSold;
+		this.volumeSold = volumeSold;
 	}
 
 	public Integer getUnitsTotal() {
-		return UnitsTotal;
+		return unitsTotal;
 	}
 
 	public void setUnitsTotal(Integer unitsTotal) {
-		UnitsTotal = unitsTotal;
+		this.unitsTotal = unitsTotal;
 	}
 
 	public Double getVolumeTotal() {
-		return VolumeTotal;
+		return volumeTotal;
 	}
 
 	public void setVolumeTotal(Double volumeTotal) {
-		VolumeTotal = volumeTotal;
+		this.volumeTotal = volumeTotal;
 	}
 
 	public String getAgentRaw() {
-		return AgentRaw;
+		return agentRaw;
 	}
 
 	public void setAgentRaw(String agentRaw) {
-		AgentRaw = agentRaw;
+		this.agentRaw = agentRaw;
 	}
 
 	public String getOfficeRaw() {
-		return OfficeRaw;
+		return officeRaw;
 	}
 
 	public void setOfficeRaw(String officeRaw) {
-		OfficeRaw = officeRaw;
+		this.officeRaw = officeRaw;
 	}
 	
 	public Double getPercentMlsVolume() {
-		return PercentMlsVolume;
+		return percentMlsVolume;
 	}
 
 	public void setPercentMlsVolume(Double percentMlsVolume) {
-		PercentMlsVolume = percentMlsVolume;
+		this.percentMlsVolume = percentMlsVolume;
 	}
 
 	public Double getAvgTtlPrice() {
-		return AvgTtlPrice;
+		return avgTtlPrice;
 	}
 
 	public void setAvgTtlPrice(Double avgTtlPrice) {
-		AvgTtlPrice = avgTtlPrice;
+		this.avgTtlPrice = avgTtlPrice;
 	}
 
 	public Double getAvgDom() {
-		return AvgDom;
+		return avgDom;
 	}
 
 	public void setAvgDom(Double avgDom) {
-		AvgDom = avgDom;
+		this.avgDom = avgDom;
 	}
 
 	public Integer getRank() {
-		return Rank;
+		return rank;
 	}
 
 	public void setRank(Integer rank) {
-		Rank = rank;
+		this.rank = rank;
 	}
 
 	

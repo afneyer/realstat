@@ -13,12 +13,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Example;
 
 @Entity
-@Table(name="property_transaction", uniqueConstraints=@UniqueConstraint(columnNames = {"MlsNo"}))
+@Table(name="property_transaction", uniqueConstraints=@UniqueConstraint(columnNames = {"mlsNo"}))
 public class PropertyTransaction extends AbstractEntity {
 	
 	public static final Logger log = LoggerFactory.getLogger(Application.class);
 
-	@Basic(optional=false) private Integer MlsNo;
+	@Basic(optional=false) private Integer mlsNo;
 	@ManyToOne
 	private RealProperty realProperty;
 	@ManyToOne
@@ -30,106 +30,106 @@ public class PropertyTransaction extends AbstractEntity {
 	@ManyToOne
 	private Agent sellingAgent2;
 	
-	private String Status;
-	private String Dom;
-	private String Address;
-	private String Unit;
-	private String City;
-	private String Area;
-	private Double ListPrice;
-	private Double SalesPrice;
-	private String BuildingType;
-	private Double Sqft;
-	private Integer Bedrooms;
-	private Integer Baths;
-	private Integer BathsPartial;
-	private String Gar;
-	private Integer Garsp;
-	private Date Yrblt;
-	private Double Acres;
-	private Double LotSqft;
-	private Double HoaFee;
-	private String HoaFeesFreq;
-	private Date CloseDate;
-	private Integer Age;
-	private String Apn;
+	private String status;
+	private String dom;
+	private String address;
+	private String unit;
+	private String city;
+	private String area;
+	private Double listPrice;
+	private Double salesPrice;
+	private String buildingType;
+	private Double sqft;
+	private Integer bedrooms;
+	private Integer baths;
+	private Integer bathsPartial;
+	private String gar;
+	private Integer garsp;
+	private Date yrblt;
+	private Double acres;
+	private Double lotSqft;
+	private Double hoaFee;
+	private String hoaFeesFreq;
+	private Date closeDate;
+	private Integer age;
+	private String apn;
 	private String apnClean;
-	private String CensusTract;
-	private String CityTransferTax;
-	private String PropClass;
-	private String CoListAgentBreNum;
-	private String CoSellAgentBreNum;
-	private String CompToSellingOffice;
-	private String CompType;
-	private String County;
-	private Integer CumulativeDomls;
-	private Integer DaysOnMls;
-	private Date GeneralDate;
-	private String DistNeighborhoodSubdiv;
-	private String DualVariable;
-	private Integer Fireplaces;
-	private String FloorUnitIsOn;
-	private String ForeclosureStatus;
-	private String Hoa;
-	private String HowSold;
-	private Date InputDate;
-	private Double ListPriceSqft;
-	private String ListAgentBreNum;
-	private Date ListDate;
-	private String ListingBrokerBreNumber;
-	private String ListingType;
-	private Integer NumberOfOffers;
-	private Date OffMarketDate;
-	private Double OriginalPrice;
-	private Date PendingDate;
-	private String PendingLitigation;
-	private Double OccPercent;
-	private String PointOfSaleOrdinance;
-	private String Pool;
-	private Double PreviousPrice;
-	private Double Price;
-	private Date PriceDate;
-	private Double PriceSqft;
-	private Integer RoomsTotal;
-	private Double SalePriceSqft;
-	private String SaleCoop;
-	private Double SaleLastListPrice;
-	private Double SaleOriginalPrice;
-	private String SaleRent;
-	private String SellingBrokerBreNumber;
-	private String SoldAgentBreNum;
-	private String TaxId;
-	private Double TicPercentOwnerOffered;
-	private Integer UnitsInComplex;
-	private Date UpdateDate;
-	private String Source;
-	private String SpecialInformation;
-	private String State;
-	private Date StatusDate;
-	private String Stories;
-	private String Zip;
-	private String Zoning;
-	private String CoListAgentName;
-	private String CoListAgentLicenseId;
-	private String CoSellAgentName;
-	private String CoSellAgentLicenseId;
-	private String ListingAgentName;
-	private String ListingAgentLicenseId;
-	private String SellingAgent1Name;
-	private String SellingAgent1LicenseId;
+	private String censusTract;
+	private String cityTransferTax;
+	private String propClass;
+	private String coListAgentBreNum;
+	private String coSellAgentBreNum;
+	private String compToSellingOffice;
+	private String compType;
+	private String county;
+	private Integer cumulativeDomls;
+	private Integer daysOnMls;
+	private Date generalDate;
+	private String distNeighborhoodSubdiv;
+	private String dualVariable;
+	private Integer fireplaces;
+	private String floorUnitIsOn;
+	private String foreclosureStatus;
+	private String hoa;
+	private String howSold;
+	private Date inputDate;
+	private Double listPriceSqft;
+	private String listAgentBreNum;
+	private Date listDate;
+	private String listingBrokerBreNumber;
+	private String listingType;
+	private Integer numberOfOffers;
+	private Date offMarketDate;
+	private Double originalPrice;
+	private Date pendingDate;
+	private String pendingLitigation;
+	private Double occPercent;
+	private String pointOfSaleOrdinance;
+	private String pool;
+	private Double previousPrice;
+	private Double price;
+	private Date priceDate;
+	private Double priceSqft;
+	private Integer roomsTotal;
+	private Double salePriceSqft;
+	private String saleCoop;
+	private Double saleLastListPrice;
+	private Double saleOriginalPrice;
+	private String saleRent;
+	private String sellingBrokerBreNumber;
+	private String soldAgentBreNum;
+	private String taxId;
+	private Double ticPercentOwnerOffered;
+	private Integer unitsInComplex;
+	private Date updateDate;
+	private String source;
+	private String specialInformation;
+	private String state;
+	private Date statusDate;
+	private String stories;
+	private String zip;
+	private String zoning;
+	private String coListAgentName;
+	private String coListAgentLicenseId;
+	private String coSellAgentName;
+	private String coSellAgentLicenseId;
+	private String listingAgentName;
+	private String listingAgentLicenseId;
+	private String sellingAgent1Name;
+	private String sellingAgent1LicenseId;
 	
 
 	public PropertyTransaction() {
 	}
 
 	public PropertyTransaction(Integer id) {
-		this.MlsNo = id;
+		this.mlsNo = id;
 	}
 
 	@Override
 	public String toString() {
 		return String.format("PropTransaction [id=%d, Address='%s', Unit='%s', City='%s',Zip='%s']", 
-				MlsNo, Address, Unit, City, Zip);
+				mlsNo, address, unit, city, zip);
 	}
 	
 	@Override
@@ -145,187 +145,187 @@ public class PropertyTransaction extends AbstractEntity {
 	
 	
 	public String getStatus() {
-		return Status;
+		return status;
 	}
 
 	public void setStatus(String status) {
-		Status = status;
+		this.status = status;
 	}
 
 	public String getDom() {
-		return Dom;
+		return dom;
 	}
 
 	public void setDom(String dom) {
-		Dom = dom;
+		this.dom = dom;
 	}
 
 	public String getAddress() {
-		return Address;
+		return address;
 	}
 
 	public void setAddress(String address) {
-		Address = address;
+		this.address = address;
 	}
 
 	public String getUnit() {
-		return Unit;
+		return unit;
 	}
 
 	public void setUnit(String unit) {
-		Unit = unit;
+		this.unit = unit;
 	}
 
 	public String getCity() {
-		return City;
+		return city;
 	}
 
 	public void setCity(String city) {
-		City = city;
+		this.city = city;
 	}
 
 	public String getArea() {
-		return Area;
+		return area;
 	}
 
 	public void setArea(String area) {
-		Area = area;
+		this.area = area;
 	}
 
 	public Double getListPrice() {
-		return ListPrice;
+		return listPrice;
 	}
 
 	public void setListPrice(Double listPrice) {
-		ListPrice = listPrice;
+		this.listPrice = listPrice;
 	}
 
 	public Double getSalesPrice() {
-		return SalesPrice;
+		return salesPrice;
 	}
 
 	public void setSalesPrice(Double salesPrice) {
-		SalesPrice = salesPrice;
+		this.salesPrice = salesPrice;
 	}
 
 	public String getBuildingType() {
-		return BuildingType;
+		return buildingType;
 	}
 
 	public void setBuildingType(String buildingType) {
-		BuildingType = buildingType;
+		this.buildingType = buildingType;
 	}
 
 	public Double getSqft() {
-		return Sqft;
+		return sqft;
 	}
 
 	public void setSqft(Double sqft) {
-		Sqft = sqft;
+		this.sqft = sqft;
 	}
 
 	public Integer getBedrooms() {
-		return Bedrooms;
+		return bedrooms;
 	}
 
 	public void setBedrooms(Integer bedrooms) {
-		Bedrooms = bedrooms;
+		this.bedrooms = bedrooms;
 	}
 
 	public Integer getBaths() {
-		return Baths;
+		return baths;
 	}
 
 	public void setBaths(Integer baths) {
-		Baths = baths;
+		this.baths = baths;
 	}
 
 	public Integer getBathsPartial() {
-		return BathsPartial;
+		return bathsPartial;
 	}
 
 	public void setBathsPartial(Integer bathsPartial) {
-		BathsPartial = bathsPartial;
+		this.bathsPartial = bathsPartial;
 	}
 
 	public String getGar() {
-		return Gar;
+		return gar;
 	}
 
 	public void setGar(String gar) {
-		Gar = gar;
+		this.gar = gar;
 	}
 
 	public Integer getGarsp() {
-		return Garsp;
+		return garsp;
 	}
 
 	public void setGarsp(Integer garsp) {
-		Garsp = garsp;
+		this.garsp = garsp;
 	}
 
 	public Date getYrblt() {
-		return Yrblt;
+		return yrblt;
 	}
 
 	public void setYrblt(Date yrblt) {
-		Yrblt = yrblt;
+		this.yrblt = yrblt;
 	}
 
 	public Double getAcres() {
-		return Acres;
+		return acres;
 	}
 
 	public void setAcres(Double acres) {
-		Acres = acres;
+		this.acres = acres;
 	}
 
 	public Double getLotSqft() {
-		return LotSqft;
+		return lotSqft;
 	}
 
 	public void setLotSqft(Double lotSqft) {
-		LotSqft = lotSqft;
+		this.lotSqft = lotSqft;
 	}
 
 	public Double getHoaFee() {
-		return HoaFee;
+		return hoaFee;
 	}
 
 	public void setHoaFee(Double hoaFee) {
-		HoaFee = hoaFee;
+		this.hoaFee = hoaFee;
 	}
 
 	public String getHoaFeesFreq() {
-		return HoaFeesFreq;
+		return hoaFeesFreq;
 	}
 
 	public void setHoaFeesFreq(String hoaFeesFreq) {
-		HoaFeesFreq = hoaFeesFreq;
+		this.hoaFeesFreq = hoaFeesFreq;
 	}
 
 	public Date getCloseDate() {
-		return CloseDate;
+		return closeDate;
 	}
 
 	public void setCloseDate(Date closeDate) {
-		CloseDate = closeDate;
+		this.closeDate = closeDate;
 	}
 
 	public Integer getAge() {
-		return Age;
+		return age;
 	}
 
 	public void setAge(Integer age) {
-		Age = age;
+		this.age = age;
 	}
 
 	public String getApn() {
-		return Apn;
+		return apn;
 	}
 
 	public void setApn(String apn) {
-		Apn = apn;
+		this.apn = apn;
 		this.setApnClean(apn);
 	}
 
@@ -337,452 +337,454 @@ public class PropertyTransaction extends AbstractEntity {
 		this.apnClean = RealStatUtil.cleanApn(apn);
 	}
 
+	
+
 	public String getCensusTract() {
-		return CensusTract;
+		return censusTract;
 	}
 
 	public void setCensusTract(String censusTract) {
-		CensusTract = censusTract;
+		this.censusTract = censusTract;
 	}
 
 	public String getCityTransferTax() {
-		return CityTransferTax;
+		return cityTransferTax;
 	}
 
 	public void setCityTransferTax(String cityTransferTax) {
-		CityTransferTax = cityTransferTax;
+		this.cityTransferTax = cityTransferTax;
 	}
 
 	public String getPropClass() {
-		return PropClass;
+		return propClass;
 	}
 
-	public void setPropClass(String pClass) {
-		PropClass = pClass;
+	public void setPropClass(String propClass) {
+		this.propClass = propClass;
 	}
 
 	public String getCoListAgentBreNum() {
-		return CoListAgentBreNum;
+		return coListAgentBreNum;
 	}
 
 	public void setCoListAgentBreNum(String coListAgentBreNum) {
-		CoListAgentBreNum = coListAgentBreNum;
+		this.coListAgentBreNum = coListAgentBreNum;
 	}
 
 	public String getCoSellAgentBreNum() {
-		return CoSellAgentBreNum;
+		return coSellAgentBreNum;
 	}
 
 	public void setCoSellAgentBreNum(String coSellAgentBreNum) {
-		CoSellAgentBreNum = coSellAgentBreNum;
+		this.coSellAgentBreNum = coSellAgentBreNum;
 	}
 
 	public String getCompToSellingOffice() {
-		return CompToSellingOffice;
+		return compToSellingOffice;
 	}
 
 	public void setCompToSellingOffice(String compToSellingOffice) {
-		CompToSellingOffice = compToSellingOffice;
+		this.compToSellingOffice = compToSellingOffice;
 	}
 
 	public String getCompType() {
-		return CompType;
+		return compType;
 	}
 
 	public void setCompType(String compType) {
-		CompType = compType;
+		this.compType = compType;
 	}
 
 	public String getCounty() {
-		return County;
+		return county;
 	}
 
 	public void setCounty(String county) {
-		County = county;
+		this.county = county;
 	}
 
 	public Integer getCumulativeDomls() {
-		return CumulativeDomls;
+		return cumulativeDomls;
 	}
 
 	public void setCumulativeDomls(Integer cumulativeDomls) {
-		CumulativeDomls = cumulativeDomls;
+		this.cumulativeDomls = cumulativeDomls;
 	}
 
 	public Integer getDaysOnMls() {
-		return DaysOnMls;
+		return daysOnMls;
 	}
 
 	public void setDaysOnMls(Integer daysOnMls) {
-		DaysOnMls = daysOnMls;
+		this.daysOnMls = daysOnMls;
 	}
 
 	public Date getGeneralDate() {
-		return GeneralDate;
+		return generalDate;
 	}
 
 	public void setGeneralDate(Date generalDate) {
-		GeneralDate = generalDate;
+		this.generalDate = generalDate;
 	}
 
 	public String getDistNeighborhoodSubdiv() {
-		return DistNeighborhoodSubdiv;
+		return distNeighborhoodSubdiv;
 	}
 
 	public void setDistNeighborhoodSubdiv(String distNeighborhoodSubdiv) {
-		DistNeighborhoodSubdiv = distNeighborhoodSubdiv;
+		this.distNeighborhoodSubdiv = distNeighborhoodSubdiv;
 	}
 
 	public String getDualVariable() {
-		return DualVariable;
+		return dualVariable;
 	}
 
 	public void setDualVariable(String dualVariable) {
-		DualVariable = dualVariable;
+		this.dualVariable = dualVariable;
 	}
 
 	public Integer getFireplaces() {
-		return Fireplaces;
+		return fireplaces;
 	}
 
 	public void setFireplaces(Integer fireplaces) {
-		Fireplaces = fireplaces;
+		this.fireplaces = fireplaces;
 	}
 
 	public String getFloorUnitIsOn() {
-		return FloorUnitIsOn;
+		return floorUnitIsOn;
 	}
 
 	public void setFloorUnitIsOn(String floorUnitIsOn) {
-		FloorUnitIsOn = floorUnitIsOn;
+		this.floorUnitIsOn = floorUnitIsOn;
 	}
 
 	public String getForeclosureStatus() {
-		return ForeclosureStatus;
+		return foreclosureStatus;
 	}
 
 	public void setForeclosureStatus(String foreclosureStatus) {
-		ForeclosureStatus = foreclosureStatus;
+		this.foreclosureStatus = foreclosureStatus;
 	}
 
 	public String getHoa() {
-		return Hoa;
+		return hoa;
 	}
 
 	public void setHoa(String hoa) {
-		Hoa = hoa;
+		this.hoa = hoa;
 	}
 
 	public String getHowSold() {
-		return HowSold;
+		return howSold;
 	}
 
 	public void setHowSold(String howSold) {
-		HowSold = howSold;
+		this.howSold = howSold;
 	}
 
 	public Date getInputDate() {
-		return InputDate;
+		return inputDate;
 	}
 
 	public void setInputDate(Date inputDate) {
-		InputDate = inputDate;
+		this.inputDate = inputDate;
 	}
 
 	public Double getListPriceSqft() {
-		return ListPriceSqft;
+		return listPriceSqft;
 	}
 
 	public void setListPriceSqft(Double listPriceSqft) {
-		ListPriceSqft = listPriceSqft;
+		this.listPriceSqft = listPriceSqft;
 	}
 
 	public String getListAgentBreNum() {
-		return ListAgentBreNum;
+		return listAgentBreNum;
 	}
 
 	public void setListAgentBreNum(String listAgentBreNum) {
-		ListAgentBreNum = listAgentBreNum;
+		this.listAgentBreNum = listAgentBreNum;
 	}
 
 	public Date getListDate() {
-		return ListDate;
+		return listDate;
 	}
 
 	public void setListDate(Date listDate) {
-		ListDate = listDate;
+		this.listDate = listDate;
 	}
 
 	public String getListingBrokerBreNumber() {
-		return ListingBrokerBreNumber;
+		return listingBrokerBreNumber;
 	}
 
 	public void setListingBrokerBreNumber(String listingBrokerBreNumber) {
-		ListingBrokerBreNumber = listingBrokerBreNumber;
+		this.listingBrokerBreNumber = listingBrokerBreNumber;
 	}
 
 	public String getListingType() {
-		return ListingType;
+		return listingType;
 	}
 
 	public void setListingType(String listingType) {
-		ListingType = listingType;
+		this.listingType = listingType;
 	}
 
 	public Integer getNumberOfOffers() {
-		return NumberOfOffers;
+		return numberOfOffers;
 	}
 
 	public void setNumberOfOffers(Integer numberOfOffers) {
-		NumberOfOffers = numberOfOffers;
+		this.numberOfOffers = numberOfOffers;
 	}
 
 	public Date getOffMarketDate() {
-		return OffMarketDate;
+		return offMarketDate;
 	}
 
 	public void setOffMarketDate(Date offMarketDate) {
-		OffMarketDate = offMarketDate;
+		this.offMarketDate = offMarketDate;
 	}
 
 	public Double getOriginalPrice() {
-		return OriginalPrice;
+		return originalPrice;
 	}
 
 	public void setOriginalPrice(Double originalPrice) {
-		OriginalPrice = originalPrice;
+		this.originalPrice = originalPrice;
 	}
 
 	public Date getPendingDate() {
-		return PendingDate;
+		return pendingDate;
 	}
 
 	public void setPendingDate(Date pendingDate) {
-		PendingDate = pendingDate;
+		this.pendingDate = pendingDate;
 	}
 
 	public String getPendingLitigation() {
-		return PendingLitigation;
+		return pendingLitigation;
 	}
 
 	public void setPendingLitigation(String pendingLitigation) {
-		PendingLitigation = pendingLitigation;
+		this.pendingLitigation = pendingLitigation;
 	}
 
 	public Double getOccPercent() {
-		return OccPercent;
+		return occPercent;
 	}
 
 	public void setOccPercent(Double occPercent) {
-		OccPercent = occPercent;
+		this.occPercent = occPercent;
 	}
 
 	public String getPointOfSaleOrdinance() {
-		return PointOfSaleOrdinance;
+		return pointOfSaleOrdinance;
 	}
 
 	public void setPointOfSaleOrdinance(String pointOfSaleOrdinance) {
-		PointOfSaleOrdinance = pointOfSaleOrdinance;
+		this.pointOfSaleOrdinance = pointOfSaleOrdinance;
 	}
 
 	public String getPool() {
-		return Pool;
+		return pool;
 	}
 
 	public void setPool(String pool) {
-		Pool = pool;
+		this.pool = pool;
 	}
 
 	public Double getPreviousPrice() {
-		return PreviousPrice;
+		return previousPrice;
 	}
 
 	public void setPreviousPrice(Double previousPrice) {
-		PreviousPrice = previousPrice;
+		this.previousPrice = previousPrice;
 	}
 
 	public Double getPrice() {
-		return Price;
+		return price;
 	}
 
 	public void setPrice(Double price) {
-		Price = price;
+		this.price = price;
 	}
 
 	public Date getPriceDate() {
-		return PriceDate;
+		return priceDate;
 	}
 
 	public void setPriceDate(Date priceDate) {
-		PriceDate = priceDate;
+		this.priceDate = priceDate;
 	}
 
 	public Double getPriceSqft() {
-		return PriceSqft;
+		return priceSqft;
 	}
 
 	public void setPriceSqft(Double priceSqft) {
-		PriceSqft = priceSqft;
+		this.priceSqft = priceSqft;
 	}
 
 	public Integer getRoomsTotal() {
-		return RoomsTotal;
+		return roomsTotal;
 	}
 
 	public void setRoomsTotal(Integer roomsTotal) {
-		RoomsTotal = roomsTotal;
+		this.roomsTotal = roomsTotal;
 	}
 
 	public Double getSalePriceSqft() {
-		return SalePriceSqft;
+		return salePriceSqft;
 	}
 
 	public void setSalePriceSqft(Double salePriceSqft) {
-		SalePriceSqft = salePriceSqft;
+		this.salePriceSqft = salePriceSqft;
 	}
 
 	public String getSaleCoop() {
-		return SaleCoop;
+		return saleCoop;
 	}
 
 	public void setSaleCoop(String saleCoop) {
-		SaleCoop = saleCoop;
+		this.saleCoop = saleCoop;
 	}
 
 	public Double getSaleLastListPrice() {
-		return SaleLastListPrice;
+		return saleLastListPrice;
 	}
 
 	public void setSaleLastListPrice(Double saleLastListPrice) {
-		SaleLastListPrice = saleLastListPrice;
+		this.saleLastListPrice = saleLastListPrice;
 	}
 
 	public Double getSaleOriginalPrice() {
-		return SaleOriginalPrice;
+		return saleOriginalPrice;
 	}
 
 	public void setSaleOriginalPrice(Double saleOriginalPrice) {
-		SaleOriginalPrice = saleOriginalPrice;
+		this.saleOriginalPrice = saleOriginalPrice;
 	}
 
 	public String getSaleRent() {
-		return SaleRent;
+		return saleRent;
 	}
 
 	public void setSaleRent(String saleRent) {
-		SaleRent = saleRent;
+		this.saleRent = saleRent;
 	}
 
 	public String getSellingBrokerBreNumber() {
-		return SellingBrokerBreNumber;
+		return sellingBrokerBreNumber;
 	}
 
 	public void setSellingBrokerBreNumber(String sellingBrokerBreNumber) {
-		SellingBrokerBreNumber = sellingBrokerBreNumber;
+		this.sellingBrokerBreNumber = sellingBrokerBreNumber;
 	}
 
 	public String getSoldAgentBreNum() {
-		return SoldAgentBreNum;
+		return soldAgentBreNum;
 	}
 
 	public void setSoldAgentBreNum(String soldAgentBreNum) {
-		SoldAgentBreNum = soldAgentBreNum;
+		this.soldAgentBreNum = soldAgentBreNum;
 	}
 
 	public String getTaxId() {
-		return TaxId;
+		return taxId;
 	}
 
 	public void setTaxId(String taxId) {
-		TaxId = taxId;
+		this.taxId = taxId;
 	}
 
 	public Double getTicPercentOwnerOffered() {
-		return TicPercentOwnerOffered;
+		return ticPercentOwnerOffered;
 	}
 
 	public void setTicPercentOwnerOffered(Double ticPercentOwnerOffered) {
-		TicPercentOwnerOffered = ticPercentOwnerOffered;
+		this.ticPercentOwnerOffered = ticPercentOwnerOffered;
 	}
 
 	public Integer getUnitsInComplex() {
-		return UnitsInComplex;
+		return unitsInComplex;
 	}
 
 	public void setUnitsInComplex(Integer unitsInComplex) {
-		UnitsInComplex = unitsInComplex;
+		this.unitsInComplex = unitsInComplex;
 	}
 
 	public Date getUpdateDate() {
-		return UpdateDate;
+		return updateDate;
 	}
 
 	public void setUpdateDate(Date updateDate) {
-		UpdateDate = updateDate;
+		this.updateDate = updateDate;
 	}
 
 	public String getSource() {
-		return Source;
+		return source;
 	}
 
 	public void setSource(String source) {
-		Source = source;
+		this.source = source;
 	}
 
 	public String getSpecialInformation() {
-		return SpecialInformation;
+		return specialInformation;
 	}
 
 	public void setSpecialInformation(String specialInformation) {
-		SpecialInformation = specialInformation;
+		this.specialInformation = specialInformation;
 	}
 
 	public String getState() {
-		return State;
+		return state;
 	}
 
 	public void setState(String state) {
-		State = state;
+		this.state = state;
 	}
 
 	public Date getStatusDate() {
-		return StatusDate;
+		return statusDate;
 	}
 
 	public void setStatusDate(Date statusDate) {
-		StatusDate = statusDate;
+		this.statusDate = statusDate;
 	}
 
 	public String getStories() {
-		return Stories;
+		return stories;
 	}
 
 	public void setStories(String stories) {
-		Stories = stories;
+		this.stories = stories;
 	}
 
 	public String getZip() {
-		return Zip;
+		return zip;
 	}
 
 	public void setZip(String zip) {
-		Zip = zip;
+		this.zip = zip;
 	}
 
 	public String getZoning() {
-		return Zoning;
+		return zoning;
 	}
 
 	public void setZoning(String zoning) {
-		Zoning = zoning;
+		this.zoning = zoning;
 	}
 
 	public Integer getMlsNo() {
-		return MlsNo;
+		return mlsNo;
 	}
 
 	public void setMlsNo(Integer mlsNo) {
-		MlsNo = mlsNo;
+		this.mlsNo = mlsNo;
 	}
 
 	public RealProperty getRealProperty() {
@@ -794,67 +796,67 @@ public class PropertyTransaction extends AbstractEntity {
 	}
 
 	public String getCoListAgentName() {
-		return CoListAgentName;
+		return coListAgentName;
 	}
 
 	public void setCoListAgentName(String coListAgentName) {
-		CoListAgentName = coListAgentName;
+		this.coListAgentName = coListAgentName;
 	}
 
 	public String getCoListAgentLicenseId() {
-		return CoListAgentLicenseId;
+		return coListAgentLicenseId;
 	}
 
 	public void setCoListAgentLicenseId(String coListAgentLicenseId) {
-		CoListAgentLicenseId = coListAgentLicenseId;
+		this.coListAgentLicenseId = coListAgentLicenseId;
 	}
 
 	public String getCoSellAgentName() {
-		return CoSellAgentName;
+		return coSellAgentName;
 	}
 
 	public void setCoSellAgentName(String coSellAgentName) {
-		CoSellAgentName = coSellAgentName;
+		this.coSellAgentName = coSellAgentName;
 	}
 
 	public String getCoSellAgentLicenseId() {
-		return CoSellAgentLicenseId;
+		return coSellAgentLicenseId;
 	}
 
 	public void setCoSellAgentLicenseId(String coSellAgentLicenseId) {
-		CoSellAgentLicenseId = coSellAgentLicenseId;
+		this.coSellAgentLicenseId = coSellAgentLicenseId;
 	}
 
 	public String getListingAgentName() {
-		return ListingAgentName;
+		return listingAgentName;
 	}
 
 	public void setListingAgentName(String listingAgentName) {
-		ListingAgentName = listingAgentName;
+		this.listingAgentName = listingAgentName;
 	}
 
 	public String getListingAgentLicenseId() {
-		return ListingAgentLicenseId;
+		return listingAgentLicenseId;
 	}
 
 	public void setListingAgentLicenseId(String listingAgentLicenseId) {
-		ListingAgentLicenseId = listingAgentLicenseId;
+		this.listingAgentLicenseId = listingAgentLicenseId;
 	}
 
 	public String getSellingAgent1Name() {
-		return SellingAgent1Name;
+		return sellingAgent1Name;
 	}
 
 	public void setSellingAgent1Name(String sellingAgent1Name) {
-		SellingAgent1Name = sellingAgent1Name;
+		this.sellingAgent1Name = sellingAgent1Name;
 	}
 
 	public String getSellingAgent1LicenseId() {
-		return SellingAgent1LicenseId;
+		return sellingAgent1LicenseId;
 	}
 
 	public void setSellingAgent1LicenseId(String sellingAgent1LicenseId) {
-		SellingAgent1LicenseId = sellingAgent1LicenseId;
+		this.sellingAgent1LicenseId = sellingAgent1LicenseId;
 	}
 
 	public Agent getListingAgent() {
