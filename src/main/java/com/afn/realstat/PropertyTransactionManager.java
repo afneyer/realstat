@@ -79,6 +79,7 @@ public class PropertyTransactionManager {
 			// }
 			//
 			ptRepo.save(listPt);
+			ptRepo.flush();
 			// ts.flush();
 			// ptm.commit(ts);
 
@@ -226,56 +227,7 @@ public class PropertyTransactionManager {
 		}
 	}
 
-	@Transactional
-	public void linkPropertyTransactionToListingAgent(PropertyTransaction pt) {
-		Agent agt = null;
-		String lic = pt.getListingAgentLicenseId();
-
-		List<Agent> list = agtRepo.findByLicense(lic);
-		if (list.size() == 1) {
-			agt = list.get(0);
-			pt.setListingAgent(agt);
-			importLog.info("Property Transaction Linked to Listing Agent by LicenseId= " + pt.toString());
-			return;
-		}
-
-		linkPropertyTransactionToListingAgentByAddress(pt);
-
-		/*
-		 * if (list.size() == 0) { // no corresponding property found
-		 * importLog.warn("No property found by APN=" + pt.getApn() +
-		 * " apnClean =" + apnClean + " for propertyTransaction = " +
-		 * pt.toString() );
-		 * this.linkPropertyTransactionToRealPropertyByAddress(pt); return; }
-		 * 
-		 * for (RealProperty rp1 : list) {
-		 * importLog.warn("Multiple properties by APN! pt = " + pt.toString() +
-		 * "rp = " + rp1.toString() );
-		 * this.linkPropertyTransactionToRealPropertyByAddress(pt); return; }
-		 */
-
-	}
-
-	private void linkPropertyTransactionToListingAgentByAddress(PropertyTransaction pt) {
-		Agent agt = null;
-		String nameRaw = pt.getListingAgentName();
-		PersName name = new PersName(nameRaw);
-		if (name.getFirstName() != null && name.getLastName() != null) {
-
-			List<Agent> list = agtRepo.findByFirstNameAndLastName(name.getFirstName(), name.getLastName());
-			if (list.size() == 1) {
-				agt = list.get(0);
-				pt.setListingAgent(agt);
-				importLog.info("Property Transaction Linked to Listing Agent by Name= " + name.getFirstName() + " "
-						+ name.getLastName());
-				return;
-			}
-		}
-
-		importLog.info("Could not link Property Transaction to listing agent:" + "license="
-				+ pt.getListingAgentLicenseId() + "  name=" + name.getFirstName() + " " + name.getLastName());
-
-	}
+	
 
 	@Transactional
 	public void linkPropertyTransactionToAgent(PropertyTransaction pt, Function<PropertyTransaction, String> licGetter,
@@ -283,11 +235,23 @@ public class PropertyTransactionManager {
 			BiFunction<PropertyTransaction, Agent, String> agentSetter) {
 		Agent agt = null;
 		String lic = licGetter.apply(pt);
+		String name = agentNameGetter.apply(pt);	
 
 		List<Agent> list = agtRepo.findByLicense(lic);
+		if (list.size() == 0) {
+			// try to create the agent
+			agt = new Agent(lic,name);
+			if (agt.isValid()) {
+				agtRepo.save(agt);
+				// TODO remove warning
+				importLog.info("Agent created: " + agt.toString());
+				agentSetter.apply(pt, agt);
+				importLog.info("Property Transaction Linked by LicenseId= " + pt.toString() + "  Using: ", licGetter.toString());
+			}
+		}
 		if (list.size() == 1) {
 			agt = list.get(0);
-			agentSetter.apply(pt, agt); // pt.setListingAgent(agt);
+			agentSetter.apply(pt, agt);
 			importLog.info("Property Transaction Linked by LicenseId= " + pt.toString() + "  Using: ", licGetter.toString());
 			return;
 		}
@@ -295,12 +259,6 @@ public class PropertyTransactionManager {
 		linkPropertyTransactionToAgentByAddress(pt, agentNameGetter, agentSetter);
 
 		/*
-		 * if (list.size() == 0) { // no corresponding property found
-		 * importLog.warn("No property found by APN=" + pt.getApn() +
-		 * " apnClean =" + apnClean + " for propertyTransaction = " +
-		 * pt.toString() );
-		 * this.linkPropertyTransactionToRealPropertyByAddress(pt); return; }
-		 * 
 		 * for (RealProperty rp1 : list) {
 		 * importLog.warn("Multiple properties by APN! pt = " + pt.toString() +
 		 * "rp = " + rp1.toString() );
@@ -332,26 +290,6 @@ public class PropertyTransactionManager {
 
 	}
 
-	private void linkPropertyTransactionToSellingAgentByAddress(PropertyTransaction pt) {
-		Agent agt = null;
-		String nameRaw = pt.getSellingAgent1Name();
-		PersName name = new PersName(nameRaw);
-		if (name.getFirstName() != null && name.getLastName() != null) {
-
-			List<Agent> list = agtRepo.findByFirstNameAndLastName(name.getFirstName(), name.getLastName());
-			if (list.size() == 1) {
-				agt = list.get(0);
-				pt.setSellingAgent(agt);
-				importLog.info("Property Transaction Linked to Selling Agent by Name= " + name.getFirstName() + " "
-						+ name.getLastName());
-				return;
-			}
-		}
-
-		importLog.info("Could not link Property Transaction to listing agent:" + "license="
-				+ pt.getListingAgentLicenseId() + "  name=" + name.getFirstName() + " " + name.getLastName());
-
-	}
 
 	// TODO (iterate using pagable)
 	/*
