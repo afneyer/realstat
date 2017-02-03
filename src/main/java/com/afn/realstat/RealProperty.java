@@ -79,9 +79,18 @@ public class RealProperty extends AbstractEntity {
 		Example<AbstractEntity> e = Example.of(new RealProperty(this.getApn()));
 		return e;
 	}
+	
+	@Override
+	public boolean isValid() {
+		return apn != null;
+	}
 
 	@Override
 	public void saveOrUpdate() {
+	}
+	
+	@Override
+	public void clean() {
 	}
 
 	public void setFieldByString(Object bean, String field, String value) throws Exception {

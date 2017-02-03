@@ -17,7 +17,7 @@ public interface AbstractEntityRepository<T extends AbstractEntity> extends JpaR
 
 		List<T> existingEntities = getExistingEntities(newEntity);
 		if (existingEntities.size() > 1) {
-			log.error("Non-unique entries for table " + newEntity.getClass().getName() + "field apn");
+			log.error("Non-unique entries for table " + newEntity.getClass().getName() +  newEntity.toString());
 		}
 
 		if (existingEntities.size() >= 1) {
@@ -27,6 +27,7 @@ public interface AbstractEntityRepository<T extends AbstractEntity> extends JpaR
 			}
 		}
 
+		newEntity.clean();
 		this.save(newEntity);
 
 	}

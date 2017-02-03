@@ -23,7 +23,7 @@ public abstract class AbstractImporter {
 	// @Autowired RealPropertyRepository repository;
 
 	private static final Logger importLog = LoggerFactory.getLogger("import");
-	
+
 	/**
 	 * 
 	 */
@@ -58,7 +58,7 @@ public abstract class AbstractImporter {
 	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	private void readWithCsvBeanReader( File file ) throws Exception {
+	private void readWithCsvBeanReader(File file) throws Exception {
 
 		ICsvBeanReader beanReader = null;
 		try {
@@ -74,27 +74,32 @@ public abstract class AbstractImporter {
 
 			AbstractEntity entity;
 			while ((entity = (AbstractEntity) beanReader.read(entityClass, header, processors)) != null) {
-				importLog.info( "Importer before saving or updating entity:");
-				importLog.info( "   Csv Line Nbr  =" + beanReader.getLineNumber());
-				importLog.info( "   Csv Row Nbr   =" + beanReader.getRowNumber());
-				importLog.info( "   Entity Class  =" + entityClass);
-				importLog.info( "   Entity String =" + entity);
-				saveOrUpdateEntity(entity);
+				importLog.info("Importer before saving or updating entity:");
+				importLog.info("   Csv Line Nbr  =" + beanReader.getLineNumber());
+				importLog.info("   Csv Row Nbr   =" + beanReader.getRowNumber());
+				importLog.info("   Entity Class  =" + entityClass);
+				importLog.info("   Entity String =" + entity);
+				entity.clean();
+				if (entity.isValid()) {
+					saveOrUpdateEntity(entity);
+				} else {
+					importLog.warn("Invalid entity skipped: Class=" + entity.getClass() + "  Entity=" + entity.toString());
+				}
 			}
 
 		}
 
-	finally
+		finally
 
-	{
-		if (beanReader != null) {
-			beanReader.close();
+		{
+			if (beanReader != null) {
+				beanReader.close();
+			}
 		}
-	}
 
 	}
 
-	protected abstract void saveOrUpdateEntity(AbstractEntity e);
+	protected abstract void saveOrUpdateEntity(AbstractEntity entity);
 
 	// abstract void readAndSaveNextEntity( CsvBeanReader r );
 

@@ -19,15 +19,15 @@ public class ImportAllTest {
 	@Autowired
 	private CrsImporter crsImporter;
 
-	@SuppressWarnings("unused")
+	@Autowired
+	private AgentImporter agentImporter;
+
 	@Autowired
 	private AgentVolumeImporter agvImporter;
 
 	@Test
-	public void testImportFile() {
-
+	public void importCrsFiles() {
 		File file;
-
 		file = new File("C:\\afndev\\apps\\realstat\\data", "CRSPropertyExport - 94610_0-2000.csv");
 		crsImporter.importFile(file);
 		file = new File("C:\\afndev\\apps\\realstat\\data", "CRSPropertyExport - 94610_2001-100000.csv");
@@ -42,12 +42,26 @@ public class ImportAllTest {
 		crsImporter.importFile(file);
 		file = new File("C:\\afndev\\apps\\realstat\\data", "CRSPropertyExport - 94618_2501-100000.csv");
 		crsImporter.importFile(file);
+	}
 
-		// mlsImporter.importFile(file);
+	@Test
+	public void importAgentFiles() {
+		File file;
+		file = new File("C:\\afndev\\apps\\realstat\\data", "AgentsExport - Berkeley_Oakland.csv");
+		agentImporter.importFile(file);
+	}
 
-		// file = new
-		// File("C:\\afndev\\apps\\realstat\\data","Paragon-Volume-Ranking---Agent-Within-MLS-2012-01-12
-		// - 2017-01-12.csv");
-		// agvImporter.importFile(file);
+	public void importAgentVolumes() {
+		File file;
+		file = new File("C:\\afndev\\apps\\realstat\\data",
+				"Paragon-Volume-Ranking---Agent-Within-MLS-2012-01-12-2017-01-12.csv");
+		agvImporter.importFile(file);
+	}
+
+	@Test
+	public void importMlsFiles() {
+		File file;
+		file = new File("C:\\afndev\\apps\\realstat\\data", "MLSExport - 94611_0-1500.csv");
+		mlsImporter.importFile(file);
 	}
 }

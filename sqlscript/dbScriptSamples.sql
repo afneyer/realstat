@@ -17,6 +17,37 @@ addressClean in
 --select count(*) from property_transaction;
 --select count(*) from real_property;*/
 
+/*
+--drop table agent;
+*/
+
+
+/*select status, 
+count(ListingAgentName), count(SellingAgent1Name), count(CoListAgentName), count(CoSellAgentName), 
+count(ListingAgentLicenseID), count(SellingAgent1LicenseId), count(CoListAgentLicenseId), count(CoSellAgentLicenseId),
+count(ListAgentBreNum), count(SoldAgentBreNum), count(CoListAgentBreNum), count(CoSellAgentBreNum),
+count(listingAgent_id), count(sellingAgent_id), count(listingAgent2_id), count(sellingAgent2_id)
+from property_transaction group by status;*/
+
+/*
+select ListingAgentName, ListingAgentLicenseID, ListAgentBreNum,
+ SellingAgent1Name, SellingAgent1LicenseId,SoldAgentBreNum,
+CoListAgentLicenseId, CoSellAgentLicenseId, CoListAgentBreNum, 
+CoListAgentName, CoSellAgentName, CoSellAgentBreNum
+from property_transaction;
+*/
+
+/*
+select status, count(id) from property_transaction group by status;
+*/
+/*
+drop table real_property;
 drop table agent;
+drop table agent_volume;
+drop table property_transaction;
+*/
+
+
+
 
 

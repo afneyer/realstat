@@ -1,5 +1,7 @@
 package com.afn.realstat;
 
+import static org.junit.Assert.assertFalse;
+
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
@@ -30,5 +32,9 @@ public abstract class AbstractEntity {
 	public abstract Example getRefExample();
 	
 	public abstract void saveOrUpdate();
+
+	public abstract void clean();
+	
+	public abstract boolean isValid();
 	
 }

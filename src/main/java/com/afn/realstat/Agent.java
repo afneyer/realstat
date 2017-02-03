@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Example;
 
 @Entity
-@Table(name = "agent", uniqueConstraints = @UniqueConstraint(columnNames = { "UserCode" }),
+@Table(name = "agent", uniqueConstraints = @UniqueConstraint(columnNames = { "license" }),
 		indexes = {
 		@Index(name = "idx_firstName", columnList = "firstName"),
 		@Index(name = "idx_firstName", columnList = "lastName"),
@@ -21,44 +21,39 @@ public class Agent extends AbstractEntity {
 
 	public static final Logger log = LoggerFactory.getLogger("import");
 
-	@Basic(optional = false)
-	private String agentName;
-	@Basic(optional = false)
+	private String agentName;	
 	private String userCode;
+	@Basic(optional = false)
 	private String firstName;
 	private String middleName;
 	private String middleInitial;
+	@Basic(optional = false)
 	private String lastName;
 	private String officeName;
 	private String officeCode;
 	private String officePhone;
 	private String type;
 	private String status;
+	@Basic(optional = false)
 	private String license;
 
 	public Agent() {
 	}
 	
-	/*
-	 * This constructor is private and only used to generate the reference example for saveOrUpdate (see below)
-	 * TODO needs better solution with callback
-	 */
-	private Agent(String userCode) {
-		this.userCode = userCode;
-	}
-
-	public Agent(String userCode, String agentName) {
-		this(userCode, agentName, null);
-	}
-
-	public Agent(String userCode, String agentName, String license) {
-		this.userCode = userCode;
-		this.agentName = agentName;
+	public Agent(String license, String agentNameRaw) {
 		this.license = license;
-		cleanUpFields();
+		this.agentName = agentNameRaw;
+		clean();
 	}
 
-	public void cleanUpFields() {
+	public Agent(String license, String firstName, String lastName) {
+		this.license = license;
+		this.agentName = firstName + " " + lastName;
+		clean();
+	}
+
+	
+	public void clean() {
 		cleanUserCode();
 		extractFirstMiddleLast();
 		cleanLicense();
@@ -71,8 +66,11 @@ public class Agent extends AbstractEntity {
 		}
 	}
 
+	// TODO remove
 	private void cleanUserCode() {
-		userCode = userCode.toLowerCase();
+		if (userCode != null) {
+			userCode = userCode.toLowerCase();
+		}
 	}
 
 	private void extractFirstMiddleLast() {
@@ -85,7 +83,8 @@ public class Agent extends AbstractEntity {
 
 	@Override
 	public String toString() {
-		return String.format("Agent [User Code='%s', Name='%s', License='%s']", userCode, agentName, license);
+		return String.format("Agent [License='%s', Name='%s', FirstName='%s', LastName='%s', MiddleInitial='%s']", 
+				license, agentName, firstName, lastName, middleInitial);
 	}
 
 	@Override
@@ -94,8 +93,18 @@ public class Agent extends AbstractEntity {
 
 	@Override
 	public Example<AbstractEntity> getRefExample() {
-		Example<AbstractEntity> e = Example.of(new Agent(getUserCode()));
+		Agent sampleAgent = new Agent();
+		sampleAgent.firstName = firstName;
+		sampleAgent.lastName = lastName;
+		sampleAgent.license = license;
+		Example<AbstractEntity> e = Example.of(sampleAgent);
+
 		return e;
+	}
+	
+	@Override
+	public boolean isValid() {
+		return (firstName != null && lastName != null && license != null);
 	}
 
 	// All getters and setters
@@ -195,5 +204,7 @@ public class Agent extends AbstractEntity {
 	public void setLicense(String license) {
 		this.license = license;
 	}
+
+	
 
 }

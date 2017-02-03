@@ -10,11 +10,13 @@ import javax.persistence.UniqueConstraint;
 import org.springframework.data.domain.Example;
 
 @Entity
-@Table(name="agent_volume",uniqueConstraints=@UniqueConstraint(columnNames = {"BreNo","Year"}))
+@Table(name = "agent_volume", uniqueConstraints = @UniqueConstraint(columnNames = { "BreNo", "Year" }))
 public class AgentVolume extends AbstractEntity {
 
-	@Basic(optional=false) private String breNo;
-	@Basic(optional=false) private Date year;
+	@Basic(optional = false)
+	private String breNo;
+	@Basic(optional = false)
+	private Date year;
 	private Integer rank;
 	private Integer unitsListed;
 	private Double volumeListed;
@@ -38,26 +40,36 @@ public class AgentVolume extends AbstractEntity {
 
 	@Override
 	public String toString() {
-		return String.format("AgentVolume [Bre='%s', Year='%s',  AgentRaw='%s', OfficeRaw='%s', UnitsTotal='%s', VolumeTotal='%s',]", 
+		return String.format(
+				"AgentVolume [Bre='%s', Year='%s',  AgentRaw='%s', OfficeRaw='%s', UnitsTotal='%s', VolumeTotal='%s',]",
 				breNo, year, agentRaw, officeRaw, unitsTotal, volumeTotal);
 	}
-	
+
 	@Override
 	public void saveOrUpdate() {
 	}
-	
+
+	@Override
+	public void clean() {
+	}
+
 	@Override
 	public Example<AbstractEntity> getRefExample() {
-		Example<AbstractEntity> e = Example.of( new AgentVolume(getBreNo(), getYear()));
+		Example<AbstractEntity> e = Example.of(new AgentVolume(getBreNo(), getYear()));
 		return e;
 	}
-	
+
+	@Override
+	public boolean isValid() {
+		return (breNo != null && year != null);
+	}
+
 	public String extractBrefromAgentRaw() {
 		String agr = getAgentRaw();
-		String bre = agr.replaceAll("[A-Z,a-z,\\-, ]","");
+		String bre = agr.replaceAll("[A-Z,a-z,\\-, ]", "");
 		return bre;
 	}
-	
+
 	// All getters and setters
 
 	public String getBreNo() {
@@ -139,7 +151,7 @@ public class AgentVolume extends AbstractEntity {
 	public void setOfficeRaw(String officeRaw) {
 		this.officeRaw = officeRaw;
 	}
-	
+
 	public Double getPercentMlsVolume() {
 		return percentMlsVolume;
 	}
@@ -172,5 +184,4 @@ public class AgentVolume extends AbstractEntity {
 		this.rank = rank;
 	}
 
-	
 }

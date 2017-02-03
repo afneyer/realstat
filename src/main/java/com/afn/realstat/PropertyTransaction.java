@@ -13,12 +13,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Example;
 
 @Entity
-@Table(name="property_transaction", uniqueConstraints=@UniqueConstraint(columnNames = {"mlsNo"}))
+@Table(name = "property_transaction", uniqueConstraints = @UniqueConstraint(columnNames = { "mlsNo" }))
 public class PropertyTransaction extends AbstractEntity {
-	
+
 	public static final Logger log = LoggerFactory.getLogger(Application.class);
 
-	@Basic(optional=false) private Integer mlsNo;
+	@Basic(optional = false)
+	private Integer mlsNo;
 	@ManyToOne
 	private RealProperty realProperty;
 	@ManyToOne
@@ -29,7 +30,7 @@ public class PropertyTransaction extends AbstractEntity {
 	private Agent sellingAgent;
 	@ManyToOne
 	private Agent sellingAgent2;
-	
+
 	private String status;
 	private String dom;
 	private String address;
@@ -117,7 +118,6 @@ public class PropertyTransaction extends AbstractEntity {
 	private String listingAgentLicenseId;
 	private String sellingAgent1Name;
 	private String sellingAgent1LicenseId;
-	
 
 	public PropertyTransaction() {
 	}
@@ -128,22 +128,29 @@ public class PropertyTransaction extends AbstractEntity {
 
 	@Override
 	public String toString() {
-		return String.format("PropTransaction [id=%d, Address='%s', Unit='%s', City='%s',Zip='%s']", 
-				mlsNo, address, unit, city, zip);
+		return String.format("PropTransaction [id=%d, Address='%s', Unit='%s', City='%s',Zip='%s']", mlsNo, address,
+				unit, city, zip);
 	}
-	
+
 	@Override
 	public void saveOrUpdate() {
 	}
-	
+
+	@Override
+	public void clean() {
+	}
+
 	@Override
 	public Example<AbstractEntity> getRefExample() {
-		Example<AbstractEntity> e = Example.of( new PropertyTransaction(this.getMlsNo()));
+		Example<AbstractEntity> e = Example.of(new PropertyTransaction(this.getMlsNo()));
 		return e;
 	}
-	
-	
-	
+
+	@Override
+	public boolean isValid() {
+		return (mlsNo != null);
+	}
+
 	public String getStatus() {
 		return status;
 	}
@@ -336,8 +343,6 @@ public class PropertyTransaction extends AbstractEntity {
 	public void setApnClean(String apn) {
 		this.apnClean = RealStatUtil.cleanApn(apn);
 	}
-
-	
 
 	public String getCensusTract() {
 		return censusTract;
@@ -890,5 +895,5 @@ public class PropertyTransaction extends AbstractEntity {
 	public void setSellingAgent2(Agent sellingAgent2) {
 		this.sellingAgent2 = sellingAgent2;
 	}
-	
+
 }

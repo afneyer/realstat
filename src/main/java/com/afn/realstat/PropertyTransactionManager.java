@@ -152,10 +152,8 @@ public class PropertyTransactionManager {
 
 		if (list.size() == 0) {
 			// no corresponding property found
-			importLog.warn("No property found by Adress");
-			importLog.warn("raw Address=" + adrClean.getRawAddress());
-			importLog.warn("clean Address" + adrClean.getCleanAddress());
-			importLog.warn("prop trans=" + pt.toString());
+			importLog.warn("No property found by adress raw=" + adrClean.getRawAddress() + "  clean=" + adrClean.getCleanAddress() +
+			"propTrans=" + pt.toString() );
 			return;
 		}
 
