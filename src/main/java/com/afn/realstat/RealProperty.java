@@ -84,10 +84,6 @@ public class RealProperty extends AbstractEntity {
 	public boolean isValid() {
 		return apn != null;
 	}
-
-	@Override
-	public void saveOrUpdate() {
-	}
 	
 	@Override
 	public void clean() {

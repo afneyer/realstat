@@ -3,6 +3,8 @@
 
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.text.ParseException;
@@ -34,5 +36,55 @@ public class AgentTest {
 		assertEquals("M", agt.getMiddleInitial());
 		assertEquals("Callahan",agt.getLastName());
 		assertEquals("792768",agt.getLicense());
+	}
+	
+	@Test 
+	public void testHasValidLicense() {
+		
+		Agent agt;
+		
+		// valid agent licenses
+		agt = new Agent("r01969778",null);
+		assertTrue(agt.hasValidLicense());
+		agt = new Agent("1969778",null);
+		assertTrue(agt.hasValidLicense());
+		agt = new Agent("888",null);
+		assertTrue(agt.hasValidLicense());
+		
+		// invalid agent licenses
+		agt = new Agent(null,null);
+		assertFalse(agt.hasValidLicense());
+		agt = new Agent("",null);
+		assertFalse(agt.hasValidLicense());
+		agt = new Agent("ABCD",null);
+		assertFalse(agt.hasValidLicense());
+		
+		
+	}
+	
+	@Test 
+	public void testHasValidName() {
+		
+		Agent agt;
+		
+		// valid agent names
+		agt = new Agent("1969778","Andreas Neyer");
+		assertTrue(agt.hasValidName());
+		agt = new Agent("1969778","Andreas","Neyer");
+		assertTrue(agt.hasValidName());
+		agt = new Agent("1969778","Andreas F. Neyer");
+		assertTrue(agt.hasValidName());
+		
+		// invalid agent names
+		agt = new Agent("1969778","");
+		assertFalse(agt.hasValidName());
+		agt = new Agent("1969778","         ");
+		assertFalse(agt.hasValidName());
+		agt = new Agent("1969778","      ","       ");
+		assertFalse(agt.hasValidName());
+		agt = new Agent("1969778",null);
+		assertFalse(agt.hasValidName());
+		agt = new Agent("1969778",null,null);
+		assertFalse(agt.hasValidName());
 	}
 }

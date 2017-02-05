@@ -153,8 +153,8 @@ public class PropertyTransactionManager {
 
 		if (list.size() == 0) {
 			// no corresponding property found
-			importLog.warn("No property found by adress raw=" + adrClean.getRawAddress() + "  clean=" + adrClean.getCleanAddress() +
-			"propTrans=" + pt.toString() );
+			importLog.warn("No property found by adress raw=" + adrClean.getRawAddress() + "  clean="
+					+ adrClean.getCleanAddress() + "propTrans=" + pt.toString());
 			return;
 		}
 
@@ -227,45 +227,23 @@ public class PropertyTransactionManager {
 		}
 	}
 
-	
-
 	@Transactional
 	public void linkPropertyTransactionToAgent(PropertyTransaction pt, Function<PropertyTransaction, String> licGetter,
 			Function<PropertyTransaction, String> agentNameGetter,
 			BiFunction<PropertyTransaction, Agent, String> agentSetter) {
 		Agent agt = null;
 		String lic = licGetter.apply(pt);
-		String name = agentNameGetter.apply(pt);	
+		String name = agentNameGetter.apply(pt);
+		agt = new Agent(lic, name);
+		agt = agtRepo.saveOrUpdate(agt);
 
-		List<Agent> list = agtRepo.findByLicense(lic);
-		if (list.size() == 0) {
-			// try to create the agent
-			agt = new Agent(lic,name);
-			if (agt.isValid()) {
-				agtRepo.save(agt);
-				// TODO remove warning
-				importLog.info("Agent created: " + agt.toString());
-				agentSetter.apply(pt, agt);
-				importLog.info("Property Transaction Linked by LicenseId= " + pt.toString() + "  Using: ", licGetter.toString());
-			}
-		}
-		if (list.size() == 1) {
-			agt = list.get(0);
+		if (agt != null) {
 			agentSetter.apply(pt, agt);
-			importLog.info("Property Transaction Linked by LicenseId= " + pt.toString() + "  Using: ", licGetter.toString());
-			return;
+			importLog.info("Property Transaction Linked by LicenseId= " + pt.toString() + "  Using: ",
+					licGetter.toString());
 		}
-
-		linkPropertyTransactionToAgentByAddress(pt, agentNameGetter, agentSetter);
-
-		/*
-		 * for (RealProperty rp1 : list) {
-		 * importLog.warn("Multiple properties by APN! pt = " + pt.toString() +
-		 * "rp = " + rp1.toString() );
-		 * this.linkPropertyTransactionToRealPropertyByAddress(pt); return; }
-		 */
-
 	}
+	/*
 
 	private void linkPropertyTransactionToAgentByAddress(PropertyTransaction pt,
 			Function<PropertyTransaction, String> agentNameGetter,
@@ -289,7 +267,7 @@ public class PropertyTransactionManager {
 				+ pt.getListingAgentLicenseId() + "  name=" + name.getFirstName() + " " + name.getLastName());
 
 	}
-
+	*/ 
 
 	// TODO (iterate using pagable)
 	/*

@@ -133,10 +133,6 @@ public class PropertyTransaction extends AbstractEntity {
 	}
 
 	@Override
-	public void saveOrUpdate() {
-	}
-
-	@Override
 	public void clean() {
 	}
 

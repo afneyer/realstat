@@ -13,23 +13,33 @@ public interface AbstractEntityRepository<T extends AbstractEntity> extends JpaR
 
 	public static final Logger log = LoggerFactory.getLogger(Application.class);
 
-	public default void saveOrUpdate(T newEntity) {
+	public default T saveOrUpdate(T newEntity) {
 
+		newEntity.clean();
 		List<T> existingEntities = getExistingEntities(newEntity);
 		if (existingEntities.size() > 1) {
 			log.error("Non-unique entries for table " + newEntity.getClass().getName() +  newEntity.toString());
+			return null;
 		}
 
-		if (existingEntities.size() >= 1) {
-			T existingEntity = existingEntities.get(0);
-			if (existingEntity != null) {
-				newEntity.setId(existingEntity.getId());
-			}
+		if (existingEntities.size() == 1) {
+			newEntity = updateEntity(existingEntities.get(0),newEntity);
+			return newEntity;
+		} else {
+			save(newEntity);
+			return newEntity;
 		}
-
-		newEntity.clean();
-		this.save(newEntity);
-
+	}
+	
+	// assumes the entity exists in the repository
+	public default T updateEntity(T existingEntity, T newEntity) {
+		// TODO check for detached
+		if (existingEntity != null) {
+			newEntity.setId(existingEntity.getId());
+		    save(newEntity);
+		    return newEntity;
+		} 
+		return null;
 	}
 
 	@SuppressWarnings("rawtypes")

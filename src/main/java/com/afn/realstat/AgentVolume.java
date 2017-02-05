@@ -46,10 +46,6 @@ public class AgentVolume extends AbstractEntity {
 	}
 
 	@Override
-	public void saveOrUpdate() {
-	}
-
-	@Override
 	public void clean() {
 	}
 
@@ -57,11 +53,6 @@ public class AgentVolume extends AbstractEntity {
 	public Example<AbstractEntity> getRefExample() {
 		Example<AbstractEntity> e = Example.of(new AgentVolume(getBreNo(), getYear()));
 		return e;
-	}
-
-	@Override
-	public boolean isValid() {
-		return (breNo != null && year != null);
 	}
 
 	public String extractBrefromAgentRaw() {
@@ -182,6 +173,12 @@ public class AgentVolume extends AbstractEntity {
 
 	public void setRank(Integer rank) {
 		this.rank = rank;
+	}
+
+	@Override
+	public boolean isValid() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 }

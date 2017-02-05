@@ -1,10 +1,8 @@
 package com.afn.realstat;
 
-import javax.persistence.Basic;
 import javax.persistence.Entity;
 import javax.persistence.Index;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -12,34 +10,29 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Example;
 
 @Entity
-@Table(name = "agent", uniqueConstraints = @UniqueConstraint(columnNames = { "license" }),
-		indexes = {
+@Table(name = "agent",  indexes = {
 		@Index(name = "idx_firstName", columnList = "firstName"),
-		@Index(name = "idx_firstName", columnList = "lastName"),
-		@Index(name = "idx_license", columnList = "license") } )
+		@Index(name = "idx_firstName", columnList = "lastName"), @Index(name = "idx_license", columnList = "license") })
 public class Agent extends AbstractEntity {
 
 	public static final Logger log = LoggerFactory.getLogger("import");
 
-	private String agentName;	
+	private String agentName;
 	private String userCode;
-	@Basic(optional = false)
 	private String firstName;
 	private String middleName;
 	private String middleInitial;
-	@Basic(optional = false)
 	private String lastName;
 	private String officeName;
 	private String officeCode;
 	private String officePhone;
 	private String type;
 	private String status;
-	@Basic(optional = false)
 	private String license;
 
 	public Agent() {
 	}
-	
+
 	public Agent(String license, String agentNameRaw) {
 		this.license = license;
 		this.agentName = agentNameRaw;
@@ -48,13 +41,17 @@ public class Agent extends AbstractEntity {
 
 	public Agent(String license, String firstName, String lastName) {
 		this.license = license;
+		if (firstName == null) {
+			firstName = "";
+		}
+		if (lastName == null) {
+			lastName = "";
+		}
 		this.agentName = firstName + " " + lastName;
 		clean();
 	}
 
-	
 	public void clean() {
-		cleanUserCode();
 		extractFirstMiddleLast();
 		cleanLicense();
 	}
@@ -63,13 +60,6 @@ public class Agent extends AbstractEntity {
 		if (license != null && !license.isEmpty()) {
 			license = license.replaceAll("[A-Za-z]", "");
 			license = StringUtils.stripStart(license, "0");
-		}
-	}
-
-	// TODO remove
-	private void cleanUserCode() {
-		if (userCode != null) {
-			userCode = userCode.toLowerCase();
 		}
 	}
 
@@ -83,12 +73,8 @@ public class Agent extends AbstractEntity {
 
 	@Override
 	public String toString() {
-		return String.format("Agent [License='%s', Name='%s', FirstName='%s', LastName='%s', MiddleInitial='%s']", 
+		return String.format("Agent [Lic='%s', Raw='%s', FN='%s', LN='%s', MI='%s']",
 				license, agentName, firstName, lastName, middleInitial);
-	}
-
-	@Override
-	public void saveOrUpdate() {
 	}
 
 	@Override
@@ -101,7 +87,7 @@ public class Agent extends AbstractEntity {
 
 		return e;
 	}
-	
+
 	@Override
 	public boolean isValid() {
 		return (firstName != null && lastName != null && license != null);
@@ -205,6 +191,22 @@ public class Agent extends AbstractEntity {
 		this.license = license;
 	}
 
-	
+	// TODO implement more tight license check (format)
+	public boolean hasValidLicense() {
+		if (license != null && !license.isEmpty()) {
+			return true;
+		}
+		return false;
+	}
+
+	/*
+	 * First and Last Name must be not null or empty
+	 */
+	public boolean hasValidName() {
+		if (firstName != null && lastName != null && !firstName.isEmpty() && !lastName.isEmpty()) {
+			return true;
+		}
+		return false;
+	}
 
 }
