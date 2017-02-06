@@ -12,7 +12,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 @SpringBootTest(classes = Application.class, webEnvironment = SpringBootTest.WebEnvironment.NONE)
 public class ImportAllTest {
 
-	@SuppressWarnings("unused")
 	@Autowired
 	private MlsImporter mlsImporter;
 
@@ -47,7 +46,7 @@ public class ImportAllTest {
 	@Test
 	public void importAgentFiles() {
 		File file;
-		file = new File("C:\\afndev\\apps\\realstat\\data", "AgentsExport - Berkeley_Oakland.csv");
+		file = new File("C:\\afndev\\apps\\realstat\\data", "MLSAllAgentList.txt");
 		agentImporter.importFile(file);
 	}
 

@@ -16,13 +16,13 @@ import com.vaadin.spring.annotation.SpringComponent;
  *
  */
 @SpringComponent
-public class MlsImporter extends AbstractImporter {
+public class MlsImporter extends AbstractImporter<PropertyTransaction> {
 
 	/**
 	 * 
 	 */
 	@Autowired
-	PropertyTransactionRepository repository;
+	PropertyTransactionRepository ptRepo;
 
 	// private static final Logger log = LoggerFactory.getLogger(Application.class);
 
@@ -175,9 +175,14 @@ public class MlsImporter extends AbstractImporter {
 		return header;
 	}
 
-	protected void saveOrUpdateEntity(AbstractEntity e) {
-		PropertyTransaction pt = (PropertyTransaction) e;
-		repository.saveOrUpdate(pt);
+	protected void saveOrUpdateEntity(PropertyTransaction pt) {
+		ptRepo.saveOrUpdate(pt);
+	}
+
+	@Override
+	protected void clean(PropertyTransaction entity) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

@@ -14,7 +14,7 @@ import com.vaadin.spring.annotation.SpringComponent;
  *
  */
 @SpringComponent
-public class AgentVolumeImporter extends AbstractImporter {
+public class AgentVolumeImporter extends AbstractImporter<AgentVolume> {
 	
 	/**
 	 * 
@@ -81,9 +81,16 @@ public class AgentVolumeImporter extends AbstractImporter {
 		return header;
 	}
 
-	protected void saveOrUpdateEntity(AbstractEntity e) {
-		AgentVolume av = (AgentVolume)e;
-		av.setBreNo( av.extractBrefromAgentRaw() );
+	@Override
+	protected void clean(AgentVolume entity) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	protected void saveOrUpdateEntity(AgentVolume av) {
 		repository.saveOrUpdate(av);
+		// TODO Auto-generated method stub
+		
 	}
 }

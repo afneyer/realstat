@@ -23,7 +23,7 @@ public interface AgentRepository extends AbstractEntityRepository<Agent> {
 			List<Agent> agentsByLic = findByLicense(lic);
 
 			if (agentsByLic.size() > 1) {
-				log.error("Non-unique entries for agent license: Agent=", a);
+				log.error("Non-unique entries for agent license: Agent=" + a);
 				return null;
 			}
 
@@ -43,7 +43,7 @@ public interface AgentRepository extends AbstractEntityRepository<Agent> {
 				// There a multiple agents with same name and we don't have a
 				// valid license to distinguish them.
 				// TODO maybe select by middle name;
-				log.error("Non-unique entries for agent first and last: Agent=", a);
+				log.error("Non-unique entries for agent first and last: Agent=" + a);
 				return null;
 			}
 
@@ -57,7 +57,10 @@ public interface AgentRepository extends AbstractEntityRepository<Agent> {
 				return a;
 			}
 		}
-
+		
+		if (lic != null || fn != null || ln != null) {
+			log.warn("Agent has invalid license and invalid name: Agent=" + a);
+		}
 		return null;
 
 	}

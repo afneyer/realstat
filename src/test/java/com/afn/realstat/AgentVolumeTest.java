@@ -18,7 +18,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 public class AgentVolumeTest {
 
 	@Test
-	public void testExtractBreFromAgentRaw() {
+	public void testExtractUserCode() {
 		SimpleDateFormat year = new SimpleDateFormat("yyyy");
 		AgentVolume agv1 = null;
 		try {
@@ -28,8 +28,9 @@ public class AgentVolumeTest {
 		}
 
 		agv1.setAgentRaw("Lesterhuis, Hendrik - 159521452");
-		assertEquals("159521452", agv1.extractBrefromAgentRaw());
+		assertEquals("159521452", agv1.getUserCode());
+		
 		agv1.setAgentRaw("MCRAE, BEBE - R00875159");
-		assertEquals("00875159", agv1.extractBrefromAgentRaw());
+		assertEquals("R00875159", agv1.getUserCode());
 	}
 }

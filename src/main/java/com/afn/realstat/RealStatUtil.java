@@ -1,5 +1,7 @@
 package com.afn.realstat;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * @author Andreas
  *
@@ -11,7 +13,7 @@ public class RealStatUtil {
 	}
 
 	public static String cleanApn(String inStr) {
-		if (inStr == null || inStr == "0" ) {
+		if (inStr == null || inStr == "0") {
 			return null;
 		}
 
@@ -55,7 +57,7 @@ public class RealStatUtil {
 				int numZero = 0;
 				if (c == '0') {
 					// also remove the second last character if it's also a 0
-					c = outStr.charAt(i+1);
+					c = outStr.charAt(i + 1);
 					numZero = 1;
 					if (c == '0') {
 						numZero = 2;
@@ -75,5 +77,21 @@ public class RealStatUtil {
 
 		return outStr;
 	}
-	
+
+	public static String cleanLicense(String licRaw) {
+		if (licRaw != null && !licRaw.isEmpty()) {
+			licRaw = licRaw.replaceAll("[A-Za-z]", "");
+			licRaw = licRaw.replaceAll(" +", "");
+			licRaw = StringUtils.stripStart(licRaw, "0");
+			licRaw.trim();
+			if (licRaw.isEmpty()) {
+				return null;
+			} else {
+				return licRaw;
+			}
+		} else {
+			return null;
+		}
+	}
+
 }

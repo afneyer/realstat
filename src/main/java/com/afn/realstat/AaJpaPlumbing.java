@@ -30,7 +30,7 @@ public class AaJpaPlumbing {
 	
 	public void saveOrUpdateEntity() {
 		AgentVolume av = new AgentVolume("Test", new Date() );
-		av.setBreNo( "testBre" );
+		av.setUserCode( "testBre" );
 		//String className= em.getClass().getName();
 		repository.saveOrUpdate(av);
 	}

@@ -1,5 +1,7 @@
 package com.afn.realstat;
 
+import static org.hamcrest.CoreMatchers.startsWith;
+
 import java.util.List;
 import java.util.function.Function;
 
@@ -122,14 +124,14 @@ public class PropertyTransactionManager {
 
 		if (list.size() == 0) {
 			// no corresponding property found
-			importLog.warn("No property found by APN=" + pt.getApn() + " apnClean =" + apnClean
+			importLog.info("No property found by APN=" + pt.getApn() + " apnClean =" + apnClean
 					+ " for propertyTransaction = " + pt.toString());
 			this.linkPropertyTransactionToRealPropertyByAddress(pt);
 			return;
 		}
 
 		for (RealProperty rp1 : list) {
-			importLog.warn("Multiple properties by APN! pt = " + pt.toString() + "rp = " + rp1.toString());
+			importLog.info("Multiple properties by APN! pt = " + pt.toString() + "rp = " + rp1.toString());
 			this.linkPropertyTransactionToRealPropertyByAddress(pt);
 			return;
 		}
@@ -147,7 +149,7 @@ public class PropertyTransactionManager {
 		if (list.size() == 1) {
 			rp = list.get(0);
 			pt.setRealProperty(rp);
-			importLog.warn("Property Transaction Linked By Address= " + pt.toString());
+			importLog.info("Property Transaction Linked By Address= " + pt.toString());
 			return;
 		}
 
@@ -234,40 +236,55 @@ public class PropertyTransactionManager {
 		Agent agt = null;
 		String lic = licGetter.apply(pt);
 		String name = agentNameGetter.apply(pt);
-		agt = new Agent(lic, name);
-		agt = agtRepo.saveOrUpdate(agt);
 
-		if (agt != null) {
-			agentSetter.apply(pt, agt);
-			importLog.info("Property Transaction Linked by LicenseId= " + pt.toString() + "  Using: ",
-					licGetter.toString());
+		// only try to link if name or license is not null
+		if (lic != null || name != null) {
+
+			// correct data issues (should really go into the importer) TODO
+			String outOfAreaLic = "9999915";
+			String outOfAreaName = "Outofareafn Outofarealn";
+			String lcName = name.toLowerCase();
+			if (lcName.startsWith("out of") || lcName.startsWith("non member") || lcName.startsWith("_ nonmember")
+					|| lcName.startsWith("non-member")) {
+				lic = outOfAreaLic;
+				name = outOfAreaName;
+			}
+
+			// find or create agent
+			agt = new Agent(lic, name);
+			agt = agtRepo.saveOrUpdate(agt);
+
+			if (agt != null) {
+				agentSetter.apply(pt, agt);
+				importLog.info("Property Transaction Linked by LicenseId= " + pt.toString() + "  Using: ",
+						licGetter.toString());
+			}
+
 		}
 	}
 	/*
-
-	private void linkPropertyTransactionToAgentByAddress(PropertyTransaction pt,
-			Function<PropertyTransaction, String> agentNameGetter,
-			BiFunction<PropertyTransaction, Agent, String> agentSetter) {
-		Agent agt = null;
-		String nameRaw = agentNameGetter.apply(pt);
-		PersName name = new PersName(nameRaw);
-		if (name.getFirstName() != null && name.getLastName() != null) {
-
-			List<Agent> list = agtRepo.findByFirstNameAndLastName(name.getFirstName(), name.getLastName());
-			if (list.size() == 1) {
-				agt = list.get(0);
-				agentSetter.apply(pt, agt);
-				importLog.info("Property Transaction Linked to Agent by Name= " + name.getFirstName() + " "
-						+ name.getLastName() + "  Using: ", agentNameGetter.toString());
-				return;
-			}
-		}
-
-		importLog.info("Could not link Property Transaction to listing agent:" + "license="
-				+ pt.getListingAgentLicenseId() + "  name=" + name.getFirstName() + " " + name.getLastName());
-
-	}
-	*/ 
+	 * 
+	 * private void linkPropertyTransactionToAgentByAddress(PropertyTransaction
+	 * pt, Function<PropertyTransaction, String> agentNameGetter,
+	 * BiFunction<PropertyTransaction, Agent, String> agentSetter) { Agent agt =
+	 * null; String nameRaw = agentNameGetter.apply(pt); PersName name = new
+	 * PersName(nameRaw); if (name.getFirstName() != null && name.getLastName()
+	 * != null) {
+	 * 
+	 * List<Agent> list =
+	 * agtRepo.findByFirstNameAndLastName(name.getFirstName(),
+	 * name.getLastName()); if (list.size() == 1) { agt = list.get(0);
+	 * agentSetter.apply(pt, agt);
+	 * importLog.info("Property Transaction Linked to Agent by Name= " +
+	 * name.getFirstName() + " " + name.getLastName() + "  Using: ",
+	 * agentNameGetter.toString()); return; } }
+	 * 
+	 * importLog.info("Could not link Property Transaction to listing agent:" +
+	 * "license=" + pt.getListingAgentLicenseId() + "  name=" +
+	 * name.getFirstName() + " " + name.getLastName());
+	 * 
+	 * }
+	 */
 
 	// TODO (iterate using pagable)
 	/*

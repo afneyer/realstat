@@ -19,6 +19,7 @@ public class Agent extends AbstractEntity {
 
 	private String agentName;
 	private String userCode;
+	private String agentPhone;
 	private String firstName;
 	private String middleName;
 	private String middleInitial;
@@ -57,10 +58,7 @@ public class Agent extends AbstractEntity {
 	}
 
 	private void cleanLicense() {
-		if (license != null && !license.isEmpty()) {
-			license = license.replaceAll("[A-Za-z]", "");
-			license = StringUtils.stripStart(license, "0");
-		}
+		license = RealStatUtil.cleanLicense(license);
 	}
 
 	private void extractFirstMiddleLast() {
@@ -141,6 +139,14 @@ public class Agent extends AbstractEntity {
 
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
+	}
+
+	public String getAgentPhone() {
+		return agentPhone;
+	}
+
+	public void setAgentPhone(String agentPhone) {
+		this.agentPhone = agentPhone;
 	}
 
 	public String getOfficeName() {

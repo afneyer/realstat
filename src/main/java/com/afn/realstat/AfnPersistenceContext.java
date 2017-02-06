@@ -29,7 +29,7 @@ class AfnPersistenceContext {
 	public DataSource afn1DataSource() {
 		DriverManagerDataSource datasource = new DriverManagerDataSource();
         datasource.setDriverClassName(com.mysql.jdbc.Driver.class.getName());
-        datasource.setUrl("jdbc:mysql://localhost:3306/test");
+        datasource.setUrl("jdbc:mysql://localhost:3306/test?useSSL=false");
         datasource.setUsername("root");
         datasource.setPassword("admin");
         return datasource;

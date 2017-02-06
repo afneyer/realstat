@@ -21,14 +21,15 @@ public class RealStatUtilTest {
 		assertEquals("48E732287", RealStatUtil.cleanApn("048E732208700"));
 		assertEquals("48F73779", RealStatUtil.cleanApn("048F737700900"));
 		
-		
-		
-		ParseDouble2 parser = new ParseDouble2();
-
-		assertEquals("2.0", parser.cleanStrDouble2("2.0"));
-		assertEquals(null, parser.cleanStrDouble2("MONTCL"));
-		assertEquals("3", parser.cleanStrDouble2("*3"));
-		
+	}
+	
+	@Test
+	public void testCleanLicense() {
+		assertEquals("1969778", RealStatUtil.cleanLicense("r01969778"));
+		assertEquals("969778", RealStatUtil.cleanLicense("r00969778"));
+		assertEquals("1976000", RealStatUtil.cleanLicense("1976000"));
+		assertEquals("197600", RealStatUtil.cleanLicense("RET00197600"));
+		assertEquals(null,RealStatUtil.cleanLicense("    A        "));
 	}
 
 }

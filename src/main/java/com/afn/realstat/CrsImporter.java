@@ -15,7 +15,7 @@ import com.vaadin.spring.annotation.SpringComponent;
  *
  */
 @SpringComponent
-public class CrsImporter extends AbstractImporter {
+public class CrsImporter extends AbstractImporter<RealProperty> {
 	
 	/**
 	 * 
@@ -104,8 +104,16 @@ public class CrsImporter extends AbstractImporter {
 		return header;
 	}
 
-	protected void saveOrUpdateEntity(AbstractEntity e) {
-		RealProperty rp = (RealProperty)e;
+
+	@Override
+	protected void clean(RealProperty entity) {
+		// TODO Auto-generated method stub		
+	}
+
+
+	@Override
+	protected void saveOrUpdateEntity(RealProperty rp) {
 		repository.saveOrUpdate(rp);
+		
 	}
 }

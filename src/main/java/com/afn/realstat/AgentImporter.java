@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.supercsv.cellprocessor.Optional;
 import org.supercsv.cellprocessor.constraint.NotNull;
 import org.supercsv.cellprocessor.ift.CellProcessor;
+import org.supercsv.prefs.CsvPreference;
 
 import com.vaadin.spring.annotation.SpringComponent;
 
@@ -12,8 +13,8 @@ import com.vaadin.spring.annotation.SpringComponent;
  *
  */
 @SpringComponent
-public class AgentImporter extends AbstractImporter {
-	
+public class AgentImporter extends AbstractImporter<Agent> {
+
 	/**
 	 * 
 	 */
@@ -21,6 +22,7 @@ public class AgentImporter extends AbstractImporter {
 	// private static final Logger log = LoggerFactory.getLogger(Application.class);
 
 	public AgentImporter() {
+		csvPref = CsvPreference.TAB_PREFERENCE;
 		entityClass = Agent.class;
 	}
 	
@@ -34,6 +36,7 @@ public class AgentImporter extends AbstractImporter {
 				
 				new NotNull(), // Agent Name
 				new NotNull(), // User Code
+				new Optional(), // Agent Phone
 				new Optional(), // Office Name
 				new Optional(), // Office Code
 				new Optional(), // Office Phone
@@ -59,7 +62,8 @@ public class AgentImporter extends AbstractImporter {
 			
 			// special translations
 			switch (header[i]) {
-			case "xxxxxxxxSamplexxxxx":
+			case "Agent License":
+				header[i] = "License";
 				break;
 			default:
 				header[i] = translateCsvFileFieldDefault(header[i]);
@@ -68,8 +72,31 @@ public class AgentImporter extends AbstractImporter {
 		return header;
 	}
 
-	protected void saveOrUpdateEntity(AbstractEntity e) {
-		Agent a = (Agent)e;
+
+
+	@Override
+	protected void clean(Agent a) {
+		
+		// translate bad data
+		if (a.getAgentName().startsWith("(Ravi) Luthra, Virender")) a.setAgentName("Lutra, Virender Ravi");
+		if (a.getAgentName().startsWith("- NO DRE# REQUIRED, ATTORNEY/LAW")) a.setAgentName("Attorney, Law");
+		if (a.getAgentName().startsWith(". Robertson, H")) a.setAgentName("Robertson, H");
+		if (a.getAgentName().startsWith("999999")) {
+			a.setAgentName("Non-Member, Non-Member");
+			a.setLicense("999999");
+		}
+		if (a.getAgentName().startsWith("xxx")) a.setAgentName("xxx");
+		if (a.getAgentName().startsWith("xxx")) a.setAgentName("xxx");
+		
+		// clean entity
+		a.clean();
+	}
+
+
+	@Override
+	protected void saveOrUpdateEntity(Agent a) {
 		agentRep.saveOrUpdate(a);
+		// TODO Auto-generated method stub
+		
 	}
 }

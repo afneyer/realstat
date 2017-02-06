@@ -10,13 +10,14 @@ import javax.persistence.UniqueConstraint;
 import org.springframework.data.domain.Example;
 
 @Entity
-@Table(name = "agent_volume", uniqueConstraints = @UniqueConstraint(columnNames = { "BreNo", "Year" }))
+@Table(name = "agent_volume", uniqueConstraints = @UniqueConstraint(columnNames = { "userCode", "year" }))
 public class AgentVolume extends AbstractEntity {
 
 	@Basic(optional = false)
-	private String breNo;
+	private String userCode;
 	@Basic(optional = false)
 	private Date year;
+	private String agentRaw;
 	private Integer rank;
 	private Integer unitsListed;
 	private Double volumeListed;
@@ -24,7 +25,7 @@ public class AgentVolume extends AbstractEntity {
 	private Double volumeSold;
 	private Integer unitsTotal;
 	private Double volumeTotal;
-	private String agentRaw;
+
 	private String officeRaw;
 	private Double percentMlsVolume;
 	private Double avgTtlPrice;
@@ -33,42 +34,56 @@ public class AgentVolume extends AbstractEntity {
 	public AgentVolume() {
 	}
 
-	public AgentVolume(String id, Date year) {
-		this.breNo = id;
+	public AgentVolume(String agentRaw, Date year) {
+		this.agentRaw = agentRaw;
 		this.year = year;
+		extractUserCode();
 	}
 
 	@Override
 	public String toString() {
 		return String.format(
-				"AgentVolume [Bre='%s', Year='%s',  AgentRaw='%s', OfficeRaw='%s', UnitsTotal='%s', VolumeTotal='%s',]",
-				breNo, year, agentRaw, officeRaw, unitsTotal, volumeTotal);
+				"AgentVolume [UC='%s', Year='%s',  AgentRaw='%s', OfficeRaw='%s', UnitsTotal='%s', VolumeTotal='%s',]",
+				userCode, year, agentRaw, officeRaw, unitsTotal, volumeTotal);
 	}
 
 	@Override
 	public void clean() {
 	}
+	
+	private void extractUserCode() {
+		String userCode = agentRaw.split("-")[1];
+		userCode.trim();
+	}
+
+	@Override
+	public boolean isValid() {
+		if (userCode != null && year != null) {
+			return true;
+		}
+		return false;
+	}
 
 	@Override
 	public Example<AbstractEntity> getRefExample() {
-		Example<AbstractEntity> e = Example.of(new AgentVolume(getBreNo(), getYear()));
+		Example<AbstractEntity> e = Example.of(new AgentVolume(getUserCode(), getYear()));
 		return e;
 	}
 
-	public String extractBrefromAgentRaw() {
-		String agr = getAgentRaw();
-		String bre = agr.replaceAll("[A-Z,a-z,\\-, ]", "");
-		return bre;
+	public String getAgentUserCode() {
+		String userCode = agentRaw;
+		
+		return userCode;
 	}
 
 	// All getters and setters
 
-	public String getBreNo() {
-		return breNo;
+	public String getUserCode() {
+		return userCode;
 	}
 
-	public void setBreNo(String breNo) {
-		this.breNo = breNo;
+	public void setUserCode(String userCode) {
+		this.userCode = userCode;
 	}
 
 	public Date getYear() {
@@ -175,10 +190,6 @@ public class AgentVolume extends AbstractEntity {
 		this.rank = rank;
 	}
 
-	@Override
-	public boolean isValid() {
-		// TODO Auto-generated method stub
-		return false;
-	}
+	
 
 }

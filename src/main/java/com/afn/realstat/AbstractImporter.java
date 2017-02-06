@@ -18,24 +18,21 @@ import com.vaadin.spring.annotation.SpringComponent;
  *
  */
 @SpringComponent
-public abstract class AbstractImporter {
+public abstract class AbstractImporter<T extends AbstractEntity> {
 
 	// @Autowired RealPropertyRepository repository;
 
 	private static final Logger importLog = LoggerFactory.getLogger("import");
-
-	/**
-	 * 
-	 */
-	public AbstractImporter() {
-	}
-
-	/**
-	 * @param crsFile
-	 */
-
+	protected CsvPreference csvPref = CsvPreference.STANDARD_PREFERENCE;
+	
 	@SuppressWarnings("rawtypes")
 	Class entityClass;
+
+	public AbstractImporter() {
+	}
+	
+	protected abstract void clean(T entity);
+	protected abstract void saveOrUpdateEntity(T entity);
 
 	public void importFile(File importFile) {
 
@@ -63,7 +60,7 @@ public abstract class AbstractImporter {
 		ICsvBeanReader beanReader = null;
 		try {
 
-			beanReader = new CsvBeanReader(new FileReader(file), CsvPreference.STANDARD_PREFERENCE);
+			beanReader = new CsvBeanReader(new FileReader(file), csvPref);
 
 			// the header elements are used to map the values to the bean (names
 			// must match)
@@ -72,14 +69,14 @@ public abstract class AbstractImporter {
 
 			header = mapHeader(header);
 
-			AbstractEntity entity;
-			while ((entity = (AbstractEntity) beanReader.read(entityClass, header, processors)) != null) {
+			T entity;
+			while ((entity = (T) beanReader.read(entityClass, header, processors)) != null) {
 				importLog.info("Importer before saving or updating entity:");
 				importLog.info("   Csv Line Nbr  =" + beanReader.getLineNumber());
 				importLog.info("   Csv Row Nbr   =" + beanReader.getRowNumber());
 				importLog.info("   Entity Class  =" + entityClass);
 				importLog.info("   Entity String =" + entity);
-				entity.clean();
+				clean(entity);
 				if (entity.isValid()) {
 					saveOrUpdateEntity(entity);
 				} else {
@@ -99,7 +96,7 @@ public abstract class AbstractImporter {
 
 	}
 
-	protected abstract void saveOrUpdateEntity(AbstractEntity entity);
+	
 
 	// abstract void readAndSaveNextEntity( CsvBeanReader r );
 

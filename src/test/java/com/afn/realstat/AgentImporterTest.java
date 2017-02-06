@@ -18,7 +18,7 @@ public class AgentImporterTest {
 
 	@Test
 	public void testImportFile() {
-		File file = new File("C:\\afndev\\apps\\realstat\\testdata","AgentsExport - Berkeley_Oakland.csv");
+		File file = new File("C:\\afndev\\apps\\realstat\\testdata","MLSAllAgentList20.txt");
 		importer.importFile(file);
 	}
 }
