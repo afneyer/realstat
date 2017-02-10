@@ -1,5 +1,7 @@
 package com.afn.realstat;
 
+import static org.junit.Assert.fail;
+
 import java.io.File;
 
 import org.junit.Test;
@@ -59,8 +61,29 @@ public class ImportAllTest {
 
 	@Test
 	public void importMlsFiles() {
-		File file;
-		file = new File("C:\\afndev\\apps\\realstat\\data", "MLSExport - 94611_0-1500.csv");
-		mlsImporter.importFile(file);
+		
+		File dir = new File("C:\\afndev\\apps\\realstat\\data");
+		  File[] directoryListing = dir.listFiles();
+		  if (directoryListing != null) {
+		    for (File file : directoryListing) {
+		        String fileName = file.getName();
+		        if (fileName.startsWith("MLSExport - 94611")) {
+		        	System.out.println("Importing file = " + fileName);
+		        	mlsImporter.importFile(file);
+		        	System.out.println("Importing file = " + fileName);
+		        }
+		    }
+		  } else {
+		    fail();
+		  }
+		
+//		file = new File("C:\\afndev\\apps\\realstat\\data", "MLSExport - 94611_0-1500.csv");
+//		mlsImporter.importFile(file);
+		// file = new File("C:\\afndev\\apps\\realstat\\data", "MLSExport - 94611_1501-plus.csv");
+		// mlsImporter.importFile(file);
+//		file = new File("C:\\afndev\\apps\\realstat\\data", "MLSExport - 94610-all.csv");
+//		mlsImporter.importFile(file);
+//		file = new File("C:\\afndev\\apps\\realstat\\data", "MLSExport - 94618-all.csv");
+//		mlsImporter.importFile(file);
 	}
 }

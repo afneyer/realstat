@@ -31,8 +31,9 @@ public abstract class AbstractImporter<T extends AbstractEntity> {
 	public AbstractImporter() {
 	}
 	
-	protected abstract void clean(T entity);
+	protected abstract void preProcessEntity(T entity);
 	protected abstract void saveOrUpdateEntity(T entity);
+	protected abstract void postProcessEntity(T entity);
 
 	public void importFile(File importFile) {
 
@@ -76,9 +77,10 @@ public abstract class AbstractImporter<T extends AbstractEntity> {
 				importLog.info("   Csv Row Nbr   =" + beanReader.getRowNumber());
 				importLog.info("   Entity Class  =" + entityClass);
 				importLog.info("   Entity String =" + entity);
-				clean(entity);
+				preProcessEntity(entity);
 				if (entity.isValid()) {
 					saveOrUpdateEntity(entity);
+					postProcessEntity(entity);
 				} else {
 					importLog.warn("Invalid entity skipped: Class=" + entity.getClass() + "  Entity=" + entity.toString());
 				}

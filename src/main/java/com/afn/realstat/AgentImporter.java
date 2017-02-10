@@ -75,7 +75,7 @@ public class AgentImporter extends AbstractImporter<Agent> {
 
 
 	@Override
-	protected void clean(Agent a) {
+	protected void preProcessEntity(Agent a) {
 		
 		// translate bad data
 		if (a.getAgentName().startsWith("(Ravi) Luthra, Virender")) a.setAgentName("Lutra, Virender Ravi");
@@ -99,4 +99,12 @@ public class AgentImporter extends AbstractImporter<Agent> {
 		// TODO Auto-generated method stub
 		
 	}
+
+
+	@Override
+	protected void postProcessEntity(Agent entity) {
+		// no post-processing needed		
+	}
+	
+	
 }

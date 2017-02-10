@@ -1,7 +1,5 @@
 package com.afn.realstat;
 
-import static org.hamcrest.CoreMatchers.startsWith;
-
 import java.util.List;
 import java.util.function.Function;
 
@@ -101,7 +99,7 @@ public class PropertyTransactionManager {
 			// DebugUtils.transactionRequired("PropertyTransactionManager.performEntityAction");
 			importLog.info("index =" + i + " iterating over PT=" + pt.toString());
 			linkPropertyTransactionToRealProperty(pt);
-			linkPropertyTransactionToAgents(pt);
+			// linkPropertyTransactionToAgents(pt);
 			// repository.save(pt)
 			i++;
 		}
@@ -262,29 +260,7 @@ public class PropertyTransactionManager {
 
 		}
 	}
-	/*
-	 * 
-	 * private void linkPropertyTransactionToAgentByAddress(PropertyTransaction
-	 * pt, Function<PropertyTransaction, String> agentNameGetter,
-	 * BiFunction<PropertyTransaction, Agent, String> agentSetter) { Agent agt =
-	 * null; String nameRaw = agentNameGetter.apply(pt); PersName name = new
-	 * PersName(nameRaw); if (name.getFirstName() != null && name.getLastName()
-	 * != null) {
-	 * 
-	 * List<Agent> list =
-	 * agtRepo.findByFirstNameAndLastName(name.getFirstName(),
-	 * name.getLastName()); if (list.size() == 1) { agt = list.get(0);
-	 * agentSetter.apply(pt, agt);
-	 * importLog.info("Property Transaction Linked to Agent by Name= " +
-	 * name.getFirstName() + " " + name.getLastName() + "  Using: ",
-	 * agentNameGetter.toString()); return; } }
-	 * 
-	 * importLog.info("Could not link Property Transaction to listing agent:" +
-	 * "license=" + pt.getListingAgentLicenseId() + "  name=" +
-	 * name.getFirstName() + " " + name.getLastName());
-	 * 
-	 * }
-	 */
+	
 
 	// TODO (iterate using pagable)
 	/*
@@ -302,4 +278,11 @@ public class PropertyTransactionManager {
 	 * }while (!page.isLastPage());
 	 * 
 	 */
+	
+	 /*
+	  * Properties sold in 2016 how long since last sale
+	  */
+		
+	
+
 }

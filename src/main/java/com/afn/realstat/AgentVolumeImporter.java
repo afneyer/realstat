@@ -82,7 +82,7 @@ public class AgentVolumeImporter extends AbstractImporter<AgentVolume> {
 	}
 
 	@Override
-	protected void clean(AgentVolume entity) {
+	protected void preProcessEntity(AgentVolume entity) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -92,5 +92,10 @@ public class AgentVolumeImporter extends AbstractImporter<AgentVolume> {
 		repository.saveOrUpdate(av);
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	protected void postProcessEntity(AgentVolume entity) {
+		// TODO Auto-generated method stub		
 	}
 }

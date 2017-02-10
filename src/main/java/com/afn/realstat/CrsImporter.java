@@ -16,17 +16,18 @@ import com.vaadin.spring.annotation.SpringComponent;
  */
 @SpringComponent
 public class CrsImporter extends AbstractImporter<RealProperty> {
-	
+
 	/**
 	 * 
 	 */
- 	@Autowired RealPropertyRepository repository;
-	// private static final Logger log = LoggerFactory.getLogger(Application.class);
+	@Autowired
+	RealPropertyRepository repository;
+	// private static final Logger log =
+	// LoggerFactory.getLogger(Application.class);
 
 	public CrsImporter() {
 		entityClass = RealProperty.class;
 	}
-	
 
 	/**
 	 * @return
@@ -68,10 +69,10 @@ public class CrsImporter extends AbstractImporter<RealProperty> {
 				new Optional(new ParseDate("yyyy")), // Year Built
 				new Optional(), // Dimensions
 				new Optional(), // Subdivision
-				new Optional( new ParseDouble() ), // Acreage
+				new Optional(new ParseDouble()), // Acreage
 				new Optional(), // Block
 				new Optional(), // Lot
-				new Optional( new ParseDouble2() ), // Lot Sq. Feet
+				new Optional(new ParseDouble2()), // Lot Sq. Feet
 				new Optional(), // Lot Dimensions
 				new Optional(), // Census Tract
 		};
@@ -80,8 +81,9 @@ public class CrsImporter extends AbstractImporter<RealProperty> {
 	}
 
 	/**
-	 * Maps the header of the csv-file (i.e. list of fields) into the field names of the entity
-	 * The default translator can be used if the entity are similar to the fields in the csv-file
+	 * Maps the header of the csv-file (i.e. list of fields) into the field
+	 * names of the entity The default translator can be used if the entity are
+	 * similar to the fields in the csv-file
 	 * 
 	 * @param header
 	 * @return
@@ -91,7 +93,7 @@ public class CrsImporter extends AbstractImporter<RealProperty> {
 		// translate each element of the header to the corresponding bean field
 		// name
 		for (int i = 0; i < header.length; i++) {
-			
+
 			// special translations
 			switch (header[i]) {
 			case "Owner 1":
@@ -104,16 +106,20 @@ public class CrsImporter extends AbstractImporter<RealProperty> {
 		return header;
 	}
 
-
 	@Override
-	protected void clean(RealProperty entity) {
-		// TODO Auto-generated method stub		
-	}
+	protected void preProcessEntity(RealProperty entity) {
+		// TODO Auto-generated method stub
 
+	}
 
 	@Override
 	protected void saveOrUpdateEntity(RealProperty rp) {
 		repository.saveOrUpdate(rp);
-		
+
+	}
+
+	@Override
+	protected void postProcessEntity(RealProperty entity) {
+		// no post-processing needed
 	}
 }
