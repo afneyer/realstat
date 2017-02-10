@@ -1,4 +1,4 @@
-package com.afn.realstat;
+package com.afn.realstat.sandbox;
 
 import java.util.Date;
 
@@ -8,12 +8,15 @@ import javax.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.afn.realstat.AgentVolume;
+import com.afn.realstat.AgentVolumeRepostitory;
+
 /**
  * @author Andreas
  *
  */
 @Component
-public class AaJpaPlumbing {
+public class EvaluateRepository {
 	
 	/**
 	 * 
@@ -24,7 +27,7 @@ public class AaJpaPlumbing {
  	@PersistenceContext
  	EntityManager em;
  	
-	public AaJpaPlumbing() {
+	public EvaluateRepository() {
 	}
 	
 	
