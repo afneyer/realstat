@@ -12,14 +12,30 @@ import javax.sql.DataSource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.jdbc.datasource.DataSourceUtils;
 
+/**
+ * The CsvFileWriter generate comma-delimited files for the use in Excel. It
+ * takes care of all the internal exception process and throws run-time
+ * exceptions for both IOExceptions and SQLExceptions.
+ * 
+ * The CsvFileWriter provides two ways of writing files:
+ * 
+ * 1) A header and file are supplied in the constructor, followed by appending
+ * the lines and finally closing the file writer.
+ * 
+ * 2) An SQL-Result set is provided. In this mode the CsvFileWriter will take
+ * care of the extraction of the header and the complete writing of the file.
+ * 
+ * @author Andreas Neyer
+ *
+ *         Copyright 2017 afndev. All rights reserved.
+ *
+ */
 public class CsvFileWriter {
 
 	private FileWriter fileWriter;
 	private String header;
 	private long row;
-	private long column;
 	private long numCols;
 
 	private static String LINE_SEP = "\r\n";
@@ -27,6 +43,14 @@ public class CsvFileWriter {
 
 	public static final Logger importLog = LoggerFactory.getLogger("import");
 
+	/**
+	 * Constructor
+	 * 
+	 * @param fileName:
+	 *            full file name as String
+	 * @param header:
+	 *            full header with comma-separated fields as String
+	 */
 	public CsvFileWriter(String fileName, String header) {
 		this.header = header;
 		try {
@@ -48,10 +72,15 @@ public class CsvFileWriter {
 			}
 		}
 		row = 1;
-		column = 0;
 		numCols = header.split(FIELD_SEP).length;
 	}
-	
+
+	/**
+	 * @param fileName:
+	 *            full file name as String
+	 * @param header:
+	 *            header as String[]
+	 */
 	public CsvFileWriter(String fileName, String[] header) {
 		this(fileName, convertToCsv(header));
 	}
@@ -70,6 +99,11 @@ public class CsvFileWriter {
 		}
 	}
 
+	/**
+	 * @param s:
+	 *            appends the line with fields already comma-separated as string
+	 *            to the file
+	 */
 	public void appendLine(String s) {
 		if (s.split(FIELD_SEP).length == numCols) {
 			try {
@@ -85,6 +119,9 @@ public class CsvFileWriter {
 		}
 	}
 
+	/**
+	 * Flushes and closes the FileWriter used by CsvFileWriter
+	 */
 	public void close() {
 		try {
 			fileWriter.flush();
@@ -94,9 +131,16 @@ public class CsvFileWriter {
 			e.printStackTrace();
 		}
 	}
-	
+
+	/**
+	 * Internal function to write a Result Set to a file
+	 * 
+	 * @param rs:
+	 *            query result set, header will be extracted from the result set
+	 * @param fileName
+	 */
 	protected static void writeResultSet(ResultSet rs, String fileName) {
-		
+
 		String head = null;
 		CsvFileWriter cfw = null;
 		ResultSetMetaData metadata = null;
@@ -110,7 +154,7 @@ public class CsvFileWriter {
 				head += metadata.getColumnName(i);
 			}
 			System.out.println(head);
-			
+
 			cfw = new CsvFileWriter(fileName, head);
 			while (rs.next()) {
 				String row = rs.getString(1);
@@ -124,15 +168,23 @@ public class CsvFileWriter {
 			throw new RuntimeException(e);
 		} finally {
 			if (cfw != null) {
-			cfw.close();
+				cfw.close();
 			}
 		}
 	}
-	
+
+	/**
+	 * Writes the result of a query into a comma-separated file for the use in
+	 * Excel
+	 * 
+	 * @param dataSource
+	 * @param queryString
+	 * @param fileName
+	 */
 	public static void writeQueryResult(DataSource dataSource, String queryString, String fileName) {
-		
+
 		System.out.println("Writing query result " + fileName);
-		
+
 		Connection conn = null;
 		try {
 			conn = dataSource.getConnection();
@@ -155,6 +207,6 @@ public class CsvFileWriter {
 			}
 
 		}
-		
+
 	}
 }
