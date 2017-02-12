@@ -1,9 +1,9 @@
 package com.afn.realstat;
 
-import static org.junit.Assert.assertTrue;
-
 import java.util.Date;
 import java.util.List;
+
+import javax.sql.DataSource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class SalesFrequencyStatistics {
 
 	public static final Logger importLog = LoggerFactory.getLogger("import");
+	
+	private String defaultFilePath;
 
 	@Autowired
 	PropertyTransactionRepository ptRepo;
@@ -24,7 +26,12 @@ public class SalesFrequencyStatistics {
 	@Autowired
 	RealPropertyRepository rpRepo;
 
+	@Autowired
+	DataSource afnDataSource;
+
 	public SalesFrequencyStatistics() {
+		// TODO retrieve base directory
+		 defaultFilePath = "C:\\afndev\\apps\\realstat\\logs\\analytics\\";
 	}
 
 	@Transactional
@@ -44,7 +51,8 @@ public class SalesFrequencyStatistics {
 			if (rp != null) {
 				// find all transactions for the property
 				Sort sort = new Sort(Direction.DESC, "closeDate");
-				List<PropertyTransaction> transForProperty = ptRepo.findByRealPropertyAndCloseDateBefore(rp, pt1.getCloseDate(), sort);
+				List<PropertyTransaction> transForProperty = ptRepo.findByRealPropertyAndCloseDateBefore(rp,
+						pt1.getCloseDate(), sort);
 
 				// assertTrue(transForProperty.size() > 0);
 
@@ -74,7 +82,27 @@ public class SalesFrequencyStatistics {
 			}
 		}
 		cfw.close();
+
+	}
+
+	public void salesByYearCityAndZip() {
 		
+		String query = 
+				"select year(closeDate) as closeYear, city, substring(zip,1,5) as zipCode, count(id) \n" +
+				"from property_transaction \n" +
+				"where closeDate is not null \n"+
+				"group by closeYear, city, zipCode \n";
+		
+		CsvFileWriter.writeQueryResult(afnDataSource, query, getFileName());
+
+	}
+	
+	private String getFileName() {
+		
+		String functionName = Thread.currentThread().getStackTrace()[2].getMethodName();
+		String fileName = functionName + ".csv";
+		String fullFileName = defaultFilePath + fileName;
+		return fullFileName;
 		
 	}
 
