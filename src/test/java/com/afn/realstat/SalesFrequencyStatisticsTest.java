@@ -28,6 +28,9 @@ public class SalesFrequencyStatisticsTest {
 	public void runAllStatistics() {
 		sfs.salesByYearCityAndZip();
 		sfs.doubleEndedTransactionsByAgent();
+		sfs.checkPropertyLinking();
+		sfs.checkAgentLinking();
+		
 	}
 
 }

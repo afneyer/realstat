@@ -105,6 +105,29 @@ public class SalesFrequencyStatistics {
 		
 		CsvFileWriter.writeQueryResult(afnDataSource, query, getFileName());
 	}
+	
+	public void checkPropertyLinking() {
+
+		String query = "select count(id) as totalCnt, count(realProperty_id) as linkedCnt, \n"
+				+ "100*count(realProperty_id)/count(id) as linkedPercent, substring(zip,1,5) as zipCode, city \n"
+				+ "from property_transaction where substring(zip,1,5) in ('94610', '94611', '94618') group by zipCode, city;";
+
+		CsvFileWriter.writeQueryResult(afnDataSource, query, getFileName());
+	}
+
+	public void checkAgentLinking() {
+
+		String query = "select status, \n"
+				+ "count(ListingAgentName), count(SellingAgent1Name), count(CoListAgentName), count(CoSellAgentName), \n"
+				+ "count(ListingAgentLicenseID), count(SellingAgent1LicenseId), count(CoListAgentLicenseId), count(CoSellAgentLicenseId), \n"
+				+ "count(ListAgentBreNum), count(SoldAgentBreNum), count(CoListAgentBreNum), count(CoSellAgentBreNum), \n"
+				+ "count(listingAgent_id), count(sellingAgent_id), count(listingAgent2_id), count(sellingAgent2_id) \n"
+				+ "from property_transaction group by status \n";
+		
+		System.out.print(query);
+
+		CsvFileWriter.writeQueryResult(afnDataSource, query, getFileName());
+	}
 
 	private String getFileName() {
 

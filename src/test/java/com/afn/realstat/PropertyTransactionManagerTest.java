@@ -16,6 +16,8 @@ public class PropertyTransactionManagerTest {
 	
 	@Test
 	public void testIteration() {
+		
+		// TODO change the nameing
 		pm.iterateAll();
 		
 	}

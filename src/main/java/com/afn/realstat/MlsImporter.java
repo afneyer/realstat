@@ -13,8 +13,12 @@ import com.vaadin.spring.annotation.SpringComponent;
 
 /**
  * @author Andreas
+ * 
+ *         TODO: importer misses over 400 records for no known reason
  *
  */
+
+// TODO: importer misses over 400 records for no known reason
 @SpringComponent
 public class MlsImporter extends AbstractImporter<PropertyTransaction> {
 
@@ -23,7 +27,7 @@ public class MlsImporter extends AbstractImporter<PropertyTransaction> {
 	 */
 	@Autowired
 	PropertyTransactionRepository ptRepo;
-	
+
 	@Autowired
 	PropertyTransactionManager pm;
 
@@ -112,7 +116,9 @@ public class MlsImporter extends AbstractImporter<PropertyTransaction> {
 				new Optional(), // Sold Agent BRE Num.
 				new Optional(), // Tax ID
 				new Optional(new ParseDouble2()), // TIC % Owner Offered
-				new Optional(new StrReplace(".", "0", new ParseInt())), // Units in Complex
+				new Optional(new StrReplace(".", "0", new ParseInt())), // Units
+																		// in
+																		// Complex
 				new Optional(new ParseDate("MM/dd/yyyy")), // Update Date
 				new Optional(), // Source
 				new Optional(), // Special Information
@@ -176,12 +182,12 @@ public class MlsImporter extends AbstractImporter<PropertyTransaction> {
 		}
 		return header;
 	}
-	
+
 	@Override
 	protected void preProcessEntity(PropertyTransaction pt) {
-		// TODO Auto-generated method stub	
+		// TODO Auto-generated method stub
 	}
-	
+
 	@Override
 	protected void saveOrUpdateEntity(PropertyTransaction pt) {
 		ptRepo.saveOrUpdate(pt);
@@ -192,11 +198,10 @@ public class MlsImporter extends AbstractImporter<PropertyTransaction> {
 		// pm.linkPropertyTransactionToAgents(pt);
 		// pm.linkPropertyTransactionToRealProperty(pt);
 	}
-	
+
 	@Override
 	protected PropertyTransaction getNewEntity() {
 		return new PropertyTransaction();
 	}
 
-	
 }
