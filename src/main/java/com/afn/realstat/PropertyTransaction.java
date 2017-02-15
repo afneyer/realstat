@@ -136,10 +136,9 @@ public class PropertyTransaction extends AbstractEntity {
 	public void clean() {
 	}
 
-	@SuppressWarnings("rawtypes")
 	@Override
-	public Example getRefExample() {
-		Example e = Example.of(new PropertyTransaction(this.getMlsNo()));
+	public Example<PropertyTransaction> getRefExample() {
+		Example<PropertyTransaction> e = Example.of(new PropertyTransaction(this.getMlsNo()));
 		return e;
 	}
 

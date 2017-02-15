@@ -76,12 +76,12 @@ public class Agent extends AbstractEntity {
 	}
 
 	@Override
-	public Example<AbstractEntity> getRefExample() {
+	public Example<Agent> getRefExample() {
 		Agent sampleAgent = new Agent();
 		sampleAgent.firstName = firstName;
 		sampleAgent.lastName = lastName;
 		sampleAgent.license = license;
-		Example<AbstractEntity> e = Example.of(sampleAgent);
+		Example<Agent> e = Example.of(sampleAgent);
 
 		return e;
 	}

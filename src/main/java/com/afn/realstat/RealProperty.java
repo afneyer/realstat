@@ -75,8 +75,8 @@ public class RealProperty extends AbstractEntity {
 	}
 
 	@Override
-	public Example<AbstractEntity> getRefExample() {
-		Example<AbstractEntity> e = Example.of(new RealProperty(this.getApn()));
+	public Example<RealProperty> getRefExample() {
+		Example<RealProperty> e = Example.of(new RealProperty(this.getApn()));
 		return e;
 	}
 	

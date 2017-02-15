@@ -48,7 +48,7 @@ public interface AbstractEntityRepository<T extends AbstractEntity> extends JpaR
 
 	@SuppressWarnings("rawtypes")
 	public default List<T> getExistingEntities(T newEntity) {
-		Example example = newEntity.getRefExample();
+		Example<T> example = newEntity.getRefExample();
 		@SuppressWarnings("unchecked")
 		List<T> list = this.findAll(example);
 		return list;

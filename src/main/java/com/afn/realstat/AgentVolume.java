@@ -65,8 +65,8 @@ public class AgentVolume extends AbstractEntity {
 	}
 
 	@Override
-	public Example<AbstractEntity> getRefExample() {
-		Example<AbstractEntity> e = Example.of(new AgentVolume(getUserCode(), getYear()));
+	public Example<AgentVolume> getRefExample() {
+		Example<AgentVolume> e = Example.of(new AgentVolume(getUserCode(), getYear()));
 		return e;
 	}
 
