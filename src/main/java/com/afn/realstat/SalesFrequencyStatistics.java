@@ -16,8 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Component
 public class SalesFrequencyStatistics {
 
-	public static final Logger importLog = LoggerFactory.getLogger("import");
-	
+	public static final Logger importLog = LoggerFactory.getLogger("app");
+
 	private String defaultFilePath;
 
 	@Autowired
@@ -31,7 +31,7 @@ public class SalesFrequencyStatistics {
 
 	public SalesFrequencyStatistics() {
 		// TODO retrieve base directory
-		 defaultFilePath = "C:\\afndev\\apps\\realstat\\logs\\analytics\\";
+		defaultFilePath = "C:\\afndev\\apps\\realstat\\logs\\analytics\\";
 	}
 
 	@Transactional
@@ -86,24 +86,33 @@ public class SalesFrequencyStatistics {
 	}
 
 	public void salesByYearCityAndZip() {
-		
-		String query = 
-				"select year(closeDate) as closeYear, city, substring(zip,1,5) as zipCode, count(id) \n" +
-				"from property_transaction \n" +
-				"where closeDate is not null \n"+
-				"group by closeYear, city, zipCode \n";
-		
+
+		String query = "select year(closeDate) as closeYear, city, substring(zip,1,5) as zipCode, count(id) \n"
+				+ "from property_transaction \n" + "where closeDate is not null \n"
+				+ "group by closeYear, city, zipCode \n";
+
 		CsvFileWriter.writeQueryResult(afnDataSource, query, getFileName());
 
 	}
-	
-	private String getFileName() {
+
+	public void doubleEndedTransactionsByAgent() {
+
+		String query = "select sum(case when(pt.listingAgent_id = pt.sellingAgent_id) then 1 else 0 end) as doubleEnded, \n"
+				+ "(100*sum(case when(pt.listingAgent_id = pt.sellingAgent_id) then 1 else 0 end)/count(pt.id)) as percentDoubleEnded, count(pt.id) as allTrans, a.agentName \n"
+				+ "from property_transaction pt, agent a \n"
+				+ "where pt.sellingAgent_id = a.id or pt.listingAgent_id = a.id \n" + "group by a.agentName \n"
+				+ "having count(pt.id) > 20 \n" + "order by percentDoubleEnded desc \n";
 		
+		CsvFileWriter.writeQueryResult(afnDataSource, query, getFileName());
+	}
+
+	private String getFileName() {
+
 		String functionName = Thread.currentThread().getStackTrace()[2].getMethodName();
 		String fileName = functionName + ".csv";
 		String fullFileName = defaultFilePath + fileName;
 		return fullFileName;
-		
+
 	}
 
 }

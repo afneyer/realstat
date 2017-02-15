@@ -15,7 +15,7 @@ import org.springframework.data.domain.Example;
 		@Index(name = "idx_firstName", columnList = "lastName"), @Index(name = "idx_license", columnList = "license") })
 public class Agent extends AbstractEntity {
 
-	public static final Logger log = LoggerFactory.getLogger("import");
+	public static final Logger log = LoggerFactory.getLogger("app");
 
 	private String agentName;
 	private String userCode;

@@ -16,6 +16,7 @@ public class ParseDouble2Test {
 		assertEquals("2.0", parser.cleanStrDouble2("2.0"));
 		assertEquals(null, parser.cleanStrDouble2("MONTCL"));
 		assertEquals("3", parser.cleanStrDouble2("*3"));
+		assertEquals(null,parser.cleanStrDouble2("."));
 		
 	}
 

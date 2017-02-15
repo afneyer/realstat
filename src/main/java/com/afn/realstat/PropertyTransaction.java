@@ -16,7 +16,7 @@ import org.springframework.data.domain.Example;
 @Table(name = "property_transaction", uniqueConstraints = @UniqueConstraint(columnNames = { "mlsNo" }))
 public class PropertyTransaction extends AbstractEntity {
 
-	public static final Logger log = LoggerFactory.getLogger(Application.class);
+	public static final Logger log = LoggerFactory.getLogger("app");
 
 	@Basic(optional = false)
 	private Integer mlsNo;
@@ -136,9 +136,10 @@ public class PropertyTransaction extends AbstractEntity {
 	public void clean() {
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
-	public Example<AbstractEntity> getRefExample() {
-		Example<AbstractEntity> e = Example.of(new PropertyTransaction(this.getMlsNo()));
+	public Example getRefExample() {
+		Example e = Example.of(new PropertyTransaction(this.getMlsNo()));
 		return e;
 	}
 

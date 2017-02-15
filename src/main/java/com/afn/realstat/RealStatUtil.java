@@ -1,6 +1,12 @@
 package com.afn.realstat;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+
 import org.apache.commons.lang3.StringUtils;
+import org.junit.Test;
 
 /**
  * @author Andreas
@@ -91,6 +97,21 @@ public class RealStatUtil {
 			}
 		} else {
 			return null;
+		}
+	}
+
+	public static int countLines(String fileName) {
+		BufferedReader reader = null;
+		try {
+			reader = new BufferedReader(new FileReader(fileName));
+			int lines = 0;
+			while (reader.readLine() != null) {
+				lines++;
+			}
+			reader.close();
+			return lines;
+		} catch (IOException e) {
+			throw new RuntimeException(e);
 		}
 	}
 

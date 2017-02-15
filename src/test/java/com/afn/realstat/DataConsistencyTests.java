@@ -1,7 +1,9 @@
 package com.afn.realstat;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -19,17 +21,20 @@ import org.springframework.test.context.junit4.SpringRunner;
         webEnvironment = SpringBootTest.WebEnvironment.NONE)
 public class DataConsistencyTests {
 	
-	private static final Logger log = LoggerFactory.getLogger(Application.class);
+	private static final Logger log = LoggerFactory.getLogger("app");
 
     @Autowired
-    private RealPropertyRepository repository;
+    private RealPropertyRepository rpRepo;
+    
+    @Autowired
+    private PropertyTransactionRepository ptRepo;
 
     @Test
     public void checkForDuplicateApnNumbers() {
         
-    	long numRecs = repository.count();
+    	long numRecs = rpRepo.count();
     	log.info("RealProperty record count = " + numRecs);
-    	List<RealProperty> properties = repository.findAll();
+    	List<RealProperty> properties = rpRepo.findAll();
 
     	
     	HashMap<String, RealProperty> list = new HashMap<String, RealProperty>();
@@ -49,5 +54,29 @@ public class DataConsistencyTests {
     		assertEquals(0,dupApn.size());
     	}
     }
+    
+    @Test
+    public void checkMlsImportCompleteness() {
+    	
+    	int records =0;    	
+    	File dir = new File("C:\\afndev\\apps\\realstat\\data");
+		File[] directoryListing = dir.listFiles();
+		if (directoryListing != null) {
+		    for (File file : directoryListing) {
+		        String fileName = file.getName();
+		        if (fileName.startsWith("MLSExport")) {
+		        	int lineCount = RealStatUtil.countLines(dir + "\\" + fileName);
+		        	System.out.println("Line count for file " + fileName + " = " + lineCount);
+		        	records += lineCount - 1;
+		        }
+		    }
+		  } else {
+		    fail();
+		  }
+		long ptCount = ptRepo.count();
+		assertEquals(records, ptCount);
+    }
+    
+    
 
 }

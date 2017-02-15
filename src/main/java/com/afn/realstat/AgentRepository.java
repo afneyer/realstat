@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 
 public interface AgentRepository extends AbstractEntityRepository<Agent> {
 
-	public static final Logger log = LoggerFactory.getLogger("import");
+	public static final Logger log = LoggerFactory.getLogger("app");
 
 	List<Agent> findByLicense(String license);
 

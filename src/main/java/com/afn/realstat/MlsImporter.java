@@ -27,13 +27,12 @@ public class MlsImporter extends AbstractImporter<PropertyTransaction> {
 	@Autowired
 	PropertyTransactionManager pm;
 
-	// private static final Logger log = LoggerFactory.getLogger(Application.class);
+	// private static final Logger log = LoggerFactory.getLogger("import");
 
 	/**
 	 * 
 	 */
 	public MlsImporter() {
-		entityClass = PropertyTransaction.class;
 	}
 
 	/**
@@ -177,20 +176,27 @@ public class MlsImporter extends AbstractImporter<PropertyTransaction> {
 		}
 		return header;
 	}
-
+	
 	@Override
 	protected void preProcessEntity(PropertyTransaction pt) {
 		// TODO Auto-generated method stub	
 	}
 	
+	@Override
 	protected void saveOrUpdateEntity(PropertyTransaction pt) {
 		ptRepo.saveOrUpdate(pt);
 	}
 
 	@Override
 	protected void postProcessEntity(PropertyTransaction pt) {
-		pm.linkPropertyTransactionToAgents(pt);
-		pm.linkPropertyTransactionToRealProperty(pt);
+		// pm.linkPropertyTransactionToAgents(pt);
+		// pm.linkPropertyTransactionToRealProperty(pt);
+	}
+	
+	@Override
+	protected PropertyTransaction getNewEntity() {
+		return new PropertyTransaction();
 	}
 
+	
 }

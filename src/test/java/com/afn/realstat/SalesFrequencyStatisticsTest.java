@@ -23,5 +23,11 @@ public class SalesFrequencyStatisticsTest {
 	public void TestSalesByYearCityAndZip() {
 		sfs.salesByYearCityAndZip();
 	}
+	
+	@Test
+	public void runAllStatistics() {
+		sfs.salesByYearCityAndZip();
+		sfs.doubleEndedTransactionsByAgent();
+	}
 
 }

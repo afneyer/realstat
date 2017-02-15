@@ -67,23 +67,13 @@ public class ImportAllTest {
 		  if (directoryListing != null) {
 		    for (File file : directoryListing) {
 		        String fileName = file.getName();
-		        if (fileName.startsWith("MLSExport - 94611")) {
+		        if (fileName.startsWith("MLSExport")) {
 		        	System.out.println("Importing file = " + fileName);
 		        	mlsImporter.importFile(file);
-		        	System.out.println("Importing file = " + fileName);
 		        }
 		    }
 		  } else {
 		    fail();
 		  }
-		
-//		file = new File("C:\\afndev\\apps\\realstat\\data", "MLSExport - 94611_0-1500.csv");
-//		mlsImporter.importFile(file);
-		// file = new File("C:\\afndev\\apps\\realstat\\data", "MLSExport - 94611_1501-plus.csv");
-		// mlsImporter.importFile(file);
-//		file = new File("C:\\afndev\\apps\\realstat\\data", "MLSExport - 94610-all.csv");
-//		mlsImporter.importFile(file);
-//		file = new File("C:\\afndev\\apps\\realstat\\data", "MLSExport - 94618-all.csv");
-//		mlsImporter.importFile(file);
 	}
 }

@@ -26,7 +26,6 @@ public class CrsImporter extends AbstractImporter<RealProperty> {
 	// LoggerFactory.getLogger(Application.class);
 
 	public CrsImporter() {
-		entityClass = RealProperty.class;
 	}
 
 	/**
@@ -121,5 +120,10 @@ public class CrsImporter extends AbstractImporter<RealProperty> {
 	@Override
 	protected void postProcessEntity(RealProperty entity) {
 		// no post-processing needed
+	}
+
+	@Override
+	protected RealProperty getNewEntity() {
+		return new RealProperty();
 	}
 }

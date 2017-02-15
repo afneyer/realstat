@@ -4,6 +4,6 @@ public interface AgentVolumeRepostitory extends AbstractEntityRepository<AgentVo
 
 	// List<AgentVolume> findByBreNo(String breNo);
 	
-	// public static final Logger log = LoggerFactory.getLogger(Application.class);
+	// public static final Logger log = LoggerFactory.getLogger("app");
 	
 }

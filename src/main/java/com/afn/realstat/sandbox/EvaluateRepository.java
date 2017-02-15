@@ -22,7 +22,7 @@ public class EvaluateRepository {
 	 * 
 	 */
  	@Autowired AgentVolumeRepostitory repository;
-	// private static final Logger log = LoggerFactory.getLogger(Application.class);
+	// private static final Logger log = LoggerFactory.getLogger("app");
  	
  	@PersistenceContext
  	EntityManager em;

@@ -26,6 +26,7 @@ public abstract class AbstractEntity {
 		return String.format( "Entity Class = %s, Id= %2 ]", this.getClass(), id );
 	}
 
+	// TODO fix
 	@SuppressWarnings("rawtypes")
 	public abstract Example getRefExample();
 

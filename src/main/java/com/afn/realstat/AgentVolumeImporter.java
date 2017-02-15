@@ -20,10 +20,9 @@ public class AgentVolumeImporter extends AbstractImporter<AgentVolume> {
 	 * 
 	 */
  	@Autowired AgentVolumeRepostitory repository;
-	// private static final Logger log = LoggerFactory.getLogger(Application.class);
+	// private static final Logger log = LoggerFactory.getLogger("import);
 
 	public AgentVolumeImporter() {
-		entityClass = AgentVolume.class;
 	}
 	
 
@@ -98,4 +97,12 @@ public class AgentVolumeImporter extends AbstractImporter<AgentVolume> {
 	protected void postProcessEntity(AgentVolume entity) {
 		// TODO Auto-generated method stub		
 	}
+
+
+	@Override
+	protected AgentVolume getNewEntity() {
+		return new AgentVolume();
+	}
+	
+	
 }

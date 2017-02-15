@@ -2,6 +2,8 @@ package com.afn.realstat;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.File;
+
 import org.junit.Test;
 import org.supercsv.cellprocessor.ParseDouble2;
 
@@ -31,5 +33,15 @@ public class RealStatUtilTest {
 		assertEquals("197600", RealStatUtil.cleanLicense("RET00197600"));
 		assertEquals(null,RealStatUtil.cleanLicense("    A        "));
 	}
-
+	
+	@Test
+	public void testCountLines() {
+		
+		String fileName = new String("C:\\afndev\\apps\\realstat\\data\\MLSExport - 94610_0-1000.csv");
+		int lines = RealStatUtil.countLines(fileName);
+		assertEquals(3087, lines);
+	}
 }
+	
+
+

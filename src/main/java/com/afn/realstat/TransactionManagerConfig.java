@@ -16,7 +16,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableTransactionManagement
 class TransactionManagerConfig {
 
-	public static final Logger log = LoggerFactory.getLogger(Application.class);
+	public static final Logger log = LoggerFactory.getLogger("app");
 
 	@Autowired
 	EntityManagerFactory emf;

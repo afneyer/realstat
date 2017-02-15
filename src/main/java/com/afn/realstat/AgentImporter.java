@@ -19,11 +19,10 @@ public class AgentImporter extends AbstractImporter<Agent> {
 	 * 
 	 */
  	@Autowired AgentRepository agentRep;
-	// private static final Logger log = LoggerFactory.getLogger(Application.class);
+	// private static final Logger log = LoggerFactory.getLogger("import");
 
 	public AgentImporter() {
 		csvPref = CsvPreference.TAB_PREFERENCE;
-		entityClass = Agent.class;
 	}
 	
 
@@ -104,6 +103,12 @@ public class AgentImporter extends AbstractImporter<Agent> {
 	@Override
 	protected void postProcessEntity(Agent entity) {
 		// no post-processing needed		
+	}
+
+
+	@Override
+	protected Agent getNewEntity() {
+		return new Agent();
 	}
 	
 	

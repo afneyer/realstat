@@ -51,14 +51,14 @@ public class ParseDouble2 extends CellProcessorAdaptor {
 
 	public String cleanStrDouble2(String inStr) {
 		// remove commas
-		String outStr = new String(inStr.toString());
+		String outStr = new String(inStr);
 		outStr = outStr.replaceAll(",", "");
 		outStr = outStr.replaceAll("\\$", "");
 		outStr = outStr.replaceAll(" ", "");
 		outStr = outStr.replaceAll("\\%", "");
 		outStr = outStr.replaceAll("[A-Z]", "");
 		outStr = outStr.replaceAll("\\*", "");
-		if (outStr.isEmpty()) {
+		if (outStr.isEmpty() || outStr.equals(".")) {
 			outStr = null;
 		}
 		return outStr;

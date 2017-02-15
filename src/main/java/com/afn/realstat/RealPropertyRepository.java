@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 
 public interface RealPropertyRepository extends AbstractEntityRepository<RealProperty> {
 	
-	public static final Logger log = LoggerFactory.getLogger(Application.class);
+	public static final Logger log = LoggerFactory.getLogger("app");
 
 	List<RealProperty> findByLastNameStartsWithIgnoreCase(String lastName);
 

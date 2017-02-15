@@ -11,7 +11,7 @@ import javatools.parsers.Name.PersonName;
 
 public class PersName {
 
-	private static final Logger log = (Logger) LoggerFactory.getLogger("import");
+	private static final Logger log = (Logger) LoggerFactory.getLogger("app");
 
 	private String rawName;
 	private String normalizedName;

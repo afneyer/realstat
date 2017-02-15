@@ -24,9 +24,6 @@ public abstract class AbstractImporter<T extends AbstractEntity> {
 
 	private static final Logger importLog = LoggerFactory.getLogger("import");
 	protected CsvPreference csvPref = CsvPreference.STANDARD_PREFERENCE;
-	
-	@SuppressWarnings("rawtypes")
-	Class entityClass;
 
 	public AbstractImporter() {
 	}
@@ -34,20 +31,17 @@ public abstract class AbstractImporter<T extends AbstractEntity> {
 	protected abstract void preProcessEntity(T entity);
 	protected abstract void saveOrUpdateEntity(T entity);
 	protected abstract void postProcessEntity(T entity);
+	protected abstract T getNewEntity();
 
-	public void importFile(File importFile) {
-
+	protected void importFile(File importFile) {
+		
 		try {
+			
 			readWithCsvBeanReader(importFile);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			importLog.error("Error in importing file " + importFile.getName());
+			throw new RuntimeException(e);
 		}
-
-		// print all records
-		// CustomerRepository repository;
-		// log.info( new Long(repository.count()).toString() );
-		// log.info("After all records have been read");
 
 	}
 
@@ -55,8 +49,9 @@ public abstract class AbstractImporter<T extends AbstractEntity> {
 	 * @param file
 	 * @throws Exception
 	 */
-	@SuppressWarnings("unchecked")
 	private void readWithCsvBeanReader(File file) throws Exception {
+		
+		long totalImported = 0;
 
 		ICsvBeanReader beanReader = null;
 		try {
@@ -69,31 +64,43 @@ public abstract class AbstractImporter<T extends AbstractEntity> {
 			final CellProcessor[] processors = getProcessors();
 
 			header = mapHeader(header);
-
-			T entity;
-			while ((entity = (T) beanReader.read(entityClass, header, processors)) != null) {
-				importLog.info("Importer before saving or updating entity:");
-				importLog.info("   Csv Line Nbr  =" + beanReader.getLineNumber());
-				importLog.info("   Csv Row Nbr   =" + beanReader.getRowNumber());
-				importLog.info("   Entity Class  =" + entityClass);
-				importLog.info("   Entity String =" + entity);
+			 
+			T entity = beanReader.read(getNewEntity(), header, processors);
+			while (entity != null) {
+				importLog.info("Going to import:" + 
+				"   Csv Line Nbr =" + beanReader.getLineNumber() +
+				"   Csv Row Nbr =" + beanReader.getRowNumber() +
+				"   Entity Class =" + entity.getClass() +
+				"   Entity String =" + entity);
 				preProcessEntity(entity);
 				if (entity.isValid()) {
 					saveOrUpdateEntity(entity);
 					postProcessEntity(entity);
+					totalImported++;
 				} else {
 					importLog.warn("Invalid entity skipped: Class=" + entity.getClass() + "  Entity=" + entity.toString());
 				}
+				entity = beanReader.read(getNewEntity(), header, processors);
 			}
-
+		} catch (Exception e) {
+			importLog.error("Cannot import file " + file.getName());
+			throw new RuntimeException(e);
 		}
 
 		finally
 
 		{
+			System.out.println("Imported " + totalImported + " from file " + file.getName());
 			if (beanReader != null) {
 				beanReader.close();
 			}
+		}
+		
+		try {
+			this.equals(beanReader);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 
 	}
@@ -167,5 +174,7 @@ public abstract class AbstractImporter<T extends AbstractEntity> {
 		stmt = new Statement(bean, field, new Object[] { value });
 		stmt.execute();
 	}
+
+	
 
 }

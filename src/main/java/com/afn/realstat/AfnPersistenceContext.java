@@ -23,7 +23,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableAutoConfiguration
 class AfnPersistenceContext {
 	
-	public static final Logger log = LoggerFactory.getLogger(Application.class);
+	public static final Logger log = LoggerFactory.getLogger("app");
 	
 	@Bean
 	public DataSource afn1DataSource() {

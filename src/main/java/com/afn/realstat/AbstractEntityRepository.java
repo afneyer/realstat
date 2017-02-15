@@ -11,7 +11,7 @@ import org.springframework.data.repository.NoRepositoryBean;
 @NoRepositoryBean
 public interface AbstractEntityRepository<T extends AbstractEntity> extends JpaRepository<T, Long> {
 
-	public static final Logger log = LoggerFactory.getLogger(Application.class);
+	public static final Logger log = LoggerFactory.getLogger("app");
 
 	public default T saveOrUpdate(T newEntity) {
 
@@ -23,10 +23,14 @@ public interface AbstractEntityRepository<T extends AbstractEntity> extends JpaR
 		}
 
 		if (existingEntities.size() == 1) {
+			log.info("Found exisiting entity for " + newEntity.getClass().getName() +  newEntity.toString());
 			newEntity = updateEntity(existingEntities.get(0),newEntity);
+			log.info("Updated exisiting entity for " + newEntity.getClass().getName() +  newEntity.toString());
 			return newEntity;
 		} else {
+			log.info("No exisiting entity for " + newEntity.getClass().getName() +  newEntity.toString());
 			save(newEntity);
+			log.info("Created new entity for " + newEntity.getClass().getName() +  newEntity.toString());
 			return newEntity;
 		}
 	}
@@ -44,10 +48,9 @@ public interface AbstractEntityRepository<T extends AbstractEntity> extends JpaR
 
 	@SuppressWarnings("rawtypes")
 	public default List<T> getExistingEntities(T newEntity) {
-		Example example = ((AbstractEntity) newEntity).getRefExample();
+		Example example = newEntity.getRefExample();
 		@SuppressWarnings("unchecked")
 		List<T> list = this.findAll(example);
 		return list;
 	}
-
 }

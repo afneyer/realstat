@@ -45,9 +45,13 @@ public class Address {
 		setRawAddress(street + ", " + city + ", " + zip);
 		
 		// if the zip has a 4-digit extension remove it because the parser does not deal with it
-		String[] zipParts = zip.split("-");
-		if (zipParts.length ==2) {
-			zip = zipParts[0];
+		if (zip != null) {
+			String[] zipParts = zip.split("-");
+			if (zipParts.length ==2) {
+				zip = zipParts[0];
+			}
+		} else {
+			zip = "00000";
 		}
 
 		UnparsedAddress upa = new UnparsedAddress(street, city, zip);
