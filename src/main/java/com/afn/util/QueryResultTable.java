@@ -1,16 +1,19 @@
-package com.afn.realstat;
+package com.afn.util;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.List;
+
+import javax.sql.DataSource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * StringTable consists of a header and table of data as strings Data in the
+ * QueryResultTable consists of a header and table of data as strings Data in the
  * table can be accessed by index e.g. get(rowIndex, columnIndex). The first row
  * or column is 1.
  * 
@@ -19,17 +22,25 @@ import org.slf4j.LoggerFactory;
  *         Copyright 2017 afndev. All rights reserved.
  *
  */
-public class StringTable {
-	
+public class QueryResultTable {
+
 	public static final Logger log = LoggerFactory.getLogger("app");
 
 	private ArrayList<String> header;
 	private ArrayList<ArrayList<String>> rows;
 
-	public StringTable(ResultSet rs) {
-		ResultSetMetaData metadata;
-		int columnCount;
+	public QueryResultTable(DataSource ds, String query) {
+
+		Connection conn = null;
 		try {
+			conn = ds.getConnection();
+			PreparedStatement ps = conn.prepareStatement(query);
+
+			ResultSet rs = ps.executeQuery();
+
+			ResultSetMetaData metadata;
+			int columnCount;
+			// try { TODO remove
 			metadata = rs.getMetaData();
 			columnCount = metadata.getColumnCount();
 			header = new ArrayList<String>(columnCount);
@@ -38,6 +49,7 @@ public class StringTable {
 				header.add(metadata.getColumnName(i));
 			}
 
+			rows = new ArrayList<ArrayList<String>>(1);
 			while (rs.next()) {
 				ArrayList<String> row = new ArrayList<String>(columnCount);
 				row.add(rs.getString(1));
@@ -47,19 +59,33 @@ public class StringTable {
 				System.out.println(row);
 				rows.add(row);
 			}
+			// } catch (SQLException e) {
+			// throw new RuntimeException(e);
+			// }
+
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
+		} finally {
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					throw new RuntimeException(e);
+				}
+			}
+
 		}
+
 	}
 
 	public String get(int i, int j) {
-		return rows.get(i).get(j);
+		return rows.get(i-1).get(j-1);
 	}
 
 	public void set(int ri, int cj, String s) {
 
 		if (cj > header.size()) {
-			String msg = "ColumnIndex for a StringTable must be smaller than the header size: Add header label(s) first!";
+			String msg = "ColumnIndex for a QueryResultTable must be smaller than the header size: Add header label(s) first!";
 			msg += "columnIndex = " + cj + " header size = " + getColumnCount();
 			log.error(msg);
 			throw new RuntimeException(new Exception(msg));
@@ -80,10 +106,6 @@ public class StringTable {
 
 	}
 
-	public List<String> getHeader() {
-		return header;
-	}
-	
 	public void addHeader(String headerString) {
 		this.header.add(headerString);
 	}
@@ -95,5 +117,9 @@ public class StringTable {
 
 	public int getColumnCount() {
 		return header.size();
+	}
+
+	public String getHeaderElement(int i) {
+		return header.get(i - 1);
 	}
 }
