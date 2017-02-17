@@ -2,11 +2,6 @@ package com.afn.realstat;
 
 import java.io.FileWriter;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
 
 import javax.sql.DataSource;
 
@@ -42,7 +37,7 @@ public class CsvFileWriter {
 
 	private static String LINE_SEP = "\r\n";
 	private static String FIELD_SEP = ",";
-
+			
 	public static final Logger importLog = LoggerFactory.getLogger("import");
 
 	/**
