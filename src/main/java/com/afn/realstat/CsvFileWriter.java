@@ -30,7 +30,7 @@ import com.afn.util.QueryResultTable;
  * 
  * @author Andreas Neyer
  *
- *         Copyright 2017 afndev. All rights reserved.
+ * Copyright 2017 afndev. All rights reserved.
  *
  */
 public class CsvFileWriter {
@@ -135,48 +135,6 @@ public class CsvFileWriter {
 	}
 
 	/**
-	 * Internal function to write a Result Set to a file
-	 * 
-	 * @param rs:
-	 *            query result set, header will be extracted from the result set
-	 * @param fileName
-	 */
-	/*
-	protected static void writeResultSet(ResultSet rs, String fileName) {
-
-		String head = null;
-		CsvFileWriter cfw = null;
-		ResultSetMetaData metadata = null;
-		int columnCount = 0;
-		try {
-			metadata = rs.getMetaData();
-			columnCount = metadata.getColumnCount();
-			head = metadata.getColumnLabel(1);
-			for (int i = 2; i <= columnCount; i++) {
-				head += FIELD_SEP;
-				head += metadata.getColumnName(i);
-			}
-			System.out.println(head);
-
-			cfw = new CsvFileWriter(fileName, head);
-			while (rs.next()) {
-				String row = rs.getString(1);
-				for (int i = 2; i <= columnCount; i++) {
-					row += FIELD_SEP + rs.getString(i);
-				}
-				System.out.println(row);
-				cfw.appendLine(row);
-			}
-		} catch (SQLException e) {
-			throw new RuntimeException(e);
-		} finally {
-			if (cfw != null) {
-				cfw.close();
-			}
-		}
-	} */
-
-	/**
 	 * Writes the result of a query into a comma-separated file for the use in
 	 * Excel
 	 * 
@@ -202,19 +160,19 @@ public class CsvFileWriter {
 		CsvFileWriter cfw = null;
 		int columnCount = 0;
 			columnCount = qrt.getColumnCount();
-			head = qrt.getHeaderElement(0);
+			head = quoteString(qrt.getHeaderElement(0));
 			for (int i = 1; i < columnCount; i++) {
 				head += FIELD_SEP;
-				head += qrt.getHeaderElement(i);
+				head += quoteString(qrt.getHeaderElement(i));
 			}
 			System.out.println(head);
 
 			cfw = new CsvFileWriter(fileName, head);
 			
 			for (int i = 0; i < qrt.getRowCount(); i++) {
-				String row = qrt.get(i, 0);
+				String row = quoteString(qrt.get(i, 0));
 				for (int j = 1; j < columnCount; j++) {
-					row += FIELD_SEP + qrt.get(i, j);
+					row += FIELD_SEP + quoteString(qrt.get(i, j));
 				}
 				System.out.println(row);
 				cfw.appendLine(row);
@@ -222,8 +180,19 @@ public class CsvFileWriter {
 			cfw.close();	
 	}
 	
-	public String quoteString(String s) {
-		String quote = "\"";
-		return quote + s + quote;
+	
+	/**
+	 * Returns a string surrounded by double-quotes in case the string contains the field separator.
+	 * This way the file can be consumed by Excel.
+	 * 
+	 * @param s
+	 * @return
+	 */
+	public static String quoteString(String s) {
+		if (s.matches(FIELD_SEP)) {
+			String quote = "\"";
+			s = quote + s + quote;
+		}
+		return s;
 	}
 }
