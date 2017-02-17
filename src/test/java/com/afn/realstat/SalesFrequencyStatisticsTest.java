@@ -15,8 +15,7 @@ public class SalesFrequencyStatisticsTest {
 
 	@Test
 	public void TestTimeBetweenSales2016() {
-		String fileName = "C:\\afndev\\apps\\realstat\\logs\\testoutput\\timeBetweenSales2016.txt";
-		sfs.timeBetweenSales2016(fileName);
+		sfs.timeBetweenSales2016();
 	}
 
 	@Test
@@ -26,7 +25,7 @@ public class SalesFrequencyStatisticsTest {
 	
 	@Test
 	public void SalesActivtyByYearCityZipBuildingType() {
-		sfs.SalesActivtyByYearCityZipBuildingType();
+		sfs.salesActivtyByYearCityZipBuildingType();
 	}
 	
 	@Test

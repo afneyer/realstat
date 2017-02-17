@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 
 import javax.sql.DataSource;
@@ -26,6 +27,8 @@ public class CsvFileWriterTest {
 
 	@Autowired
 	private DataSource afnDataSource;
+	
+	private static String filePath = System.getProperty("user.dir") + "\\logs\\testoutput";
 
 	/**
 	 * Sets up the test fixture. (Called before every test case method.)
@@ -39,10 +42,12 @@ public class CsvFileWriterTest {
 	@Test
 	public void testFileWriter() {
 
-		String fileName = "C:\\afndev\\apps\\realstat\\logs\\testoutput\\testFileWriter.txt";
+		String fileName = "testFileWriter.txt";
+		File file = new File(filePath,fileName);
+		System.out.println(file.getAbsolutePath() + file.getName());
 		String header = "FirstName, LastName, City, Zip";
 
-		CsvFileWriter cfw = new CsvFileWriter(fileName, header);
+		CsvFileWriter cfw = new CsvFileWriter(file, header);
 		String line1 = "Andreas, Neyer, Oakland, 94611";
 		String line2 = "Kathleen, Callahan, Piedmont, 94610";
 		cfw.appendLine(line1);
@@ -51,7 +56,7 @@ public class CsvFileWriterTest {
 
 		// read file back for test
 		try {
-			FileReader r = new FileReader(fileName);
+			FileReader r = new FileReader(file.getAbsolutePath());
 			BufferedReader br = new BufferedReader(r);
 			String line;
 			int count = 0;
@@ -84,6 +89,7 @@ public class CsvFileWriterTest {
 	public void testFileWriterQueryResult() {
 		
 		String fileName = "C:\\afndev\\apps\\realstat\\logs\\testoutput\\testFileWriterQueryResult.txt";
+		File file = new File(fileName);
 		
 		cRepo.save(new Customer("Andreas", "Neyer"));
 		cRepo.save(new Customer("Kathleen", "Callahan"));
@@ -91,8 +97,7 @@ public class CsvFileWriterTest {
 		String query = "select id, firstName, lastName from customer order by id";
 		QueryResultTable st = new QueryResultTable(afnDataSource, query);
 		
-		CsvFileWriter.writeQueryTable(st, fileName);
-		
+		CsvFileWriter.writeQueryTable(st, file);
 		
 	}
 

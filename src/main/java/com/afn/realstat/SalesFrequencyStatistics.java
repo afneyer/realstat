@@ -1,5 +1,6 @@
 package com.afn.realstat;
 
+import java.io.File;
 import java.util.Date;
 import java.util.List;
 
@@ -19,13 +20,7 @@ import com.afn.util.QueryResultTable;
 public class SalesFrequencyStatistics {
 
 	public static final Logger importLog = LoggerFactory.getLogger("app");
-
-	private String defaultFilePath;
-
-	private String zips = "'94610,94611,94618'";
-	private String zipCode = "substr(zip,1,5)";
-	private String sold = "substr(status(1,3)";
-
+	
 	@Autowired
 	PropertyTransactionRepository ptRepo;
 
@@ -35,16 +30,16 @@ public class SalesFrequencyStatistics {
 	@Autowired
 	DataSource afnDataSource;
 
+	private static String filePath = System.getProperty("user.dir") + "\\logs\\analytics";
+
 	public SalesFrequencyStatistics() {
-		// TODO retrieve base directory
-		defaultFilePath = "C:\\afndev\\apps\\realstat\\logs\\analytics\\";
 	}
 
 	@Transactional
-	public void timeBetweenSales2016(String fileName) {
+	public void timeBetweenSales2016() {
 
 		String header = "Apn, Street, City, Zip, Recent MLS, Recent Date, Earlier MLS, Earlier Date, Earlier Years";
-		CsvFileWriter cfw = new CsvFileWriter(fileName, header);
+		CsvFileWriter cfw = new CsvFileWriter(getFile(), header);
 
 		// find all propertyTransactions for 2016
 		Date d1 = AfnDateUtil.of(2016, 1, 1);
@@ -97,7 +92,7 @@ public class SalesFrequencyStatistics {
 				+ "from property_transaction \n" + "where closeDate is not null \n"
 				+ "group by closeYear, city, zipCode \n";
 
-		CsvFileWriter.writeQueryResult(afnDataSource, query, getFileName());
+		CsvFileWriter.writeQueryResult(afnDataSource, query, getFile());
 
 	}
 
@@ -109,16 +104,16 @@ public class SalesFrequencyStatistics {
 				+ "where pt.sellingAgent_id = a.id or pt.listingAgent_id = a.id \n" + "group by a.agentName \n"
 				+ "having count(pt.id) > 20 \n" + "order by percentDoubleEnded desc \n";
 
-		CsvFileWriter.writeQueryResult(afnDataSource, query, getFileName());
+		CsvFileWriter.writeQueryResult(afnDataSource, query, getFile());
 	}
 
 	public void checkPropertyLinking() {
 
 		String query = "select count(id) as totalCnt, count(realProperty_id) as linkedCnt, \n"
-				+ "100*count(realProperty_id)/count(id) as linkedPercent, propertyZip5 as zipCode, city \n"
+				+ "100*count(realProperty_id)/count(id) as linkedPercent,  substring(zip,1,5) as zipCode, city \n"
 				+ "from property_transaction where substring(zip,1,5) in ('94610', '94611', '94618') group by zipCode, city;";
 
-		CsvFileWriter.writeQueryResult(afnDataSource, query, getFileName());
+		CsvFileWriter.writeQueryResult(afnDataSource, query, getFile());
 	}
 
 	public void checkAgentLinking() {
@@ -139,13 +134,13 @@ public class SalesFrequencyStatistics {
 
 		System.out.print(query);
 
-		CsvFileWriter.writeQueryResult(afnDataSource, query, getFileName());
+		CsvFileWriter.writeQueryResult(afnDataSource, query, getFile());
 	}
 
 	/**
 	 * Computes Sales Activity
 	 */
-	public void SalesActivtyByYearCityZipBuildingType() {
+	public void salesActivtyByYearCityZipBuildingType() {
 
 		String ptQuery = "select count(pt.id), propertyZip5,  city, buildingType, year(closeDate) \n"
 				+ "from property_transaction pt, real_property rp \n"
@@ -172,16 +167,15 @@ public class SalesFrequencyStatistics {
 
 		qrt.addColumn(column);
 
-		CsvFileWriter.writeQueryTable(qrt, getFileName());
+		CsvFileWriter.writeQueryTable(qrt, getFile());
 
 	}
 
-	private String getFileName() {
+	private File getFile() {
 
 		String functionName = Thread.currentThread().getStackTrace()[2].getMethodName();
 		String fileName = functionName + ".csv";
-		String fullFileName = defaultFilePath + fileName;
-		return fullFileName;
+		return new File(filePath, fileName);
 
 	}
 }

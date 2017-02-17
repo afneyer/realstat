@@ -1,5 +1,6 @@
 package com.afn.realstat;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
@@ -25,7 +26,7 @@ import com.afn.util.QueryResultTable;
  * 
  * @author Andreas Neyer
  *
- * Copyright 2017 afndev. All rights reserved.
+ *         Copyright 2017 afndev. All rights reserved.
  *
  */
 public class CsvFileWriter {
@@ -37,7 +38,7 @@ public class CsvFileWriter {
 
 	private static String LINE_SEP = "\r\n";
 	private static String FIELD_SEP = ",";
-			
+
 	public static final Logger importLog = LoggerFactory.getLogger("import");
 
 	/**
@@ -48,17 +49,17 @@ public class CsvFileWriter {
 	 * @param header:
 	 *            full header with comma-separated fields as String
 	 */
-	public CsvFileWriter(String fileName, String header) {
+	public CsvFileWriter(File file, String header) {
 		this.header = header;
 		try {
-			fileWriter = new FileWriter(fileName);
+			fileWriter = new FileWriter(file.getAbsolutePath());
 
 			// Write the CSV file header
 			fileWriter.append(header.toString());
 			fileWriter.append(LINE_SEP);
 
 		} catch (Exception e) {
-			importLog.error("Error in CsvFileWriter see exception: File=", fileName + "Header = " + this.header);
+			importLog.error("Error in CsvFileWriter see exception: File=", file.getName() + "Header = " + this.header);
 			e.printStackTrace();
 			try {
 				fileWriter.flush();
@@ -78,8 +79,8 @@ public class CsvFileWriter {
 	 * @param header:
 	 *            header as String[]
 	 */
-	public CsvFileWriter(String fileName, String[] header) {
-		this(fileName, convertToCsv(header));
+	public CsvFileWriter(File file, String[] header) {
+		this(file, convertToCsv(header));
 	}
 
 	public static String convertToCsv(String[] row) {
@@ -138,53 +139,50 @@ public class CsvFileWriter {
 	 * @param fileName
 	 */
 	// TOOD refactor fileName to File
-	public static void writeQueryResult(DataSource dataSource, String queryString, String fileName) {
+	public static void writeQueryResult(DataSource dataSource, String queryString, File file) {
 
-		System.out.println("Writing query result " + fileName);
+		System.out.println("Writing query result " + file.getName());
 
-		QueryResultTable qrt = new QueryResultTable(dataSource,queryString);
-		writeQueryTable(qrt,fileName);
-		
-		
+		QueryResultTable qrt = new QueryResultTable(dataSource, queryString);
+		writeQueryTable(qrt, file);
 
 	}
 
-	public static void writeQueryTable(QueryResultTable qrt, String fileName) {
-		
+	public static void writeQueryTable(QueryResultTable qrt, File file) {
+
 		String head = null;
 		CsvFileWriter cfw = null;
 		int columnCount = 0;
-			columnCount = qrt.getColumnCount();
-			head = quoteString(qrt.getHeaderElement(0));
-			for (int i = 1; i < columnCount; i++) {
-				head += FIELD_SEP;
-				head += quoteString(qrt.getHeaderElement(i));
-			}
-			System.out.println(head);
+		columnCount = qrt.getColumnCount();
+		head = quoteString(qrt.getHeaderElement(0));
+		for (int i = 1; i < columnCount; i++) {
+			head += FIELD_SEP;
+			head += quoteString(qrt.getHeaderElement(i));
+		}
+		System.out.println(head);
 
-			cfw = new CsvFileWriter(fileName, head);
-			
-			for (int i = 0; i < qrt.getRowCount(); i++) {
-				String row = quoteString(qrt.get(i, 0));
-				for (int j = 1; j < columnCount; j++) {
-					row += FIELD_SEP + quoteString(qrt.get(i, j));
-				}
-				System.out.println(row);
-				cfw.appendLine(row);
+		cfw = new CsvFileWriter(file, head);
+
+		for (int i = 0; i < qrt.getRowCount(); i++) {
+			String row = quoteString(qrt.get(i, 0));
+			for (int j = 1; j < columnCount; j++) {
+				row += FIELD_SEP + quoteString(qrt.get(i, j));
 			}
-			cfw.close();	
+			System.out.println(row);
+			cfw.appendLine(row);
+		}
+		cfw.close();
 	}
-	
-	
+
 	/**
-	 * Returns a string surrounded by double-quotes in case the string contains the field separator.
-	 * This way the file can be consumed by Excel.
+	 * Returns a string surrounded by double-quotes in case the string contains
+	 * the field separator. This way the file can be consumed by Excel.
 	 * 
 	 * @param s
 	 * @return
 	 */
 	public static String quoteString(String s) {
-		if (s.matches(FIELD_SEP)) {
+		if (s != null && s.matches(FIELD_SEP)) {
 			String quote = "\"";
 			s = quote + s + quote;
 		}
