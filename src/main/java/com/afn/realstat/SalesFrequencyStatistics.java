@@ -1,5 +1,9 @@
 package com.afn.realstat;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
@@ -13,12 +17,18 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.afn.util.QueryResultTable;
+
 @Component
 public class SalesFrequencyStatistics {
 
 	public static final Logger importLog = LoggerFactory.getLogger("app");
 
 	private String defaultFilePath;
+
+	private String zips = "'94610,94611,94618'";
+	private String zipCode = "substr(zip,1,5)";
+	private String sold = "substr(status(1,3)";
 
 	@Autowired
 	PropertyTransactionRepository ptRepo;
@@ -70,7 +80,7 @@ public class SalesFrequencyStatistics {
 					line += rp.getApn() + ",";
 					line += rp.getPropertyAddress() + ",";
 					line += rp.getPropertyCity() + ",";
-					line += rp.getPropertyZip() + ",";
+					line += rp.getPropertyZip5() + ",";
 					line += pt1.getMlsNo() + ",";
 					line += pt1.getCloseDate() + ",";
 					line += pt2.getMlsNo() + ",";
@@ -102,14 +112,14 @@ public class SalesFrequencyStatistics {
 				+ "from property_transaction pt, agent a \n"
 				+ "where pt.sellingAgent_id = a.id or pt.listingAgent_id = a.id \n" + "group by a.agentName \n"
 				+ "having count(pt.id) > 20 \n" + "order by percentDoubleEnded desc \n";
-		
+
 		CsvFileWriter.writeQueryResult(afnDataSource, query, getFileName());
 	}
-	
+
 	public void checkPropertyLinking() {
 
 		String query = "select count(id) as totalCnt, count(realProperty_id) as linkedCnt, \n"
-				+ "100*count(realProperty_id)/count(id) as linkedPercent, substring(zip,1,5) as zipCode, city \n"
+				+ "100*count(realProperty_id)/count(id) as linkedPercent, propertyZip5 as zipCode, city \n"
 				+ "from property_transaction where substring(zip,1,5) in ('94610', '94611', '94618') group by zipCode, city;";
 
 		CsvFileWriter.writeQueryResult(afnDataSource, query, getFileName());
@@ -117,17 +127,62 @@ public class SalesFrequencyStatistics {
 
 	public void checkAgentLinking() {
 
-		String query = "select status, \n"
-				+ "count(ListingAgentName), count(SellingAgent1Name), count(CoListAgentName), count(CoSellAgentName), \n"
-				+ "count(ListingAgentLicenseID), count(SellingAgent1LicenseId), count(CoListAgentLicenseId), count(CoSellAgentLicenseId), \n"
-				+ "count(ListAgentBreNum), count(SoldAgentBreNum), count(CoListAgentBreNum), count(CoSellAgentBreNum), \n"
-				+ "count(listingAgent_id), count(sellingAgent_id), count(listingAgent2_id), count(sellingAgent2_id) \n"
-				+ "from property_transaction group by status \n";
-		
+		String query =
+
+				"select substr(zip,1,5) as zipCode, " + "		count(ListingAgentName) as list1NameCnt, "
+						+ "		100 * count(listingAgent_id) / count(ListingAgentName) as list1Percent, "
+						+ "		count(SellingAgent1Name) as sell1NameCnt, "
+						+ "		100 * count(sellingAgent_id) / count(SellingAgent1Name) as sell1Percent, "
+						+ "		count(CoListAgentName) as list2NameCnt, "
+						+ "		100 * count(listingAgent2_id) / count(CoListAgentName) as list2Percent, "
+						+ "		count(CoSellAgentName) as sell2NameCnt, "
+						+ "		100 * count(sellingAgent2_id) / count(CoSellAgentName) as sell2Percent "
+						+ "		from property_transaction  "
+						+ "		where substr(status,1,3) = 'SLD' and substr(zip,1,5) in ('94610','94611','94618') "
+						+ "		group by substr(zip,1,5) ";
+
 		System.out.print(query);
 
 		CsvFileWriter.writeQueryResult(afnDataSource, query, getFileName());
 	}
+
+	/**
+	 * Computes Sales Activity
+	 */
+	public void SalesActivtyByYearCityZipBuildingType() {
+
+		String ptQuery = "select count(pt.id), propertyZip5,  city, buildingType, year(closeDate) \n"
+				+ "from property_transaction pt, real_property rp \n"
+				+ "where pt.realProperty_id = rp.id and substr(status,1,3) = 'SLD' and propertyZip5 in ('94610','94611','94618') \n"
+				+ "group by propertyZip5, city, buildingType, buildingType, year(closeDate) \n";
+
+		QueryResultTable qrt = new QueryResultTable(afnDataSource, ptQuery);
+
+		int numRows = qrt.getRowCount();
+
+		
+		// TODO int colCount = qrt.getColumnCount();
+
+		String[] column = new String[numRows+1];
+		column[0] = "totalCount";
+		
+		for (int i = 0; i < numRows; i++) {
+
+			String zip = qrt.get(i,1);
+			String city = qrt.get(i,2).toUpperCase();
+			String landUse = RealStatUtil.convertBuildingTypeToLandUse(qrt.get(i,3));
+
+			long countOfProperties = rpRepo.countByZipCityLandUseCloseYear(zip, city, landUse);
+			column[i+1] = Long.toString(countOfProperties);
+			
+		}
+		
+		qrt.addColumn(column);
+		
+		CsvFileWriter.writeQueryTable(qrt, getFileName());
+
+	}
+
 
 	private String getFileName() {
 
@@ -138,4 +193,44 @@ public class SalesFrequencyStatistics {
 
 	}
 
+	private String[][] getQueryResult(DataSource dataSource, String query) {
+		String[][] result = null;
+		Connection conn = null;
+		try {
+			conn = dataSource.getConnection();
+			PreparedStatement ps = conn.prepareStatement(query);
+
+			ResultSet rs = ps.executeQuery();
+			
+			int numCols = rs.getMetaData().getColumnCount();
+			
+			// add extra column for to contain total values for normalization
+			String[] row = new String[numCols+1];
+			
+			int i=1;
+		    while(rs.next())
+		    {
+		    	for (int j=1; i<=numCols; j++) {
+		    		row[j] = rs.getString(j);
+		    	}
+		    	
+		    }
+		    
+		    
+		    return (result);
+
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		} finally {
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					throw new RuntimeException(e);
+				}
+			}
+
+		}
+
+	}
 }

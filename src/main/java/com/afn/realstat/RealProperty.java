@@ -14,7 +14,8 @@ import org.springframework.data.domain.Example;
 @Entity
 @Table(name = "real_property", uniqueConstraints = @UniqueConstraint(columnNames = { "apn" }), indexes = {
 		@Index(name = "idx_apnClean", columnList = "apnClean"),
-		@Index(name = "idx_addressClean", columnList = "addressClean") })
+		@Index(name = "idx_addressClean", columnList = "addressClean"), @Index(name = "idx_propertyZip5", columnList = "propertyZip5"),
+		@Index(name = "idx_propertyCity", columnList = "propertyCity"), @Index(name = "idx_landUse", columnList = "landUse")})
 
 public class RealProperty extends AbstractEntity {
 
@@ -41,6 +42,7 @@ public class RealProperty extends AbstractEntity {
 	private String propertyCity;
 	private String propertyState;
 	private String propertyZip;
+	private String propertyZip5;
 	private String addressClean;
 	private Double totalSquareFootage;
 	private Date lastSaleDate;
@@ -71,7 +73,7 @@ public class RealProperty extends AbstractEntity {
 	@Override
 	public String toString() {
 		return String.format("Property [apn=%s, address=%s, city=%s, state=%s, zip=%s']", apn, propertyAddress,
-				propertyCity, propertyState, propertyZip);
+				propertyCity, propertyState, propertyZip5);
 	}
 
 	@Override
@@ -79,12 +81,12 @@ public class RealProperty extends AbstractEntity {
 		Example<RealProperty> e = Example.of(new RealProperty(this.getApn()));
 		return e;
 	}
-	
+
 	@Override
 	public boolean isValid() {
 		return apn != null;
 	}
-	
+
 	@Override
 	public void clean() {
 	}
@@ -270,6 +272,15 @@ public class RealProperty extends AbstractEntity {
 
 	public void setPropertyZip(String propertyZip) {
 		this.propertyZip = propertyZip;
+		setPropertyZip5();
+	}
+
+	public String getPropertyZip5() {
+		return propertyZip5;
+	}
+
+	public void setPropertyZip5() {
+		this.propertyZip5 = propertyZip.substring(0,5);
 	}
 
 	public String getAddressClean() {
@@ -281,7 +292,7 @@ public class RealProperty extends AbstractEntity {
 
 		// if it's a condo we want to make sure that the address has a unit
 		// number associated with it
-		if (this.getLandUse().equals("Residential Condominium")){
+		if (this.getLandUse().equals("Residential Condominium")) {
 			if (adr.hasUnitInfo()) {
 				this.addressClean = adr.getCleanAddress();
 			} else {

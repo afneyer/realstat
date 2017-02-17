@@ -115,4 +115,18 @@ public class RealStatUtil {
 		}
 	}
 
+	public static String convertBuildingTypeToLandUse(String bt) {
+		if (bt == null) return null;
+		switch (bt) {
+		case "DE":
+			return "Single Family Residential";
+		case "CO":
+			return "Residential Condominium";
+		case "TH":
+			return "Residential Townhouse";
+		default:
+			return null;
+		}
+	}
+
 }

@@ -99,8 +99,8 @@ public class PropertyTransactionManager {
 			// DebugUtils.transactionRequired("PropertyTransactionManager.performEntityAction");
 			importLog.info("index =" + i + " iterating over PT=" + pt.toString());
 			linkPropertyTransactionToRealProperty(pt);
-			// linkPropertyTransactionToAgents(pt);
-			// repository.save(pt)
+			linkPropertyTransactionToAgents(pt);
+			// ptRepo.save(pt);
 			i++;
 		}
 

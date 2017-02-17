@@ -13,6 +13,8 @@ import javax.sql.DataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.afn.util.QueryResultTable;
+
 /**
  * The CsvFileWriter generate comma-delimited files for the use in Excel. It
  * takes care of all the internal exception process and throws run-time
@@ -139,6 +141,7 @@ public class CsvFileWriter {
 	 *            query result set, header will be extracted from the result set
 	 * @param fileName
 	 */
+	/*
 	protected static void writeResultSet(ResultSet rs, String fileName) {
 
 		String head = null;
@@ -171,7 +174,7 @@ public class CsvFileWriter {
 				cfw.close();
 			}
 		}
-	}
+	} */
 
 	/**
 	 * Writes the result of a query into a comma-separated file for the use in
@@ -181,32 +184,46 @@ public class CsvFileWriter {
 	 * @param queryString
 	 * @param fileName
 	 */
+	// TOOD refactor fileName to File
 	public static void writeQueryResult(DataSource dataSource, String queryString, String fileName) {
 
 		System.out.println("Writing query result " + fileName);
 
-		Connection conn = null;
-		try {
-			conn = dataSource.getConnection();
-			PreparedStatement ps = conn.prepareStatement(queryString);
+		QueryResultTable qrt = new QueryResultTable(dataSource,queryString);
+		writeQueryTable(qrt,fileName);
+		
+		
 
-			ResultSet rs = ps.executeQuery();
-			CsvFileWriter.writeResultSet(rs, fileName);
-			rs.close();
-			ps.close();
+	}
 
-		} catch (SQLException e) {
-			throw new RuntimeException(e);
-		} finally {
-			if (conn != null) {
-				try {
-					conn.close();
-				} catch (SQLException e) {
-					throw new RuntimeException(e);
-				}
+	public static void writeQueryTable(QueryResultTable qrt, String fileName) {
+		
+		String head = null;
+		CsvFileWriter cfw = null;
+		int columnCount = 0;
+			columnCount = qrt.getColumnCount();
+			head = qrt.getHeaderElement(0);
+			for (int i = 1; i < columnCount; i++) {
+				head += FIELD_SEP;
+				head += qrt.getHeaderElement(i);
 			}
+			System.out.println(head);
 
-		}
-
+			cfw = new CsvFileWriter(fileName, head);
+			
+			for (int i = 0; i < qrt.getRowCount(); i++) {
+				String row = qrt.get(i, 0);
+				for (int j = 1; j < columnCount; j++) {
+					row += FIELD_SEP + qrt.get(i, j);
+				}
+				System.out.println(row);
+				cfw.appendLine(row);
+			}
+			cfw.close();	
+	}
+	
+	public String quoteString(String s) {
+		String quote = "\"";
+		return quote + s + quote;
 	}
 }

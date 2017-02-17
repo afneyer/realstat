@@ -6,9 +6,35 @@ import static org.junit.Assert.fail;
 import java.io.BufferedReader;
 import java.io.FileReader;
 
-import org.junit.Test;
+import javax.sql.DataSource;
 
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
+
+import com.afn.util.QueryResultTable;
+
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = Application.class, webEnvironment = SpringBootTest.WebEnvironment.NONE)
 public class CsvFileWriterTest {
+	
+	@Autowired
+	private CustomerRepository cRepo;
+
+	@Autowired
+	private DataSource afnDataSource;
+
+	/**
+	 * Sets up the test fixture. (Called before every test case method.)
+	 */
+	@Before
+	public void setUp() {
+		cRepo.deleteAll();
+		cRepo.flush();
+	}
 
 	@Test
 	public void testFileWriter() {
@@ -52,6 +78,22 @@ public class CsvFileWriterTest {
 			fail();
 		}
 
+	}
+	
+	@Test
+	public void testFileWriterQueryResult() {
+		
+		String fileName = "C:\\afndev\\apps\\realstat\\logs\\testoutput\\testFileWriterQueryResult.txt";
+		
+		cRepo.save(new Customer("Andreas", "Neyer"));
+		cRepo.save(new Customer("Kathleen", "Callahan"));
+
+		String query = "select id, firstName, lastName from customer order by id";
+		QueryResultTable st = new QueryResultTable(afnDataSource, query);
+		
+		CsvFileWriter.writeQueryTable(st, fileName);
+		
+		
 	}
 
 }

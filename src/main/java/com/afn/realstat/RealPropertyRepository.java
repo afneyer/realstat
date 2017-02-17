@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.jpa.repository.Query;
 
 public interface RealPropertyRepository extends AbstractEntityRepository<RealProperty> {
 	
@@ -16,26 +17,11 @@ public interface RealPropertyRepository extends AbstractEntityRepository<RealPro
 	List<RealProperty> findByApnClean(String ApnClean);
 	
     List<RealProperty> findByAddressClean(String cleanAddress);
-
-	
-
-	/* TOOD remove
-	public default void saveOrUpdate(RealProperty newEntity) {
-
-		List<RealProperty> existingEntities = findByApn(newEntity.getApn());
-		if (existingEntities.size() > 1) {
-			log.error("Non-unique entries for table " + newEntity.getClass().getName() + "field apn");
-		}
-
-		if (existingEntities.size() >= 1) {
-			RealProperty existingEntity = existingEntities.get(0);
-			if (existingEntity != null) {
-				newEntity.setId(existingEntity.getId());
-			}
-		}
-		this.save(newEntity);
-
-	}
-	
-	*/
+    
+    @Query(value = "select count(rp.id) from real_property rp "
+    		+ "where propertyZip5 = ?1 and " +
+		      "propertyCity = ?2 and landUse = ?3",
+		      nativeQuery = true)
+    long countByZipCityLandUseCloseYear( String zip, String city, String landUse);
+ 
 }

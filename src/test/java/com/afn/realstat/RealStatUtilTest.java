@@ -41,6 +41,15 @@ public class RealStatUtilTest {
 		int lines = RealStatUtil.countLines(fileName);
 		assertEquals(3087, lines);
 	}
+	
+	@Test
+	public void testConvertBuildingTypeToLandUse() {
+		assertEquals("Single Family Residential",RealStatUtil.convertBuildingTypeToLandUse("DE"));
+		assertEquals("Residential Townhouse",RealStatUtil.convertBuildingTypeToLandUse("TH"));
+		assertEquals("Residential Condominium",RealStatUtil.convertBuildingTypeToLandUse("CO"));
+		assertEquals(null,RealStatUtil.convertBuildingTypeToLandUse("DX"));
+		assertEquals(null,RealStatUtil.convertBuildingTypeToLandUse(null));
+	}
 }
 	
 

@@ -55,6 +55,7 @@ public class RealPropertyManager {
 				log.info("set RealProperty.apnClean to: " + entity.getApnClean() );
 				entity.setAddressClean();
 				log.info("set RealProperty.addressClean to: " + entity.getAddressClean() );
+				entity.setPropertyZip5();
 			}
 			offset += batchSize;
 			listEntity = getAllEntitiesIterable(offset, batchSize);
