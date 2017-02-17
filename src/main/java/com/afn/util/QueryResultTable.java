@@ -59,9 +59,6 @@ public class QueryResultTable {
 				System.out.println(row);
 				rows.add(row);
 			}
-			// } catch (SQLException e) {
-			// throw new RuntimeException(e);
-			// }
 
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
@@ -79,35 +76,58 @@ public class QueryResultTable {
 	}
 
 	public String get(int i, int j) {
-		return rows.get(i-1).get(j-1);
+		return rows.get(i).get(j);
 	}
 
 	public void set(int ri, int cj, String s) {
 
-		if (cj > header.size()) {
+		if (cj >= getColumnCount()) {
 			String msg = "ColumnIndex for a QueryResultTable must be smaller than the header size: Add header label(s) first!";
 			msg += "columnIndex = " + cj + " header size = " + getColumnCount();
 			log.error(msg);
-			throw new RuntimeException(new Exception(msg));
+			throw new RuntimeException(msg);
 		}
 
-		ArrayList<String> row = null;
-		if (ri <= getRowCount()) {
-			row = rows.get(ri - 1);
-		} else {
-			row = new ArrayList<String>(getColumnCount());
-			rows.add(ri - 1, row);
-		}
-		if (cj <= getColumnCount()) {
-			row.set(cj, s);
-		} else {
-			row.add(cj, s);
-		}
 
+		if (ri >= getRowCount()) {
+			String msg = "RowIndex for a QueryResultTable must be smaller than row count: Use addRow instead!";
+			msg += "rowIndex = " + ri + " row count = " + getRowCount();
+			log.error(msg);
+			throw new RuntimeException(msg);
+		} 
+		
+		rows.get(ri).set(cj, s);
 	}
-
-	public void addHeader(String headerString) {
-		this.header.add(headerString);
+	
+	
+	/**
+	 * @param col : must include header label at index 0
+	 */
+	public void addColumn(String[] col) {
+		if (col.length != getRowCount()+1) {
+			String msg = "Column must have same number of elements as other colums (including a header at index=0): ";
+			msg += "Col element = " + col.length + " other columns = " + getColumnCount();
+			log.error(msg);
+			throw new RuntimeException(msg);
+		}
+		header.add(col[0]);
+		for (int i=1; i<= this.getRowCount(); i++) {
+			rows.get(i-1).add(col[i]);
+		}
+	}
+	
+	public void addRow(String[] newRow) {
+		if (newRow.length != getColumnCount()) {
+			String msg = "Row must have same number of elements as other rows: ";
+			msg += "Row element = " + newRow.length + " other rows = " + getRowCount();
+			log.error(msg);
+			throw new RuntimeException(msg);
+		} 
+		ArrayList<String> row = new ArrayList<String>(getColumnCount());
+		for (int i=0; i<getColumnCount(); i++) {
+			row.add(i, newRow[i]);			
+		}
+		rows.add(row);
 	}
 
 	public int getRowCount() {
@@ -120,6 +140,6 @@ public class QueryResultTable {
 	}
 
 	public String getHeaderElement(int i) {
-		return header.get(i - 1);
+		return header.get(i);
 	}
 }
