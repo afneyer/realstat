@@ -59,6 +59,7 @@ public class CsvFileWriter {
 			fileWriter.append(LINE_SEP);
 
 		} catch (Exception e) {
+			importLog.error("Exception:",e);
 			importLog.error("Error in CsvFileWriter see exception: File=", file.getName() + "Header = " + this.header);
 			e.printStackTrace();
 			try {

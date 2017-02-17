@@ -145,7 +145,10 @@ public class SalesFrequencyStatistics {
 		String ptQuery = "select count(pt.id), propertyZip5,  city, buildingType, year(closeDate) \n"
 				+ "from property_transaction pt, real_property rp \n"
 				+ "where pt.realProperty_id = rp.id and substr(status,1,3) = 'SLD' and propertyZip5 in ('94610','94611','94618') \n"
-				+ "group by propertyZip5, city, buildingType, buildingType, year(closeDate) \n";
+				+ "and buildingType in ('DE','CO') \n"
+				+ "and city in ('PIEDMONT','OAKLAND') \n"
+				+ "and closeDate is not null \n"
+				+ "group by propertyZip5, city, buildingType, year(closeDate) \n";
 
 		QueryResultTable qrt = new QueryResultTable(afnDataSource, ptQuery);
 
@@ -166,6 +169,8 @@ public class SalesFrequencyStatistics {
 		}
 
 		qrt.addColumn(column);
+		
+		// Normalize table
 
 		CsvFileWriter.writeQueryTable(qrt, getFile());
 
