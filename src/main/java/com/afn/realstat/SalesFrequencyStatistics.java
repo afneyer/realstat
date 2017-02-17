@@ -1,9 +1,5 @@
 package com.afn.realstat;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
@@ -160,29 +156,25 @@ public class SalesFrequencyStatistics {
 
 		int numRows = qrt.getRowCount();
 
-		
-		// TODO int colCount = qrt.getColumnCount();
-
-		String[] column = new String[numRows+1];
+		String[] column = new String[numRows + 1];
 		column[0] = "totalCount";
-		
+
 		for (int i = 0; i < numRows; i++) {
 
-			String zip = qrt.get(i,1);
-			String city = qrt.get(i,2).toUpperCase();
-			String landUse = RealStatUtil.convertBuildingTypeToLandUse(qrt.get(i,3));
+			String zip = qrt.get(i, 1);
+			String city = qrt.get(i, 2).toUpperCase();
+			String landUse = RealStatUtil.convertBuildingTypeToLandUse(qrt.get(i, 3));
 
 			long countOfProperties = rpRepo.countByZipCityLandUseCloseYear(zip, city, landUse);
-			column[i+1] = Long.toString(countOfProperties);
-			
+			column[i + 1] = Long.toString(countOfProperties);
+
 		}
-		
+
 		qrt.addColumn(column);
-		
+
 		CsvFileWriter.writeQueryTable(qrt, getFileName());
 
 	}
-
 
 	private String getFileName() {
 
@@ -190,47 +182,6 @@ public class SalesFrequencyStatistics {
 		String fileName = functionName + ".csv";
 		String fullFileName = defaultFilePath + fileName;
 		return fullFileName;
-
-	}
-
-	private String[][] getQueryResult(DataSource dataSource, String query) {
-		String[][] result = null;
-		Connection conn = null;
-		try {
-			conn = dataSource.getConnection();
-			PreparedStatement ps = conn.prepareStatement(query);
-
-			ResultSet rs = ps.executeQuery();
-			
-			int numCols = rs.getMetaData().getColumnCount();
-			
-			// add extra column for to contain total values for normalization
-			String[] row = new String[numCols+1];
-			
-			int i=1;
-		    while(rs.next())
-		    {
-		    	for (int j=1; i<=numCols; j++) {
-		    		row[j] = rs.getString(j);
-		    	}
-		    	
-		    }
-		    
-		    
-		    return (result);
-
-		} catch (SQLException e) {
-			throw new RuntimeException(e);
-		} finally {
-			if (conn != null) {
-				try {
-					conn.close();
-				} catch (SQLException e) {
-					throw new RuntimeException(e);
-				}
-			}
-
-		}
 
 	}
 }
