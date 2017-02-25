@@ -45,7 +45,8 @@ public class CsvFileWriterTest {
 		String fileName = "testFileWriter.txt";
 		File file = new File(filePath,fileName);
 		System.out.println(file.getAbsolutePath() + file.getName());
-		String header = "FirstName, LastName, City, Zip";
+		String[] header = {"FirstName", "LastName", "City", "Zip"};
+		String targetHead = "FirstName,LastName,City,Zip";
 
 		CsvFileWriter cfw = new CsvFileWriter(file, header);
 		String line1 = "Andreas, Neyer, Oakland, 94611";
@@ -63,7 +64,8 @@ public class CsvFileWriterTest {
 			while ((line = br.readLine()) != null) {
 				switch (count) {
 				case 0:
-					assertEquals(header, line);
+					System.out.println(line);
+					assertEquals(targetHead, line);
 					break;
 				case 1:
 					assertEquals(line1, line);
@@ -94,11 +96,20 @@ public class CsvFileWriterTest {
 		cRepo.save(new Customer("Andreas", "Neyer"));
 		cRepo.save(new Customer("Kathleen", "Callahan"));
 
-		String query = "select id, firstName, lastName from customer order by id";
+		String query = "select id, substr(firstName,1,5), lastName from customer order by id";
 		QueryResultTable st = new QueryResultTable(afnDataSource, query);
 		
 		CsvFileWriter.writeQueryTable(st, file);
 		
+	}
+	
+	@Test
+	public void testQuoteString() {
+		String s = "substr(test,1,5)";
+		String result = CsvFileWriter.quoteString(s);
+		
+		System.out.println(result);
+		assertEquals("\"substr(test,1,5)\"",result);
 	}
 
 }

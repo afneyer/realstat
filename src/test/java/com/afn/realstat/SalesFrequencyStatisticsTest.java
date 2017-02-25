@@ -14,18 +14,23 @@ public class SalesFrequencyStatisticsTest {
 	SalesFrequencyStatistics sfs;
 
 	@Test
-	public void TestTimeBetweenSales2016() {
+	public void testTimeBetweenSales2016() {
 		sfs.timeBetweenSales2016();
 	}
 
 	@Test
-	public void TestSalesByYearCityAndZip() {
+	public void testSalesByYearCityAndZip() {
 		sfs.salesByYearCityAndZip();
 	}
 	
 	@Test
-	public void SalesActivtyByYearCityZipBuildingType() {
+	public void testSalesActivtyByYearCityZipBuildingType() {
 		sfs.salesActivtyByYearCityZipBuildingType();
+	}
+	
+	@Test
+	public void testPropertiesOnMarketByCityZipBuildingType() {
+		sfs.propertiesOnMarketByCityZipBuildingType();
 	}
 	
 	@Test

@@ -48,9 +48,9 @@ public class QueryResultTableTest {
 		assertEquals(3, st.getColumnCount());
 		assertEquals(2, st.getRowCount());
 
-		assertEquals("id", st.getHeaderElement(1));
-		assertEquals("firstName", st.getHeaderElement(2));
-		assertEquals("lastName", st.getHeaderElement(3));
+		assertEquals("id", st.getHeaderElement(0));
+		assertEquals("firstName", st.getHeaderElement(1));
+		assertEquals("lastName", st.getHeaderElement(2));
 
 		assertEquals("Andreas", st.get(0, 1));
 		assertEquals("Neyer", st.get(0, 2));
@@ -109,5 +109,27 @@ public class QueryResultTableTest {
 			assertTrue( e.getMessage().startsWith("RowIndex for a QueryResultTable"));
 		}
 
+	}
+	
+	@Test
+	public void testAddQueryResultTable() {
+
+		cRepo.save(new Customer("Andreas", "Neyer"));
+		cRepo.save(new Customer("Kathleen", "Callahan"));
+
+		String query = "select id, firstName, lastName from customer order by id";
+		QueryResultTable st1 = new QueryResultTable(afnDataSource, query);
+		
+		assertEquals(2,st1.getRowCount());
+		assertEquals(3,st1.getColumnCount());
+		st1.addQueryResultTable(st1);
+		
+		assertEquals(4,st1.getRowCount());
+		assertEquals(3,st1.getColumnCount());
+		
+		st1.set(0, 1, "Felix");
+	    assertEquals("Felix",st1.get(0,1));
+	    assertEquals("Andreas",st1.get(2,1));
+		
 	}
 }

@@ -32,7 +32,7 @@ import com.afn.util.QueryResultTable;
 public class CsvFileWriter {
 
 	private FileWriter fileWriter;
-	private String header;
+	private String[] header;
 	private long row;
 	private long numCols;
 
@@ -49,13 +49,15 @@ public class CsvFileWriter {
 	 * @param header:
 	 *            full header with comma-separated fields as String
 	 */
-	public CsvFileWriter(File file, String header) {
+	public CsvFileWriter(File file, String[] header) {
 		this.header = header;
 		try {
 			fileWriter = new FileWriter(file.getAbsolutePath());
 
 			// Write the CSV file header
-			fileWriter.append(header.toString());
+			String head = convertToCsv(header);
+			System.out.println(head);
+			fileWriter.append(head);
 			fileWriter.append(LINE_SEP);
 
 		} catch (Exception e) {
@@ -67,29 +69,19 @@ public class CsvFileWriter {
 				fileWriter.close();
 			} catch (IOException e1) {
 				System.out.println("Error while flushing/closing CsvFileWriter !!!");
-				e.printStackTrace();
+				e1.printStackTrace();
 			}
 		}
 		row = 1;
-		numCols = header.split(FIELD_SEP).length;
-	}
-
-	/**
-	 * @param fileName:
-	 *            full file name as String
-	 * @param header:
-	 *            header as String[]
-	 */
-	public CsvFileWriter(File file, String[] header) {
-		this(file, convertToCsv(header));
+		numCols = header.length;
 	}
 
 	public static String convertToCsv(String[] row) {
 		if (row != null) {
-			String line = row[0];
+			String line = quoteString(row[0]);
 			for (int i = 1; i < row.length; i++) {
 				line += CsvFileWriter.FIELD_SEP;
-				line += row[i];
+				line += quoteString(row[i]);
 			}
 			;
 			return line;
@@ -151,24 +143,17 @@ public class CsvFileWriter {
 
 	public static void writeQueryTable(QueryResultTable qrt, File file) {
 
-		String head = null;
 		CsvFileWriter cfw = null;
 		int columnCount = 0;
 		columnCount = qrt.getColumnCount();
-		head = quoteString(qrt.getHeaderElement(0));
-		for (int i = 1; i < columnCount; i++) {
-			head += FIELD_SEP;
-			head += quoteString(qrt.getHeaderElement(i));
-		}
-		System.out.println(head);
+		String[] head = qrt.getHeader(); 
+		// System.out.println(head);
 
 		cfw = new CsvFileWriter(file, head);
 
 		for (int i = 0; i < qrt.getRowCount(); i++) {
-			String row = quoteString(qrt.get(i, 0));
-			for (int j = 1; j < columnCount; j++) {
-				row += FIELD_SEP + quoteString(qrt.get(i, j));
-			}
+			
+			String row = convertToCsv(qrt.getRow(i));
 			System.out.println(row);
 			cfw.appendLine(row);
 		}
@@ -183,7 +168,7 @@ public class CsvFileWriter {
 	 * @return
 	 */
 	public static String quoteString(String s) {
-		if (s != null && s.matches(FIELD_SEP)) {
+		if (s != null && s.contains(FIELD_SEP)) {
 			String quote = "\"";
 			s = quote + s + quote;
 		}

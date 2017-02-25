@@ -106,7 +106,7 @@ public class QueryResultTable {
 	public void addColumn(String[] col) {
 		if (col.length != getRowCount()+1) {
 			String msg = "Column must have same number of elements as other colums (including a header at index=0): ";
-			msg += "Col element = " + col.length + " other columns = " + getColumnCount();
+			msg += "Col element = " + col.length + " other columns = " + getRowCount();
 			log.error(msg);
 			throw new RuntimeException(msg);
 		}
@@ -119,7 +119,7 @@ public class QueryResultTable {
 	public void addRow(String[] newRow) {
 		if (newRow.length != getColumnCount()) {
 			String msg = "Row must have same number of elements as other rows: ";
-			msg += "Row element = " + newRow.length + " other rows = " + getRowCount();
+			msg += "Row element = " + newRow.length + " other rows = " + getColumnCount();
 			log.error(msg);
 			throw new RuntimeException(msg);
 		} 
@@ -141,5 +141,33 @@ public class QueryResultTable {
 
 	public String getHeaderElement(int i) {
 		return header.get(i);
+	}
+	
+	public String[] getHeader() {
+		String[] head = new String[header.size()];
+		head = header.toArray(head);
+		return head;
+	}
+	
+	public String[] getRow(int i) {
+		String[] row = new String[rows.get(i).size()];
+		row = rows.get(i).toArray(row);
+		return row;
+	}
+
+	public void addQueryResultTable(QueryResultTable queryResultTable) {
+		int colCount = getColumnCount();
+		if (queryResultTable.getColumnCount() != colCount) {
+			String msg = "Rows of added QueryResultTable must have number of columns as this table: ";
+			msg += "Existing table column count = " + colCount + ";   New table column count = " + queryResultTable.getColumnCount();
+			log.error(msg);
+			throw new RuntimeException(msg);
+		} 
+		
+		// Use existing header and add rows and columns
+		int rowCount = queryResultTable.getRowCount();
+		for (int i=0; i<rowCount; i++) {
+			rows.add( new ArrayList<String>(queryResultTable.rows.get(i)) );
+		}
 	}
 }
