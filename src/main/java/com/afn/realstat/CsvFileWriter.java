@@ -144,8 +144,6 @@ public class CsvFileWriter {
 	public static void writeQueryTable(QueryResultTable qrt, File file) {
 
 		CsvFileWriter cfw = null;
-		int columnCount = 0;
-		columnCount = qrt.getColumnCount();
 		String[] head = qrt.getHeader(); 
 		// System.out.println(head);
 
