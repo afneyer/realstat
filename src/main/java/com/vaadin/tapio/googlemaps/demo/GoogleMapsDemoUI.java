@@ -1,14 +1,25 @@
 package com.vaadin.tapio.googlemaps.demo;
 
 import java.util.ArrayList;
+import java.util.List;
+
 import javax.servlet.annotation.WebServlet;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.afn.realstat.Agent;
+import com.afn.realstat.AgentRepository;
+import com.afn.realstat.PropertyTransaction;
+import com.afn.realstat.PropertyTransactionRepository;
+import com.afn.realstat.RealPropertyRepository;
+import com.afn.util.MapLocation;
 import com.google.gwt.maps.client.services.Geocoder;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.annotations.Widgetset;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
+import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.tapio.googlemaps.GoogleMap;
 import com.vaadin.tapio.googlemaps.client.GoogleMapControl;
@@ -24,8 +35,16 @@ import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapMarker;
 import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapPolygon;
 import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapPolyline;
 import com.vaadin.tapio.googlemaps.demo.events.OpenInfoWindowOnMarkerClickListener;
-import com.vaadin.ui.*;
+import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.CssLayout;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Label;
+import com.vaadin.ui.Notification;
+import com.vaadin.ui.Panel;
+import com.vaadin.ui.TabSheet;
+import com.vaadin.ui.UI;
+import com.vaadin.ui.VerticalLayout;
 
 /**
  * Google Maps UI for testing and demoing.
@@ -34,6 +53,7 @@ import com.vaadin.ui.Button.ClickEvent;
 @Theme("valo")
 @SuppressWarnings("serial")
 @Widgetset("AppWidgetset")
+@SpringComponent
 public class GoogleMapsDemoUI extends UI {
 
 	private GoogleMap googleMap;
@@ -44,7 +64,17 @@ public class GoogleMapsDemoUI extends UI {
 	private GoogleMapMarker maariaMarker = new GoogleMapMarker("Maaria", new LatLon(60.536403, 22.344648), false);
 	private GoogleMapInfoWindow maariaWindow = new GoogleMapInfoWindow("Maaria is a district of Turku", maariaMarker);;
 	private Button componentToMaariaInfoWindowButton;
-	private final static String apiKey = "AIzaSyBCyOA84WMzCHjkrEdFxtrH-pGYcFGSywE";
+
+	private final String center = "4395 Piedmont Ave. Oakland, CA 94611";
+	
+	@Autowired
+	PropertyTransactionRepository ptRepo;
+
+	@Autowired
+	RealPropertyRepository rpRepo;
+	
+	@Autowired
+	AgentRepository agtRepo;
 
 	@WebServlet(value = "/*", asyncSupported = true)
 	@VaadinServletConfiguration(productionMode = false, ui = GoogleMapsDemoUI.class, widgetset = "com.vaadin.tapio.googlemaps.demo.DemoWidgetset")
@@ -72,7 +102,9 @@ public class GoogleMapsDemoUI extends UI {
 		googleMap = new GoogleMap(null, null, null);
 		// uncomment to enable Chinese API.
 		// googleMap.setApiUrl("maps.google.cn");
-		googleMap.setCenter(new LatLon(60.440963, 22.25122));
+		
+		MapLocation cntr = new MapLocation(center);
+		googleMap.setCenter(new LatLon(cntr.getLat(), cntr.getLng()));
 		googleMap.setZoom(10);
 		googleMap.setSizeFull();
 		kakolaMarker.setAnimationEnabled(false);
@@ -156,13 +188,24 @@ public class GoogleMapsDemoUI extends UI {
 			}
 		});
 
-		Button moveCenterButton = new Button("Move over Luonnonmaa (60.447737, 21.991668), zoom 12",
+		Button moveCenterButton = new Button("Show results",
 				new Button.ClickListener() {
 					@Override
 					public void buttonClick(ClickEvent event) {
-						googleMap.setCenter(new LatLon(60.447737, 21.991668));
-						googleMap.setZoom(12);
+						
+						// create markers for all properties of an agent
+						List<Agent> agtList = agtRepo.findByLicense("792768");
+						Agent agent = agtList.get(0);
+						List<PropertyTransaction> ptList = ptRepo.findAllTransactionsByAgent( agent );
+						for (PropertyTransaction pt : ptList) {
+							String address = pt.getAddress();
+							MapLocation loc = new MapLocation(address);
+							GoogleMapMarker mrkr = new GoogleMapMarker("", new LatLon(loc.getLat(), loc.getLng()), false);
+							googleMap.addMarker(mrkr);
+						}
+						
 					}
+					
 				});
 		buttonLayoutRow1.addComponent(moveCenterButton);
 
@@ -329,10 +372,6 @@ public class GoogleMapsDemoUI extends UI {
 		});
 		buttonLayoutRow2.addComponent(trafficLayerButton);
 
-	}
-
-	public static String getGoogleApiKey() {
-		return apiKey;
 	}
 
 }
