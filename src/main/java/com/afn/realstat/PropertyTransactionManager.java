@@ -100,6 +100,7 @@ public class PropertyTransactionManager {
 			importLog.info("index =" + i + " iterating over PT=" + pt.toString());
 			linkPropertyTransactionToRealProperty(pt);
 			linkPropertyTransactionToAgents(pt);
+			pt.setZip5();
 			// ptRepo.save(pt);
 			i++;
 		}

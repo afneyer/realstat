@@ -4,6 +4,7 @@ import java.util.Date;
 
 import javax.persistence.Basic;
 import javax.persistence.Entity;
+import javax.persistence.Index;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -13,7 +14,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Example;
 
 @Entity
-@Table(name = "property_transaction", uniqueConstraints = @UniqueConstraint(columnNames = { "mlsNo" }))
+@Table(name = "property_transaction", uniqueConstraints = @UniqueConstraint(columnNames = { "mlsNo" }), indexes = {
+		@Index(name = "idx_zip5", columnList = "zip5"), @Index(name = "idx_city", columnList = "city"),
+		@Index(name = "idx_buildingType", columnList = "buildingType") })
+
 public class PropertyTransaction extends AbstractEntity {
 
 	public static final Logger log = LoggerFactory.getLogger("app");
@@ -109,6 +113,7 @@ public class PropertyTransaction extends AbstractEntity {
 	private Date statusDate;
 	private String stories;
 	private String zip;
+	private String zip5;
 	private String zoning;
 	private String coListAgentName;
 	private String coListAgentLicenseId;
@@ -770,6 +775,17 @@ public class PropertyTransaction extends AbstractEntity {
 
 	public void setZip(String zip) {
 		this.zip = zip;
+		setZip5();
+	}
+
+	public String getZip5() {
+		return zip5;
+	}
+
+	public void setZip5() {
+		if (zip != null) {
+			this.zip5 = zip.substring(0, 5);
+		}
 	}
 
 	public String getZoning() {
