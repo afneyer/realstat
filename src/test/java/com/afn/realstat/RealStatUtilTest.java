@@ -2,10 +2,7 @@ package com.afn.realstat;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.File;
-
 import org.junit.Test;
-import org.supercsv.cellprocessor.ParseDouble2;
 
 public class RealStatUtilTest {
 

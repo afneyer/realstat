@@ -1,7 +1,5 @@
 package com.afn.realstat;
 
-import static org.junit.Assert.*;
-
 import org.junit.Test;
 
 public class TrialTest {
