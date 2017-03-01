@@ -1,4 +1,4 @@
-package com.vaadin.tapio.googlemaps.demo;
+package com.afn.realstat;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,9 +13,12 @@ import com.afn.realstat.PropertyTransaction;
 import com.afn.realstat.PropertyTransactionRepository;
 import com.afn.realstat.RealPropertyRepository;
 import com.afn.util.MapLocation;
+import com.google.gwt.maps.client.services.Geocoder;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.annotations.Widgetset;
+import com.vaadin.server.FontAwesome;
+import com.vaadin.server.Page;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
 import com.vaadin.spring.annotation.SpringComponent;
@@ -37,23 +40,28 @@ import com.vaadin.tapio.googlemaps.demo.events.OpenInfoWindowOnMarkerClickListen
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.CssLayout;
+import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.TabSheet;
+import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 
 /**
- * Google Maps UI for testing and demoing.
+ * Google Maps UI for displaying properties on maps
  */
 @SpringUI(path = "/maps")
 @Theme("valo")
 @SuppressWarnings("serial")
 @Widgetset("AppWidgetset")
-public class GoogleMapsDemoUI extends UI {
-
+public class GoogleMapUI extends UI {
+	
+	@Autowired
+	private PropertyTransactionService ptService;
+	
 	private GoogleMap googleMap;
 	private GoogleMapMarker kakolaMarker = new GoogleMapMarker("DRAGGABLE: Kakolan vankila",
 			new LatLon(60.44291, 22.242415), true, null);
@@ -63,24 +71,24 @@ public class GoogleMapsDemoUI extends UI {
 	private GoogleMapInfoWindow maariaWindow = new GoogleMapInfoWindow("Maaria is a district of Turku", maariaMarker);;
 	private Button componentToMaariaInfoWindowButton;
 
-	private final String center = "4395 Piedmont Ave. Oakland, CA 94611";
+	private final String center = "5541 Maxwellton Rd. Piedmont, CA 94611";
 	
-	@Autowired
-	PropertyTransactionRepository ptRepo;
-
-	@Autowired
-	RealPropertyRepository rpRepo;
-	
-	@Autowired
-	AgentRepository agtRepo;
-
 	/*
-	@WebServlet(value = "/*", asyncSupported = true)
-	@VaadinServletConfiguration(productionMode = false, ui = GoogleMapsDemoUI.class, widgetset = "com.vaadin.tapio.googlemaps.demo.DemoWidgetset")
+	@WebServlet(value = "/maps", asyncSupported = true)
+	@VaadinServletConfiguration(productionMode = false, ui = GoogleMapUI.class, widgetset = "com.vaadin.tapio.googlemaps.demo.DemoWidgetset")
 	public static class Servlet extends VaadinServlet {
 	}
 	*/
-
+	
+	@Autowired
+	public GoogleMapUI(PropertyTransactionService ptService) {
+		this.ptService = ptService;
+	}
+	
+	public GoogleMapUI() {
+	}
+	
+	
 	@Override
 	protected void init(VaadinRequest request) {
 		CssLayout rootLayout = new CssLayout();
@@ -102,7 +110,7 @@ public class GoogleMapsDemoUI extends UI {
 		
 		MapLocation cntr = new MapLocation(center);
 		googleMap.setCenter(new LatLon(cntr.getLat(), cntr.getLng()));
-		googleMap.setZoom(10);
+		googleMap.setZoom(13);
 		googleMap.setSizeFull();
 		kakolaMarker.setAnimationEnabled(false);
 		googleMap.addMarker(kakolaMarker);
@@ -191,14 +199,11 @@ public class GoogleMapsDemoUI extends UI {
 					public void buttonClick(ClickEvent event) {
 						
 						// create markers for all properties of an agent
-						List<Agent> agtList = agtRepo.findByLicense("792768");
-						Agent agent = agtList.get(0);
-						List<PropertyTransaction> ptList = ptRepo.findAllTransactionsByAgent( agent );
-						for (PropertyTransaction pt : ptList) {
-							String address = pt.getAddress();
-							MapLocation loc = new MapLocation(address);
-							GoogleMapMarker mrkr = new GoogleMapMarker("", new LatLon(loc.getLat(), loc.getLng()), false);
+						List<MapLocation> mlList = ptService.getPropertyLocationsForAgent("792768");
+						for (MapLocation ml : mlList) {
+							GoogleMapMarker mrkr = new GoogleMapMarker("", new LatLon(ml.getLat(), ml.getLng()), false);
 							googleMap.addMarker(mrkr);
+							googleMap.markAsDirty();
 						}
 						
 					}
