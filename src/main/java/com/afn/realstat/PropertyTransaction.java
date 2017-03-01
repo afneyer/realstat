@@ -4,6 +4,7 @@ import java.util.Date;
 
 import javax.persistence.Basic;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Index;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -16,7 +17,11 @@ import org.springframework.data.domain.Example;
 @Entity
 @Table(name = "property_transaction", uniqueConstraints = @UniqueConstraint(columnNames = { "mlsNo" }), indexes = {
 		@Index(name = "idx_zip5", columnList = "zip5"), @Index(name = "idx_city", columnList = "city"),
-		@Index(name = "idx_buildingType", columnList = "buildingType") })
+		@Index(name = "idx_buildingType", columnList = "buildingType"),
+		@Index(name = "idx_sellingAgent", columnList = "sellingAgent_id"),
+		@Index(name = "idx_sellingAgent2", columnList = "sellingAgent2_id"),
+		@Index(name = "idx_listingAgent", columnList = "listingAgent_id"),
+		@Index(name = "idx_listingAgent", columnList = "listingAgent2_id"), })
 
 public class PropertyTransaction extends AbstractEntity {
 
@@ -24,15 +29,15 @@ public class PropertyTransaction extends AbstractEntity {
 
 	@Basic(optional = false)
 	private Integer mlsNo;
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	private RealProperty realProperty;
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	private Agent listingAgent;
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	private Agent listingAgent2;
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	private Agent sellingAgent;
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	private Agent sellingAgent2;
 
 	private String status;
