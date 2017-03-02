@@ -64,7 +64,7 @@ from property_transaction pt, real_property rp
 where pt.realProperty_id = rp.id and substr(status,1,3) = 'SLD' 
 group by  buildingType, status, landUse, zipCode;*/
 
-
+/*
 select count(id), substr(propertyZip,1,5), propertyCity, landUse
 from real_property
 where landUse in ('Single Family Residential', 'Residential Condominium', 'Residential Townhouse') 
@@ -74,6 +74,7 @@ select count(pt.id), substr(zip,1,5),  city, buildingType, year(closeDate)
 from property_transaction pt, real_property rp
 where pt.realProperty_id = rp.id and substr(status,1,3) = 'SLD' and substr(zip,1,5) in ('94610','94611', '94618') 
 group by  substr(zip,1,5),  city, buildingType, buildingType, year(closeDate);
+*/
 
 /*
 select 
@@ -171,6 +172,32 @@ order by percentDoubleEnded desc;
 /*
 * Relative sales activity by year
 */
+
+/*
+* Houses on the market by week
+*/
+/*
+select count(*) as cnt, substr(1,5,zip), city, buildingType from property_transaction 
+where (offMarketDate is not null and '1997-01-05' between listDate and date_add(offMarketDate,interval 1 day))
+or ((offMarketDate is null) and substr(status,1,3) = "ACT")
+group by substr(1,5,zip), city, buildingType;
+
+select count(*) as cnt, substr(z1,5,zip), city, buildingType from property_transaction 
+where (offMarketDate is not null and '1997-01-05' between listDate and date_add(offMarketDate,interval 1 day)) 
+or ((offMarketDate is null) and substr(status,1,3) = 'ACT') 
+group by substr(1,5,zip), city, buildingType; 
+*/
+
+/*
+select count(*) as cnt, pt.zip5 as MLSzip, pt.area as MLSarea, pt.city as MLScity, rp.propertyZip5 as CRSZip, rp.propertyCity as CRSCity from property_transaction pt, real_property rp
+where pt.realProperty_id = rp.id
+group by pt.zip5, pt.area, pt.city, rp.propertyZip5, rp.propertyCity; 
+*/
+
+select mlsNo from property_transaction pt 
+where listingAgent_id = 125823 or listingAgent2_id = 125823 
+or sellingAgent_id = 125823 or sellingAgent2_id = 125823
+order by mlsNo asc
 
 
 

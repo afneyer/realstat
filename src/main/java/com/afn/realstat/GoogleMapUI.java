@@ -3,25 +3,12 @@ package com.afn.realstat;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.servlet.annotation.WebServlet;
-
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.afn.realstat.Agent;
-import com.afn.realstat.AgentRepository;
-import com.afn.realstat.PropertyTransaction;
-import com.afn.realstat.PropertyTransactionRepository;
-import com.afn.realstat.RealPropertyRepository;
 import com.afn.util.MapLocation;
-import com.google.gwt.maps.client.services.Geocoder;
 import com.vaadin.annotations.Theme;
-import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.annotations.Widgetset;
-import com.vaadin.server.FontAwesome;
-import com.vaadin.server.Page;
 import com.vaadin.server.VaadinRequest;
-import com.vaadin.server.VaadinServlet;
-import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.tapio.googlemaps.GoogleMap;
 import com.vaadin.tapio.googlemaps.client.GoogleMapControl;
@@ -40,13 +27,11 @@ import com.vaadin.tapio.googlemaps.demo.events.OpenInfoWindowOnMarkerClickListen
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.CssLayout;
-import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.TabSheet;
-import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 
@@ -365,6 +350,7 @@ public class GoogleMapUI extends UI {
 				googleMap.clearMarkers();
 			}
 		});
+		buttonLayoutRow2.addComponent(clearMarkersButton);
 
 		Button trafficLayerButton = new Button("Toggle Traffic Layer", new Button.ClickListener() {
 			@Override

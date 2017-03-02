@@ -18,7 +18,7 @@ class DebugUtils {
 	          
 			Class tsmClass = contextClassLoader.loadClass("org.springframework.transaction.support.TransactionSynchronizationManager");
 	          @SuppressWarnings("unchecked")
-			Boolean isActive = (Boolean) tsmClass.getMethod("isActualTransactionActive", null).invoke(null, null);
+			Boolean isActive = (Boolean) tsmClass.getMethod("isActualTransactionActive").invoke(null);
 
 	          return isActive;
 	      } catch (ClassNotFoundException e) {

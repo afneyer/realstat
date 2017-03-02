@@ -12,7 +12,7 @@ import com.afn.util.MapLocation;
 @Component
 public class PropertyTransactionService {
 
-	private static final Logger LOGGER = Logger.getLogger("app");
+	// private static final Logger LOGGER = Logger.getLogger("app");
 
 	@Autowired
 	private PropertyTransactionRepository ptRepo;

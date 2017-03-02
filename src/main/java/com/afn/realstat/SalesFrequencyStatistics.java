@@ -1,11 +1,9 @@
 package com.afn.realstat;
 
 import java.io.File;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalUnit;
 import java.util.Date;
 import java.util.List;
 
@@ -43,7 +41,8 @@ public class SalesFrequencyStatistics {
 	@Transactional
 	public void timeBetweenSales2016() {
 
-		String[] header = {"Apn", "Street", "City", "Zip", "Recent MLS", "Recent Date", "Earlier MLS", "Earlier Date", "Earlier Years"};
+		String[] header = { "Apn", "Street", "City", "Zip", "Recent MLS", "Recent Date", "Earlier MLS", "Earlier Date",
+				"Earlier Years" };
 		CsvFileWriter cfw = new CsvFileWriter(getFile(), header);
 
 		// find all propertyTransactions for 2016
@@ -157,6 +156,7 @@ public class SalesFrequencyStatistics {
 
 		int numRows = qrt.getRowCount();
 
+		// add a column for the total property count
 		String[] column = new String[numRows + 1];
 		column[0] = "totalCount";
 
@@ -173,7 +173,13 @@ public class SalesFrequencyStatistics {
 
 		qrt.addColumn(column);
 
-		// Normalize table (TODO)
+		int numCols = qrt.getColumnCount()-1;
+		// Normalize table
+		for (int i = 0; i < numRows; i++) {
+				Double d0i = new Double(qrt.get(i, 0));
+				Double t = new Double(qrt.get(i, numCols - 1));
+				qrt.set(i, 0, Double.toString(d0i/t));
+		}
 
 		CsvFileWriter.writeQueryTable(qrt, getFile());
 
@@ -183,52 +189,53 @@ public class SalesFrequencyStatistics {
 	 * Computes Properties on the Market
 	 */
 	public void propertiesOnMarketByCityZipBuildingType() {
-		
-		LocalDate startDate = LocalDate.of(1998,1,4);
+
+		LocalDate startDate = LocalDate.of(1998, 1, 4);
 		LocalDate endDate = LocalDate.now();
-		
+
 		// iterate through all dates in intervals of a week
 		LocalDate date = startDate;
-		
+
 		String ptQuery = onMarketQueryByDate(date);
 		QueryResultTable baseTable = new QueryResultTable(afnDataSource, ptQuery);
 		String[] dateCol = createDateCol(date, baseTable.getRowCount());
 		baseTable.addColumn(dateCol);
-		
- 		date = date.plus(1, ChronoUnit.WEEKS);
-		
-		while (date.isBefore(endDate)) {	
-			
+
+		date = date.plus(1, ChronoUnit.WEEKS);
+
+		while (date.isBefore(endDate)) {
+
 			ptQuery = onMarketQueryByDate(date);
 			QueryResultTable qrt = new QueryResultTable(afnDataSource, ptQuery);
 			dateCol = createDateCol(date, qrt.getRowCount());
 			qrt.addColumn(dateCol);
-			
+
 			baseTable.addQueryResultTable(qrt);
-			
+
 			date = date.plus(1, ChronoUnit.WEEKS);
 		}
 
 		CsvFileWriter.writeQueryTable(baseTable, getFile());
 	}
-	
+
 	private String[] createDateCol(LocalDate date, int rowCount) {
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 		String dateString = formatter.format(date);
-		String[] col = new String[rowCount+1];
+		String[] col = new String[rowCount + 1];
 		col[0] = "Date";
-		for (int i=1; i<=rowCount; i++) {
+		for (int i = 1; i <= rowCount; i++) {
 			col[i] = dateString;
 		}
 		return col;
 	}
 
-	private String onMarketQueryByDate( LocalDate date ) {
-		
+	private String onMarketQueryByDate(LocalDate date) {
+
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 		String dateString = formatter.format(date);
 		String ptQuery = "select count(*) as cnt, substr(zip,1,5), city, buildingType from property_transaction \n"
-				+ "where (offMarketDate is not null and " + "'" + dateString + "'" + 	" between listDate and date_add(offMarketDate,interval 1 day)) \n"
+				+ "where (offMarketDate is not null and " + "'" + dateString + "'"
+				+ " between listDate and date_add(offMarketDate,interval 1 day)) \n"
 				+ "or ((offMarketDate is null) and substr(status,1,3) = 'ACT') \n"
 				+ "group by substr(zip,1,5), city, buildingType; \n";
 		System.out.println(ptQuery);
