@@ -1,26 +1,21 @@
 package com.afn.util;
 
-import static org.junit.Assert.assertEquals;
-
 import org.slf4j.LoggerFactory;
 
-import com.afn.realstat.Application;
 import com.google.maps.GeoApiContext;
 import com.google.maps.GeocodingApi;
 import com.google.maps.model.GeocodingResult;
 import com.google.maps.model.Geometry;
-import com.google.maps.model.LatLng;
-import com.vaadin.tapio.googlemaps.demo.GoogleMapsDemoUI;
 
 import ch.qos.logback.classic.Logger;
 
 /**
- * MapLocation is initialized with an address. The getters return the information about the location.
+ * MapLocation is initialized with an address. The getters return the
+ * information about the location.
  * 
  * @author Andreas Neyer
  *
- * Copyright 2017 afndev.
- * All rights reserved.
+ *         Copyright 2017 afndev. All rights reserved.
  *
  */
 public class MapLocation {
@@ -38,7 +33,7 @@ public class MapLocation {
 		try {
 			results = GeocodingApi.geocode(context, address).await();
 		} catch (Exception e) {
-			log.error("Error in MapLocation: Cannot convert address ="+"address");
+			log.error("Error in MapLocation: Cannot convert address =" + "address");
 			e.printStackTrace();
 		}
 		formattedAddress = results[0].formattedAddress;
