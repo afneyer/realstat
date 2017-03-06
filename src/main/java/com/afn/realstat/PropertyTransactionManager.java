@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
 
 @Component
-public class PropertyTransactionManager {
+public class PropertyTransactionManager extends AbstractEntityManager<PropertyTransaction> {
 
 	public static final Logger importLog = LoggerFactory.getLogger("import");
 
@@ -39,9 +39,19 @@ public class PropertyTransactionManager {
 	@Autowired
 	PlatformTransactionManager ptm;
 
-	public PropertyTransactionManager() {
+	public PropertyTransactionManager(PropertyTransactionRepository ptRepo) {
+		repo = ptRepo;
 	}
 
+	public void cleanAndLinkAll() {
+		
+		Function<PropertyTransaction, Boolean> cleanAndLink = pt -> {
+			return this.cleanAndLink(pt);
+		};
+		
+		performActionOnEntities(cleanAndLink);
+	}
+	
 	public List<PropertyTransaction> getAllPropertyTransactionsIterable(int offset, int max) {
 		final TypedQuery<PropertyTransaction> tq = em.createQuery("SELECT pt FROM PropertyTransaction pt",
 				PropertyTransaction.class);
@@ -52,45 +62,28 @@ public class PropertyTransactionManager {
 		return result;
 	}
 
-	// @Transactional
 	public void iterateAll() {
-		int offset = 0;
-		int batchSize = 100;
+		int maxBatches = 1;
+		int batchNbr = 0;
+		int batchSize = 1000;
 
 		List<PropertyTransaction> listPt;
 
-		listPt = getAllPropertyTransactionsIterable(offset, batchSize);
-		while (listPt.size() > 0) {
+		listPt = getAllPropertyTransactionsIterable(batchNbr*batchSize, batchSize);
+		while (listPt.size() > 0 && batchNbr < maxBatches) {
 
-			// tm.getTransaction(null); TODO
-			// DefaultTransactionDefinition dtd = new
-			// DefaultTransactionDefinition();
-			// dtd.setPropagationBehavior(Propagation.REQUIRES_NEW.value());
-			// TransactionStatus ts = ptm.getTransaction(dtd);
 			performEntityAction(listPt);
 
-			// Print this out
-			// int i = 0; TODO
-			// for (PropertyTransaction pt : listPt) {
-			// String state = pt.getState();
-			// importLog.info("Offset = " + offset + " listIndex = " + i + "
-			// state = " + state + " pt = " + pt.toString() );
-			// i++;
-			// }
-			//
-			ptRepo.save(listPt);
-			ptRepo.flush();
-			// ts.flush();
-			// ptm.commit(ts);
-
-			// em.flush();
-			// em.clear();
-			// em.getTransaction().commit();
-			offset += batchSize;
-			listPt = getAllPropertyTransactionsIterable(offset, batchSize);
+			batchNbr++;
+			listPt = getAllPropertyTransactionsIterable(batchNbr*batchSize, batchSize);
 		}
 	}
 
+	public void printTransactions () {
+		System.out.println(this);
+	}
+	
+	@Transactional
 	public void performEntityAction(List<PropertyTransaction> entityList) {
 
 		int i = 0;
@@ -98,16 +91,23 @@ public class PropertyTransactionManager {
 
 			// DebugUtils.transactionRequired("PropertyTransactionManager.performEntityAction");
 			importLog.info("index =" + i + " iterating over PT=" + pt.toString());
-			linkPropertyTransactionToRealProperty(pt);
-			linkPropertyTransactionToAgents(pt);
-			pt.setZip5();
+			cleanAndLink( pt );
+			// System.out.println(pt);
 			// ptRepo.save(pt);
 			i++;
 		}
+		ptRepo.save(entityList);
+		ptRepo.flush();
 
 	}
+	
+	public Boolean cleanAndLink( PropertyTransaction pt) {
+		linkPropertyTransactionToRealProperty(pt);
+		linkPropertyTransactionToAgents(pt);
+		pt.setZip5();
+		return true;
+	}
 
-	@Transactional
 	public void linkPropertyTransactionToRealProperty(PropertyTransaction pt) {
 
 		RealProperty rp = null;
@@ -137,7 +137,7 @@ public class PropertyTransactionManager {
 
 	}
 
-	@Transactional
+	// @Transactional
 	public void linkPropertyTransactionToRealPropertyByAddress(PropertyTransaction pt) {
 
 		RealProperty rp = null;
@@ -166,7 +166,7 @@ public class PropertyTransactionManager {
 
 	}
 
-	@Transactional
+	// @Transactional
 	public void linkPropertyTransactionToAgents(PropertyTransaction pt) {
 
 		// Link Listing Agent
@@ -228,7 +228,7 @@ public class PropertyTransactionManager {
 		}
 	}
 
-	@Transactional
+	// @Transactional
 	public void linkPropertyTransactionToAgent(PropertyTransaction pt, Function<PropertyTransaction, String> licGetter,
 			Function<PropertyTransaction, String> agentNameGetter,
 			BiFunction<PropertyTransaction, Agent, String> agentSetter) {
@@ -261,29 +261,5 @@ public class PropertyTransactionManager {
 
 		}
 	}
-	
-
-	// TODO (iterate using pagable)
-	/*
-	 * final int pageLimit = 300; int pageNumber = 0; Page<T> page =
-	 * repository.findAll(new PageRequest(pageNumber, pageLimit)); while
-	 * (page.hasNextPage()) { processPageContent(page.getContent()); page =
-	 * repository.findAll(new PageRequest(++pageNumber, pageLimit)); } //
-	 * process last page processPageContent(page.getContent());
-	 * 
-	 * or
-	 * 
-	 * do{ page = repository.findAll(new PageRequest(pageNumber, pageLimit));
-	 * pageNumber++;
-	 * 
-	 * }while (!page.isLastPage());
-	 * 
-	 */
-	
-	 /*
-	  * Properties sold in 2016 how long since last sale
-	  */
-		
-	
 
 }

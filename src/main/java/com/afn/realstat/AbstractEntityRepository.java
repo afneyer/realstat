@@ -1,10 +1,13 @@
 package com.afn.realstat;
 
 import java.util.List;
+import java.util.function.Function;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Example;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.NoRepositoryBean;
 
@@ -18,39 +21,43 @@ public interface AbstractEntityRepository<T extends AbstractEntity> extends JpaR
 		newEntity.clean();
 		List<T> existingEntities = getExistingEntities(newEntity);
 		if (existingEntities.size() > 1) {
-			log.error("Non-unique entries for table " + newEntity.getClass().getName() +  newEntity.toString());
+			log.error("Non-unique entries for table " + newEntity.getClass().getName() + newEntity.toString());
 			return null;
 		}
 
 		if (existingEntities.size() == 1) {
-			log.info("Found exisiting entity for " + newEntity.getClass().getName() +  newEntity.toString());
-			newEntity = updateEntity(existingEntities.get(0),newEntity);
-			log.info("Updated exisiting entity for " + newEntity.getClass().getName() +  newEntity.toString());
+			log.info("Found exisiting entity for " + newEntity.getClass().getName() + newEntity.toString());
+			newEntity = updateEntity(existingEntities.get(0), newEntity);
+			log.info("Updated exisiting entity for " + newEntity.getClass().getName() + newEntity.toString());
 			return newEntity;
 		} else {
-			log.info("No exisiting entity for " + newEntity.getClass().getName() +  newEntity.toString());
+			log.info("No exisiting entity for " + newEntity.getClass().getName() + newEntity.toString());
 			save(newEntity);
-			log.info("Created new entity for " + newEntity.getClass().getName() +  newEntity.toString());
+			log.info("Created new entity for " + newEntity.getClass().getName() + newEntity.toString());
 			return newEntity;
 		}
 	}
-	
+
 	// assumes the entity exists in the repository
 	public default T updateEntity(T existingEntity, T newEntity) {
 		// TODO check for detached
 		if (existingEntity != null) {
 			newEntity.setId(existingEntity.getId());
-		    save(newEntity);
-		    return newEntity;
-		} 
+			save(newEntity);
+			return newEntity;
+		}
 		return null;
 	}
 
-	@SuppressWarnings("rawtypes")
 	public default List<T> getExistingEntities(T newEntity) {
-		Example<T> example = newEntity.getRefExample();
 		@SuppressWarnings("unchecked")
+		Example<T> example = newEntity.getRefExample();
 		List<T> list = this.findAll(example);
 		return list;
 	}
+
+
+	
+	
+
 }

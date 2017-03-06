@@ -1,5 +1,7 @@
 package com.afn.realstat;
 
+import java.util.function.Function;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,11 +16,27 @@ public class PropertyTransactionManagerTest {
 	@Autowired
 	PropertyTransactionManager pm;
 	
+	@Autowired
+	PropertyTransactionRepository ptr;
+	
 	@Test
-	public void testIteration() {
+	public void testCleanAndLinkAll() {
 		
-		// TODO change the nameing
-		pm.iterateAll();
+		pm.cleanAndLinkAll();
 		
 	}
+	
+	@Test
+	public void testCleanAndLinkPartialForPerformance() {
+		int batchSize = 100;
+		int maxBatches = 10;
+		
+		Function<PropertyTransaction, Boolean> cleanAndLink = pt -> {
+			pm.cleanAndLink(pt);
+			return true;
+		};
+		
+		pm.performActionOnEntities(cleanAndLink, batchSize, maxBatches);
+	}
+
 }
