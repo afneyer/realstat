@@ -22,7 +22,7 @@ public class DataConsistencyTests {
 
 	private static final Logger log = LoggerFactory.getLogger("app");
 
-	private static final String defaultFilePath = "C:\\afndev\\apps\\realstat\\logs\\testoutput\\";
+	// private static final String defaultFilePath = "C:\\afndev\\apps\\realstat\\logs\\testoutput\\";
 
 	@Autowired
 	private RealPropertyRepository rpRepo;

@@ -1,7 +1,5 @@
 package com.afn.realstat;
 
-import static org.junit.Assert.assertEquals;
-
 import java.util.List;
 
 import org.junit.Before;
@@ -17,46 +15,46 @@ public class PropertyTransactionRepositoryTest {
 
 	@Autowired
 	private PropertyTransactionRepository ptRepo;
-	
+
 	@Autowired
 	private AgentRepository agtRepo;
-	
-	private Agent agt = new Agent("12345","John Smith");
+
+	private Agent agt = new Agent("12345", "John Smith");
 
 	@Before
 	public void setUp() {
-		
-		agt = new Agent("12345","John Smith");
+
+		agt = new Agent("12345", "John Smith");
 		agtRepo.save(agt);
 
 		// create test data
 		PropertyTransaction pt = new PropertyTransaction(1001);
 		pt.setListingAgent(agt);
 		ptRepo.saveOrUpdate(pt);
-		
+
 		pt = new PropertyTransaction(1002);
 		pt.setListingAgent(agt);
 		ptRepo.saveOrUpdate(pt);
-		
+
 		pt = new PropertyTransaction(1003);
 		pt.setListingAgent(agt);
 		ptRepo.saveOrUpdate(pt);
-		
+
 		pt = new PropertyTransaction(1004);
 		pt.setListingAgent(agt);
 		ptRepo.saveOrUpdate(pt);
-		
+
 		pt = new PropertyTransaction(1005);
 		ptRepo.saveOrUpdate(pt);
-		
+
 		pt = new PropertyTransaction(1006);
 		ptRepo.saveOrUpdate(pt);
-		
+
 		pt = new PropertyTransaction(1007);
 		pt.setSellingAgent(agt);
 		pt.setListingAgent(agt);
 		ptRepo.saveOrUpdate(pt);
-		
+
 	}
 
 	@Test
@@ -65,6 +63,6 @@ public class PropertyTransactionRepositoryTest {
 		for (PropertyTransaction pt : ptList) {
 			System.out.println(pt.getMlsNo());
 		}
-		
+
 	}
 }
