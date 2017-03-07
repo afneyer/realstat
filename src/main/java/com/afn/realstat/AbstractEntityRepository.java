@@ -1,13 +1,10 @@
 package com.afn.realstat;
 
 import java.util.List;
-import java.util.function.Function;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Example;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.NoRepositoryBean;
 
@@ -40,8 +37,7 @@ public interface AbstractEntityRepository<T extends AbstractEntity> extends JpaR
 
 	// assumes the entity exists in the repository
 	public default T updateEntity(T existingEntity, T newEntity) {
-		// TODO check for detached
-		if (existingEntity != null) {
+		if (existingEntity != null && existingEntity.getId() != null) {
 			newEntity.setId(existingEntity.getId());
 			save(newEntity);
 			return newEntity;
@@ -55,9 +51,5 @@ public interface AbstractEntityRepository<T extends AbstractEntity> extends JpaR
 		List<T> list = this.findAll(example);
 		return list;
 	}
-
-
-	
-	
 
 }

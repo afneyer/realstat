@@ -21,7 +21,10 @@ import org.springframework.data.domain.Example;
 		@Index(name = "idx_sellingAgent", columnList = "sellingAgent_id"),
 		@Index(name = "idx_sellingAgent2", columnList = "sellingAgent2_id"),
 		@Index(name = "idx_listingAgent", columnList = "listingAgent_id"),
-		@Index(name = "idx_listingAgent", columnList = "listingAgent2_id"), })
+		@Index(name = "idx_listingAgent2", columnList = "listingAgent2_id"),
+		@Index(name = "idx_listDate", columnList = "listDate"),
+		@Index(name = "idx_listOffMarketDate", columnList = "offMarketDate"),
+		})
 
 public class PropertyTransaction extends AbstractEntity {
 

@@ -11,7 +11,7 @@ import org.springframework.data.domain.Example;
 @Entity
 @Table(name = "agent",  indexes = {
 		@Index(name = "idx_firstName", columnList = "firstName"),
-		@Index(name = "idx_firstName", columnList = "lastName"), @Index(name = "idx_license", columnList = "license") })
+		@Index(name = "idx_lastName", columnList = "lastName"), @Index(name = "idx_license", columnList = "license") })
 public class Agent extends AbstractEntity {
 
 	public static final Logger log = LoggerFactory.getLogger("app");

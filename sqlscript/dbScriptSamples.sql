@@ -193,11 +193,13 @@ select count(*) as cnt, pt.zip5 as MLSzip, pt.area as MLSarea, pt.city as MLScit
 where pt.realProperty_id = rp.id
 group by pt.zip5, pt.area, pt.city, rp.propertyZip5, rp.propertyCity; 
 */
-
+/*
 select mlsNo from property_transaction pt 
 where listingAgent_id = 125823 or listingAgent2_id = 125823 
 or sellingAgent_id = 125823 or sellingAgent2_id = 125823
 order by mlsNo asc
-
+*/
+select count(*) from property_transaction;
+SHOW GLOBAL STATUS LIKE 'created_tmp%tables';
 
 

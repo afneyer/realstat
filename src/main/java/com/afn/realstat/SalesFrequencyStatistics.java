@@ -233,11 +233,11 @@ public class SalesFrequencyStatistics {
 
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 		String dateString = formatter.format(date);
-		String ptQuery = "select count(*) as cnt, substr(zip,1,5), city, buildingType from property_transaction \n"
+		String ptQuery = "select count(*) as cnt, zip5, city, buildingType from property_transaction \n"
 				+ "where (offMarketDate is not null and " + "'" + dateString + "'"
 				+ " between listDate and date_add(offMarketDate,interval 1 day)) \n"
 				+ "or ((offMarketDate is null) and substr(status,1,3) = 'ACT') \n"
-				+ "group by substr(zip,1,5), city, buildingType; \n";
+				+ "group by zip5, city, buildingType; \n";
 		System.out.println(ptQuery);
 		return ptQuery;
 	}

@@ -1,6 +1,5 @@
 package org.supercsv.cellprocessor;
 
-import org.supercsv.cellprocessor.CellProcessorAdaptor;
 import org.supercsv.cellprocessor.ift.CellProcessor;
 import org.supercsv.exception.SuperCsvCellProcessorException;
 import org.supercsv.util.CsvContext;
@@ -30,8 +29,9 @@ public class ParseDouble2 extends CellProcessorAdaptor {
 
 		// clean the string
 		String newValue = cleanStrDouble2(value.toString());
-		
-		// This parser processes optional values since the cleaning process may result in null 
+
+		// This parser processes optional values since the cleaning process may
+		// result in null
 		if (newValue == null) {
 			return null;
 		}
