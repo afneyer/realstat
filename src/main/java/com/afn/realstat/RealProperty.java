@@ -9,7 +9,9 @@ import javax.persistence.Index;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import org.hibernate.annotations.Type;
 import org.springframework.data.domain.Example;
+import org.springframework.data.geo.Point;
 
 @Entity
 @Table(name = "real_property", uniqueConstraints = @UniqueConstraint(columnNames = { "apn" }), indexes = {
@@ -62,6 +64,9 @@ public class RealProperty extends AbstractEntity {
 	private Double lotSqFeet;
 	private String lotDimensions;
 	private String censusTract;
+	//  @Type(type="org.hibernate.spatial.GeometryType")
+     private Point location;
+
 
 	public RealProperty() {
 	}
@@ -288,7 +293,7 @@ public class RealProperty extends AbstractEntity {
 	}
 
 	public void setAddressClean() {
-		Address adr = new Address(this.getPropertyAddress(), this.getPropertyCity(), this.getPropertyZip());
+		AddressParser adr = new AddressParser(this.getPropertyAddress(), this.getPropertyCity(), this.getPropertyZip());
 
 		// if it's a condo we want to make sure that the address has a unit
 		// number associated with it
@@ -299,7 +304,7 @@ public class RealProperty extends AbstractEntity {
 				// if the owner is in the same building and has some unit info
 				// try to use that address
 				// Note: this may not be always reliable
-				Address adrOwner = new Address(this.getOwnerAddress(), this.getOwnerCity(), this.getPropertyZip());
+				AddressParser adrOwner = new AddressParser(this.getOwnerAddress(), this.getOwnerCity(), this.getPropertyZip());
 				if (adrOwner.isInSameBuilding(adr)) {
 					this.addressClean = adrOwner.getCleanAddress();
 				}
@@ -451,6 +456,14 @@ public class RealProperty extends AbstractEntity {
 
 	public void setCensusTract(String censusTract) {
 		this.censusTract = censusTract;
+	}
+
+	public Point getLocation() {
+		return location;
+	}
+
+	public void setLocation(Point location) {
+		this.location = location;
 	}
 
 	/*

@@ -1,6 +1,7 @@
 package com.afn.util;
 
 import org.slf4j.LoggerFactory;
+import org.springframework.data.geo.Point;
 
 import com.google.maps.GeoApiContext;
 import com.google.maps.GeocodingApi;
@@ -51,5 +52,9 @@ public class MapLocation {
 
 	public Double getLat() {
 		return geo.location.lat;
+	}
+	
+	public Point getLocation() {
+		return new Point(getLng(),getLat());
 	}
 }

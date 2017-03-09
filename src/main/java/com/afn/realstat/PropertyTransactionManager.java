@@ -141,14 +141,14 @@ public class PropertyTransactionManager extends AbstractEntityManager<PropertyTr
 	public void linkPropertyTransactionToRealPropertyByAddress(PropertyTransaction pt) {
 
 		RealProperty rp = null;
-		Address adrClean = new Address(pt.getAddress(), pt.getUnit(), pt.getCity(), pt.getZip());
+		AddressParser adrClean = new AddressParser(pt.getAddress(), pt.getUnit(), pt.getCity(), pt.getZip());
 		String adrCleanStr = adrClean.getCleanAddress();
 		List<RealProperty> list = rpRepo.findByAddressClean(adrCleanStr);
 
 		if (list.size() == 1) {
 			rp = list.get(0);
 			pt.setRealProperty(rp);
-			importLog.info("Property Transaction Linked By Address= " + pt.toString());
+			importLog.info("Property Transaction Linked By AddressParser= " + pt.toString());
 			return;
 		}
 
