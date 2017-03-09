@@ -60,7 +60,8 @@ public class AddressParserTest {
 		origAddr = new AddressParser("150 Pearl St Apt 315", "OAKLAND", "94611-4321");
 		targetStr = "150||PEARL||315|OAKLAND|94611";
 		assertEquals(targetStr, origAddr.getCleanAddress());
-
+		assertEquals("4321", origAddr.getZip4());
+		
 	}
 
 	@Test

@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 
 import com.skovalenko.geocoder.address_parser.ParsedUsAddress;
@@ -13,51 +14,75 @@ import com.skovalenko.geocoder.address_parser.us.UsAddressParser;
 import ch.qos.logback.classic.Logger;
 
 public class AddressParser {
-	
-	
+
 	private static final Logger log = (Logger) LoggerFactory.getLogger("import");
 
 	private static char FIELD_SEP = '|';
 
 	private ParsedUsAddress parsedAddress;
 	private String rawAddress;
-	
+	private String addressLine;
+	private String street;
+	private String unit;
+	private String city;
+	private String zip;
+	private String zip4;
+
 	final static Map<String, String> streetNameTranslator;
-    static {
-        Map<String, String> snt = new HashMap<String,String>();
-        snt.put("PLEASANT", "PLEASANT VALLEY");
-        streetNameTranslator = Collections.unmodifiableMap(snt);
-    }
-	
+	static {
+		Map<String, String> snt = new HashMap<String, String>();
+		snt.put("PLEASANT", "PLEASANT VALLEY");
+		streetNameTranslator = Collections.unmodifiableMap(snt);
+	}
+
 	public AddressParser() {
 	};
 
 	// This constructor is primarily used by property_transaction since the unit
 	// number is in a separate field in property_transaction
-	public AddressParser(String inStreet, String unit, String city, String inZip) {
+	public AddressParser(String inStreet, String inUnit, String inCity, String inZip) {
+
+		street = inStreet;
+		zip = inZip;
+		city = inCity;
+		unit = inUnit;
 		
-		String street = inStreet;
-		String zip = inZip;
-		
+		addressLine = inStreet;
 		if (unit != null && !unit.isEmpty()) {
-			street += " #" + unit;
+			 addressLine += " #" + unit;
 		}
-		setRawAddress(street + ", " + city + ", " + zip);
+		rawAddress = street + ", " + city + ", " + zip;
+
+		separateZip(inZip);
 		
-		// if the zip has a 4-digit extension remove it because the parser does not deal with it
-		if (zip != null) {
+		parse();
+		
+	}
+
+	private void separateZip(String inZip) {
+		// if the zip-code has a 4-digit extension remove it because the parser
+		// does not deal with it
+		inZip = inZip.trim();
+		inZip = StringUtils.remove(inZip, ' ');
+		if (inZip != null) {
+			if (inZip.length() < 5) {
+				log.warn("Invalid Zip Code: " + rawAddress);
+				return;
+			}
+			if (inZip.length() == 5) {
+				zip = inZip;
+				zip4 = null;
+				return;
+			}
 			String[] zipParts = zip.split("-");
-			if (zipParts.length ==2) {
+			if (zipParts.length == 2) {
 				zip = zipParts[0];
+				zip4 = zipParts[1];
 			}
 		} else {
-			zip = "00000";
+			zip = null;
 		}
 
-		UnparsedAddress upa = new UnparsedAddress(street, city, zip);
-		UsAddressParser parser = new UsAddressParser();
-		parsedAddress = parser.parse(upa);
-		fixSpecialCases();
 	}
 
 	// This constructor is primarily used by realProperty because the unit
@@ -65,27 +90,12 @@ public class AddressParser {
 	public AddressParser(String streetUnit, String city, String zip) {
 		this(streetUnit, null, city, zip);
 	}
-	
-	public Address getAddress() {
-		Address adr = null;
-		adr.setStreetNbr( parsedAddress.getStreetNumber());
-		adr.setStreetPreDir( parsedAddress.getStreetPreDir());
-		adr.setStreetName( parsedAddress.getStreetName());
-		adr.setStreetType( parsedAddress.getStreetType());
-		adr.setStreetPostDir( parsedAddress.getStreetPostDir());
-		adr.setUnitNbr( parsedAddress.getSubUnitNumber());
-		adr.setUnitName( parsedAddress.getSubUnitName());
-		adr.setCity(parsedAddress.getCity());
-		adr.setState(parsedAddress.getState());
-		adr.setZip(parsedAddress.getZip());
-		adr.setZip4(parsedAddress.getZip4());
-		adr.setCounty(parsedAddress.getCounty());
-		adr.setCountry(parsedAddress.getCountry());
-		return null;
-	}
-	
-	public ParsedUsAddress getParsedUsAddress() {
-		return parsedAddress;
+
+	private void parse() {
+		UnparsedAddress upa = new UnparsedAddress(addressLine, city, zip);
+		UsAddressParser parser = new UsAddressParser();
+		parsedAddress = parser.parse(upa);
+		fixSpecialCases();
 	}
 
 	private void fixSpecialCases() {
@@ -94,14 +104,67 @@ public class AddressParser {
 			parsedAddress.setStreetName(newStreetName);
 		}
 	}
-
-	public String getRawAddress() {
-		return rawAddress;
+	
+	public String getStreetNbr() {
+	    return parsedAddress.getStreetNumber(); 
+	}
+	
+	public String getStreetPreDir() {
+	    return parsedAddress.getStreetPreDir(); 
+	}
+	
+	public String getStreetName() {
+	    return parsedAddress.getStreetName(); 
+	}
+	
+	public String getStreetType() {
+	    return parsedAddress.getStreetType(); 
+	}
+	
+	public String getStreetPostDir() {
+	    return parsedAddress.getStreetPostDir(); 
+	}
+	
+	public String getSubUnitNumber() {
+	    return parsedAddress.getSubUnitNumber(); 
+	}
+	
+	public String getSubUnitName() {
+	    return parsedAddress.getSubUnitName(); 
+	}
+	
+	public String getCity() {
+	    return parsedAddress.getCity(); 
+	}
+	
+	public String getState() {
+	    return parsedAddress.getState(); 
+	}
+	
+	public String getZip() {
+	    return parsedAddress.getZip(); 
+	}
+	
+	public String getZip4() {
+	    return zip4; 
+	}
+	
+	public String getZip42() {
+		return parsedAddress.getZip4();
+	}
+	public String getCounty() {
+	    return parsedAddress.getCounty(); 
+	}
+	
+	public String getCountry() {
+	    return parsedAddress.getCountry(); 
 	}
 
 	public void setRawAddress(String rawAddress) {
 		this.rawAddress = rawAddress;
 	}
+
+	
 
 	/*
 	 * cleanAddress contains no street type or unit numbers
@@ -122,8 +185,7 @@ public class AddressParser {
 		sb.append(parsedAddress.getCity());
 		sb.append(FIELD_SEP);
 		sb.append(parsedAddress.getZip());
-		// debug TODO remove
-		if (parsedAddress.getZip()== null || parsedAddress.getZip().isEmpty() ) {
+		if (parsedAddress.getZip() == null || parsedAddress.getZip().isEmpty()) {
 			log.warn("Clean address zip code is empty or null");
 		}
 		return sb.toString();
@@ -150,9 +212,9 @@ public class AddressParser {
 		}
 		return false;
 	}
-	
-	public static String normToStringAddress( String normAddr ) {
-		
+
+	public static String normToStringAddress(String normAddr) {
+
 		String[] items = normAddr.split(Character.toString(FIELD_SEP));
 		String strAddr = items[0] + " ";
 		strAddr += items[1] + " ";
@@ -161,8 +223,12 @@ public class AddressParser {
 		strAddr += "#" + items[4] + ",";
 		strAddr += items[5] + ",";
 		strAddr += items[6];
-			
+
 		return strAddr;
+	}
+
+	public String getRawAddress() {
+		return rawAddress;
 	}
 
 }

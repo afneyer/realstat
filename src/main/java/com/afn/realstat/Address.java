@@ -8,8 +8,6 @@ import org.springframework.data.domain.Example;
 import org.springframework.data.geo.Point;
 
 import com.afn.util.MapLocation;
-import com.skovalenko.geocoder.address_parser.ParsedUsAddress;
-import com.skovalenko.geocoder.address_parser.UsAddress;
 
 @Entity
 @Table(name = "address", indexes = { @Index(name = "idx_streetNbr", columnList = "streetNbr"),
@@ -33,71 +31,66 @@ public class Address extends AbstractEntity {
 
 	public Address() {
 	}
-	
+
 	public Address(String rawStringAddress) {
 		// AddressParser adrPrs = new AddressParser(rawStringAddress);
 	}
-	
-	private void setFields(ParsedUsAddress usAdr) {
-		setStreetNbr( usAdr.getStreetNumber());
-		setStreetPreDir( usAdr.getStreetPreDir());
-		setStreetName( usAdr.getStreetName());
-		setStreetType( usAdr.getStreetType());
-		setStreetPostDir( usAdr.getStreetPostDir());
-		setUnitNbr( usAdr.getSubUnitNumber());
-		setUnitName( usAdr.getSubUnitName());
-		setCity(usAdr.getCity());
-		setState(usAdr.getState());
-		setZip(usAdr.getZip());
-		setZip4(usAdr.getZip4());
-		setCounty(usAdr.getCounty());
-		setCountry(usAdr.getCountry());	
-		
+
+	private void setFields(AddressParser prsdAdr) {
+		setStreetNbr(prsdAdr.getStreetNbr());
+		setStreetPreDir(prsdAdr.getStreetPreDir());
+		setStreetName(prsdAdr.getStreetName());
+		setStreetType(prsdAdr.getStreetType());
+		setStreetPostDir(prsdAdr.getStreetPostDir());
+		setUnitNbr(prsdAdr.getSubUnitNumber());
+		setUnitName(prsdAdr.getSubUnitName());
+		setCity(prsdAdr.getCity());
+		setState(prsdAdr.getState());
+		setZip(prsdAdr.getZip());
+		setZip4(prsdAdr.getZip4());
+		setCounty(prsdAdr.getCounty());
+		setCountry(prsdAdr.getCountry());
+
 		setLocation();
 	}
-	
+
 	private void setLocation() {
 		if (location == null) {
 			MapLocation loc = new MapLocation(this.toString());
 			location = loc.getLocation();
 		}
-		
+
 	}
-	
+
 	public Address(String inStreet, String unit, String city, String inZip) {
-		AddressParser adrPrs = new AddressParser(inStreet, unit, city, zip);
-		setFields(adrPrs.getParsedUsAddress());
+		setFields(new AddressParser(inStreet, unit, city, zip));
 	}
-	
+
 	public Address(String inStreetUnit, String city, String inZip) {
-		AddressParser adrPrs = new AddressParser(inStreetUnit, city, zip);
-		setFields(adrPrs.getParsedUsAddress());
+		this(inStreetUnit, null, city, inZip);
 	}
-	
+
 	public String getFullStreet() {
 		// @TODO
 		return streetName;
-		
+
 	}
-	
+
 	public String toString() {
 		String adrStr = getFullStreet();
 		adrStr += ", " + city;
 		adrStr += "," + zip;
 		return adrStr;
-		
+
 	}
-	
+
 	@Override
 	public void clean() {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public boolean isValid() {
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	public String getStreetNbr() {
@@ -209,9 +202,19 @@ public class Address extends AbstractEntity {
 	}
 
 	@Override
-	public Example getRefExample() {
-		// TODO Auto-generated method stub
-		return null;
+	public Example<Address> getRefExample() {
+		Address adr = new Address();
+		adr.streetNbr = streetNbr;
+		adr.streetName = streetName;
+		adr.streetPreDir = streetPreDir;
+		adr.streetPostDir = streetPostDir;
+		adr.unitNbr = unitNbr;
+		adr.unitName = unitName;
+		adr.zip = adr.zip;
+		adr.city = adr.city;
+
+		Example<Address> e = Example.of(adr);
+		return e;
 	}
 
 }
