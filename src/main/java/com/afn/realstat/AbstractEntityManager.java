@@ -52,6 +52,7 @@ public class AbstractEntityManager<T extends AbstractEntity> {
 				log.error("Cannot apply function = " + action.toString() + " to entity " + e);
 			}
 		}
+		System.out.println("-First Entity:" + list.get(0) + "  -Last Entity:" + list.get(list.size()-1) + "  -BatchSize:" + list.size());
 		repo.save(list);
 		repo.flush();
 

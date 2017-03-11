@@ -5,7 +5,9 @@ import java.util.Date;
 
 import javax.persistence.Basic;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Index;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
@@ -23,6 +25,10 @@ public class RealProperty extends AbstractEntity {
 
 	@Basic(optional = false)
 	private String apn;
+	
+	@ManyToOne(fetch = FetchType.EAGER)
+	private Address propertyAdr;
+	
 	private String apnClean;
 	private String owner1;
 	private String title;
@@ -466,7 +472,16 @@ public class RealProperty extends AbstractEntity {
 		this.location = location;
 	}
 
-	/*
-	 * TODO remove public void test() { Long l = RealProperty_ }
-	 */
+	public void setAddress(Address adr) {
+		this.propertyAdr = adr;
+	}
+
+	public Address getPropertyAdr() {
+		return propertyAdr;
+	}
+
+	public void setPropertyAdr(Address propertyAdr) {
+		this.propertyAdr = propertyAdr;
+	}
+
 }

@@ -1,6 +1,7 @@
 package com.afn.realstat;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
 import java.util.List;
@@ -24,6 +25,9 @@ public class RealPropertyManagerTest {
 	
 	@Autowired
 	PropertyTransactionRepository ptRepo;
+	
+	@Autowired
+	RealPropertyRepository rpRepo;
 	
 	@Test
 	public void testPropertyTransactionLinking() {
@@ -59,5 +63,50 @@ public class RealPropertyManagerTest {
 	public void testIteration() {		
 		rpmgr.iterateAll();
 	}
+	
+	@Test
+	public void testCreateAndLinkAddress() {
+		RealProperty rp = createTestProperty01();
+		rpmgr.createAndLinkAddress(rp);
+		Address adr = rp.getPropertyAdr();
+		
+		assertEquals("112", adr.getStreetNbr());
+		assertEquals("INDIAN", adr.getStreetName());
+		assertEquals("RD", adr.getStreetType());
+		assertEquals("PIEDMONT", adr.getCity());
+		assertEquals("94610", adr.getZip());
+		
+	}
+
+	private RealProperty createTestProperty01() {
+		RealProperty rp = new RealProperty("51-4790-4-11");
+		rp.setPropertyAddress("112 Indian Rd");
+		rp.setPropertyCity("Piedmont");
+		rp.setPropertyZip("94611");
+		rpRepo.saveOrUpdate(rp);
+		return rp;
+	}
+	
+	@Test
+	public void testLinkToAddresses() {
+		rpmgr.linkToAddresses();
+	}
+	
+	@Test 
+	public void specialCases() {
+		List<RealProperty> rpList = rpRepo.findByApn("48B-7141-62");
+		if (rpList.size() != 1) {
+			fail("Real property count for 48B-7241-62 is:" + rpList.size());
+		} else {
+			RealProperty rp = rpList.get(0);
+			rpmgr.createAndLinkAddress(rp);
+			rpRepo.saveOrUpdate(rp);
+			assertNotNull(rp.getPropertyAdr());
+		}
+		
+	}
+	
+	
+	
 
 }

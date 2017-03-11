@@ -5,6 +5,8 @@ import org.springframework.data.geo.Point;
 
 import com.google.maps.GeoApiContext;
 import com.google.maps.GeocodingApi;
+import com.google.maps.model.AddressComponent;
+import com.google.maps.model.AddressComponentType;
 import com.google.maps.model.GeocodingResult;
 import com.google.maps.model.Geometry;
 
@@ -26,35 +28,142 @@ public class MapLocation {
 	private final static String apiKey = "AIzaSyBCyOA84WMzCHjkrEdFxtrH-pGYcFGSywE";
 
 	private Geometry geo = null;
-	private String formattedAddress = null;
+	private GeocodingResult[] results = null;
 
 	public MapLocation(String address) {
 		GeoApiContext context = new GeoApiContext().setApiKey(apiKey);
-		GeocodingResult[] results = null;
 		try {
 			results = GeocodingApi.geocode(context, address).await();
+			geo = results[0].geometry;
 		} catch (Exception e) {
-			log.error("Error in MapLocation: Cannot convert address =" + "address");
-			e.printStackTrace();
+			log.error("Error in MapLocation: Cannot convert address =" + "address" + e);
+			// e.printStackTrace();
 		}
-		formattedAddress = results[0].formattedAddress;
-		geo = results[0].geometry;
-
 	}
 
 	public String getFormattedAddress() {
-		return formattedAddress;
+		String r = null;
+		if (isValid()) {
+			r = results[0].formattedAddress;
+		}
+		return r;
 	}
 
 	public Double getLng() {
-		return geo.location.lng;
+		if (isValid()) {
+			return geo.location.lng;
+		}
+		return 0.0;
 	}
 
 	public Double getLat() {
-		return geo.location.lat;
+		if (isValid()) {
+			return geo.location.lat;
+		}
+		return 0.0;
 	}
-	
+
 	public Point getLocation() {
-		return new Point(getLng(),getLat());
+		if (isValid()) {
+			return new Point(getLng(), getLat());
+		}
+		return null;
+	}
+
+	public String getStreetNbr() {
+		String r = null;
+		if (isValid()) {
+			r = getAddressComponentType(AddressComponentType.STREET_NUMBER);
+		}
+		return r;
+	}
+
+	public String getStreet() {
+		String r = null;
+		if (isValid()) {
+			r = getAddressComponentType(AddressComponentType.ROUTE);
+		}
+		return r;
+	}
+
+	public String getCity() {
+		String r = null;
+		if (isValid()) {
+			r = getAddressComponentType(AddressComponentType.LOCALITY);
+		}
+		return r;
+	}
+
+	public String getCounty() {
+		String r = null;
+		if (isValid()) {
+			r = getAddressComponentType(AddressComponentType.ADMINISTRATIVE_AREA_LEVEL_2);
+		}
+		return r;
+	}
+
+	public String getState() {
+		String r = null;
+		if (isValid()) {
+			r = getAddressComponentType(AddressComponentType.ADMINISTRATIVE_AREA_LEVEL_1);
+		}
+		return r;
+	}
+
+	public String getCountry() {
+		String r = null;
+		if (isValid()) {
+			r = getAddressComponentType(AddressComponentType.COUNTRY);
+		}
+		return r;
+	}
+
+	public String getZip() {
+		String r = null;
+		if (isValid()) {
+			r = getAddressComponentType(AddressComponentType.POSTAL_CODE);
+		}
+		return r;
+	}
+
+	public String getZip4() {
+		String r = null;
+		if (isValid()) {
+			r = getAddressComponentType(AddressComponentType.POSTAL_CODE_SUFFIX);
+		}
+		return r;
+	}
+
+	public Boolean getPartialMatch() {
+		Boolean r = true;
+		if (isValid()) {
+			r = results[0].partialMatch;
+		}
+		return r;
+	}
+
+	private String getAddressComponentType(AddressComponentType type) {
+		String result = null;
+		AddressComponent[] cmpList = results[0].addressComponents;
+
+		for (int i = 0; i < cmpList.length; i++) {
+			AddressComponent adrCmpnt = cmpList[i];
+			com.google.maps.model.AddressComponentType[] types = adrCmpnt.types;
+			for (int j = 0; j < types.length; j++) {
+				if (types[j] == type) {
+					return cmpList[i].shortName;
+				}
+			}
+		}
+
+		return result;
+	}
+
+	public Boolean isValid() {
+		if (results.length == 0)
+			return false;
+		if (geo == null)
+			return false;
+		return true;
 	}
 }

@@ -15,6 +15,16 @@ public class MapLocationTest {
 		assertEquals("112 Indian Rd, Piedmont, CA 94610, USA", mapLoc.getFormattedAddress());
 		assertEquals(37.816977, mapLoc.getLat(), 0.0000001);
 		assertEquals(-122.220519, mapLoc.getLng(), 0.0000001);
-
+		
+		assertEquals("112",mapLoc.getStreetNbr());
+		assertEquals("Indian Rd", mapLoc.getStreet());
+		assertEquals("Piedmont", mapLoc.getCity());
+		assertEquals("Alameda County",mapLoc.getCounty());
+		assertEquals("CA",mapLoc.getState());
+		assertEquals("US",mapLoc.getCountry());
+		assertEquals("94610",mapLoc.getZip());
+		assertEquals("1201",mapLoc.getZip4());
 	}
+	
+	
 }

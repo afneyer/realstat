@@ -1,6 +1,7 @@
 package com.afn.realstat;
 
 import java.util.List;
+import java.util.function.Function;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -15,12 +16,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class RealPropertyManager {
+public class RealPropertyManager extends AbstractEntityManager<RealProperty> {
 
 	public static final Logger log = LoggerFactory.getLogger("import");
 
 	@Autowired
-	RealPropertyRepository repository;
+	RealPropertyRepository rpRepo;
+	
+	@Autowired
+	AddressRepository adrRepo;
 
 	@PersistenceContext
     EntityManager em;
@@ -28,7 +32,8 @@ public class RealPropertyManager {
 	@PersistenceUnit
 	EntityManagerFactory emf;
 
-	public RealPropertyManager() {
+	public RealPropertyManager(RealPropertyRepository rpRepo) {
+		repo = rpRepo;
 	}
 
 	private List<RealProperty> getAllEntitiesIterable(int offset, int max) {
@@ -63,7 +68,24 @@ public class RealPropertyManager {
 	}
 	
 	public List<RealProperty> findByApnClean( String apn ) {
-		List<RealProperty> rp = repository.findByApnClean(apn);
+		List<RealProperty> rp = rpRepo.findByApnClean(apn);
 		return rp;
+	}
+	
+	public void linkToAddresses() {		
+		Function<RealProperty, Boolean> createAndLinkAddress = rp -> {
+			return this.createAndLinkAddress(rp);
+		};
+		performActionOnEntities(createAndLinkAddress);
+	}
+	
+	public Boolean createAndLinkAddress(RealProperty rp) {
+		if (rp.getPropertyAdr() == null) {
+			Address adr = new Address(rp.getPropertyAddress(), rp.getPropertyCity(), rp.getPropertyZip());
+			adr = adrRepo.saveOrUpdate(adr);
+			rp.setAddress(adr);
+			System.out.println("Creating and linking address: " + adr);
+		}
+		return true;
 	}
 }

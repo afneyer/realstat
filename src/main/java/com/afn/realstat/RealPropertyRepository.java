@@ -23,5 +23,5 @@ public interface RealPropertyRepository extends AbstractEntityRepository<RealPro
 		      "propertyCity = ?2 and landUse = ?3",
 		      nativeQuery = true)
     long countByZipCityLandUseCloseYear( String zip, String city, String landUse);
- 
+    
 }

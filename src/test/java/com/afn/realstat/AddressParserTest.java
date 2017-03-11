@@ -93,6 +93,10 @@ public class AddressParserTest {
 		AddressParser origAddr = new AddressParser("2005 Pleasant Valley #308", "OAKLAND", "94611");
 		String targetStr = "2005||PLEASANT VALLEY||308|OAKLAND|94611";
 		assertEquals(targetStr, origAddr.getCleanAddress());
+		
+		origAddr = new AddressParser("4938 Proctor Ave", "OAKLAND", "94618-2545");
+		targetStr = "4938||PROCTOR|||OAKLAND|94618";
+		assertEquals(targetStr, origAddr.getCleanAddress());
 	}
 
 }

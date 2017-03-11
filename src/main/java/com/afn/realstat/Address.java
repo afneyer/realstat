@@ -32,8 +32,13 @@ public class Address extends AbstractEntity {
 	public Address() {
 	}
 
-	public Address(String rawStringAddress) {
-		// AddressParser adrPrs = new AddressParser(rawStringAddress);
+	public Address(String inStreet, String inUnit, String inCity, String inZip) {
+		AddressParser adrPrsr = new AddressParser(inStreet, inUnit, inCity, inZip);
+		setFields(adrPrsr);
+	}
+
+	public Address(String inStreetUnit, String inCity, String inZip) {
+		this(inStreetUnit, null, inCity, inZip);
 	}
 
 	private void setFields(AddressParser prsdAdr) {
@@ -50,36 +55,55 @@ public class Address extends AbstractEntity {
 		setZip4(prsdAdr.getZip4());
 		setCounty(prsdAdr.getCounty());
 		setCountry(prsdAdr.getCountry());
-
-		setLocation();
+		// setMapLocationFields();
 	}
 
-	private void setLocation() {
+	
+	public void setMapLocationFields() {
 		if (location == null) {
 			MapLocation loc = new MapLocation(this.toString());
-			location = loc.getLocation();
+			if (true /*!loc.getPartialMatch()*/) {
+				location = loc.getLocation();
+				state = loc.getState();
+				zip4 = loc.getZip4();
+				county = loc.getCounty().toUpperCase();
+				
+				// overwrite and correct
+				zip = loc.getZip();
+				city = loc.getCity().toUpperCase();
+			/*} else {
+				System.out.println("Partial Match for" + this); */
+			}
 		}
-
-	}
-
-	public Address(String inStreet, String unit, String city, String inZip) {
-		setFields(new AddressParser(inStreet, unit, city, zip));
-	}
-
-	public Address(String inStreetUnit, String city, String inZip) {
-		this(inStreetUnit, null, city, inZip);
 	}
 
 	public String getFullStreet() {
-		// @TODO
-		return streetName;
-
+		StringBuffer sb = new StringBuffer();
+		sb.append(streetNbr);
+		sb.append(" ");
+		sb.append(streetPreDir);
+		sb.append(" ");
+		sb.append(streetName);
+		sb.append(" ");
+		sb.append(streetPostDir);
+		sb.append(" ");
+		sb.append(streetType);
+		sb.append(" ");
+		sb.append(unitName);
+		sb.append(unitNbr);
+		String fs = sb.toString();
+		fs = fs.trim();
+		fs = fs.replaceAll(" +", " ");
+		return fs;
 	}
 
 	public String toString() {
 		String adrStr = getFullStreet();
 		adrStr += ", " + city;
 		adrStr += "," + zip;
+		if (zip4 != null) {
+			adrStr += "-" + zip4;
+		}
 		return adrStr;
 
 	}

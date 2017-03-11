@@ -60,11 +60,11 @@ public class AddressParser {
 	}
 
 	private void separateZip(String inZip) {
-		// if the zip-code has a 4-digit extension remove it because the parser
-		// does not deal with it
-		inZip = inZip.trim();
-		inZip = StringUtils.remove(inZip, ' ');
 		if (inZip != null) {
+			// if the zip-code has a 4-digit extension remove it because the parser
+			// does not use it, store it directly in zip4;
+			inZip = inZip.trim();
+			inZip = StringUtils.remove(inZip, ' ');
 			if (inZip.length() < 5) {
 				log.warn("Invalid Zip Code: " + rawAddress);
 				return;
@@ -149,9 +149,6 @@ public class AddressParser {
 	    return zip4; 
 	}
 	
-	public String getZip42() {
-		return parsedAddress.getZip4();
-	}
 	public String getCounty() {
 	    return parsedAddress.getCounty(); 
 	}
@@ -211,20 +208,6 @@ public class AddressParser {
 			return true;
 		}
 		return false;
-	}
-
-	public static String normToStringAddress(String normAddr) {
-
-		String[] items = normAddr.split(Character.toString(FIELD_SEP));
-		String strAddr = items[0] + " ";
-		strAddr += items[1] + " ";
-		strAddr += items[2] + " ";
-		strAddr += items[3] + " ";
-		strAddr += "#" + items[4] + ",";
-		strAddr += items[5] + ",";
-		strAddr += items[6];
-
-		return strAddr;
 	}
 
 	public String getRawAddress() {
