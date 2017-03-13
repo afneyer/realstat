@@ -5,11 +5,17 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Example;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.querydsl.QueryDslPredicateExecutor;
 import org.springframework.data.repository.NoRepositoryBean;
 
 @NoRepositoryBean
-public interface AbstractEntityRepository<T extends AbstractEntity> extends JpaRepository<T, Long> {
+public interface AbstractEntityRepository<T extends AbstractEntity>
+		extends JpaRepository<T, Long>, QueryDslPredicateExecutor<T> {
+	
+	Page<T> findAll(Pageable pageable);
 
 	public static final Logger log = LoggerFactory.getLogger("app");
 

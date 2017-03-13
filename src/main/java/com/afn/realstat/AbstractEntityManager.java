@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import com.querydsl.core.types.Predicate;
 
 @Component
 public class AbstractEntityManager<T extends AbstractEntity> {
@@ -17,20 +18,28 @@ public class AbstractEntityManager<T extends AbstractEntity> {
 
 	AbstractEntityRepository<T> repo;
 
-	public void performActionOnEntities(Function<T, Boolean> action) {
+	public void performActionOnEntities(Function<T, Boolean> action, Predicate predicate) {
 
 		int batchSize = 1000;
 		int maxBatches = 10000;
-		this.performActionOnEntities(action, batchSize, maxBatches);
+		this.performActionOnEntities(action, predicate, batchSize, maxBatches);
 
 	}
 
-	public void performActionOnEntities(Function<T, Boolean> action, int batchSize, int maxBatches) {
+	public void performActionOnEntities(Function<T, Boolean> action) {
+
+		Predicate predicate = null;
+		this.performActionOnEntities(action, predicate);
+
+	}
+
+	public void performActionOnEntities(Function<T, Boolean> action, Predicate predicate, int batchSize,
+			int maxBatches) {
 
 		// set the paging parameters (batch size)
 		int i = 0;
 		PageRequest pr = new PageRequest(i, batchSize);
-		Page<T> entities = repo.findAll(pr);
+		Page<T> entities = repo.findAll(predicate,pr);
 
 		// iterate over all pages
 		while (entities.hasContent() && i < maxBatches) {
@@ -41,6 +50,7 @@ public class AbstractEntityManager<T extends AbstractEntity> {
 			i++;
 			pr = new PageRequest(i, batchSize);
 			entities = repo.findAll(pr);
+
 		}
 	}
 
@@ -52,7 +62,8 @@ public class AbstractEntityManager<T extends AbstractEntity> {
 				log.error("Cannot apply function = " + action.toString() + " to entity " + e);
 			}
 		}
-		System.out.println("-First Entity:" + list.get(0) + "  -Last Entity:" + list.get(list.size()-1) + "  -BatchSize:" + list.size());
+		System.out.println("-First Entity:" + list.get(0) + "  -Last Entity:" + list.get(list.size() - 1)
+				+ "  -BatchSize:" + list.size());
 		repo.save(list);
 		repo.flush();
 

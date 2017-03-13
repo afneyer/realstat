@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import com.querydsl.core.types.Predicate;
+
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = Application.class,
         webEnvironment = SpringBootTest.WebEnvironment.NONE)
@@ -36,7 +38,8 @@ public class PropertyTransactionManagerTest {
 			return true;
 		};
 		
-		pm.performActionOnEntities(cleanAndLink, batchSize, maxBatches);
+		Predicate p = null;
+		pm.performActionOnEntities(cleanAndLink, p, batchSize, maxBatches);
 	}
 
 }

@@ -15,6 +15,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.querydsl.core.types.Predicate;
+import com.querydsl.core.types.dsl.BooleanExpression;
+
 @Component
 public class RealPropertyManager extends AbstractEntityManager<RealProperty> {
 
@@ -87,5 +90,26 @@ public class RealPropertyManager extends AbstractEntityManager<RealProperty> {
 			System.out.println("Creating and linking address: " + adr);
 		}
 		return true;
+	}
+	
+	public void cleanAndFixAddresses() {
+		
+		Function<RealProperty, Boolean> cleanAndFixAddress = rp -> {
+			return this.cleanAndFixAddressUsingMapLocations(rp);
+		};
+		
+		QRealProperty rpq = QRealProperty.realProperty;
+		BooleanExpression predicate = rpq.propertyAdr.isNull();
+		performActionOnEntities(cleanAndFixAddress, predicate);
+	}
+	
+	public Boolean cleanAndFixAddressUsingMapLocations(RealProperty rp) {
+		if (rp.getPropertyAdr() != null) {
+			Address adr = rp.getPropertyAdr();
+			adr.setMapLocationFields();
+			System.out.println("Fixing address using MapLocations: " + adr);
+			return true;
+		}
+		return false;
 	}
 }

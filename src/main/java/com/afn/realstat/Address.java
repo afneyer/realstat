@@ -4,6 +4,8 @@ import javax.persistence.Entity;
 import javax.persistence.Index;
 import javax.persistence.Table;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Example;
 import org.springframework.data.geo.Point;
 
@@ -13,6 +15,8 @@ import com.afn.util.MapLocation;
 @Table(name = "address", indexes = { @Index(name = "idx_streetNbr", columnList = "streetNbr"),
 		@Index(name = "idx_streetName", columnList = "streetName") })
 public class Address extends AbstractEntity {
+
+	public static final Logger log = LoggerFactory.getLogger("app");
 
 	private String streetNbr;
 	private String streetPreDir;
@@ -58,21 +62,36 @@ public class Address extends AbstractEntity {
 		// setMapLocationFields();
 	}
 
-	
 	public void setMapLocationFields() {
 		if (location == null) {
-			MapLocation loc = new MapLocation(this.toString());
-			if (true /*!loc.getPartialMatch()*/) {
-				location = loc.getLocation();
-				state = loc.getState();
-				zip4 = loc.getZip4();
-				county = loc.getCounty().toUpperCase();
-				
-				// overwrite and correct
-				zip = loc.getZip();
-				city = loc.getCity().toUpperCase();
-			/*} else {
-				System.out.println("Partial Match for" + this); */
+			MapLocation mapLoc = new MapLocation(this.toString());
+
+			location = mapLoc.getLocation();
+			state = mapLoc.getState();
+			zip4 = mapLoc.getZip4();
+			county = mapLoc.getCounty();
+			if (county != null) {
+				county = county.toUpperCase();
+			}
+
+			// Overwrite and correct zip and city from the map
+			String mapZip = mapLoc.getZip();
+			if (mapZip != null) {
+				if (zip != null && !zip.equals(mapZip) && zip == null) {
+					log.warn("Corrected address:" + this + "  Cur Zip:" + zip + "  New Zip:" + mapZip);
+					zip = mapZip;
+				}
+			}
+
+			if (city != null) {
+				String mapCity = mapLoc.getCity();
+				if (mapCity != null) {
+					mapCity = mapCity.toUpperCase();
+					if (!city.equals(mapCity)) {
+						log.warn("Corrected address:" + this + "  Cur City:" + city + " New City: " + mapCity);
+						city = mapCity;
+					}
+				}
 			}
 		}
 	}

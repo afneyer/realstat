@@ -93,7 +93,7 @@ public class RealPropertyManagerTest {
 	}
 	
 	@Test 
-	public void specialCases() {
+	public void testSpecialCases() {
 		List<RealProperty> rpList = rpRepo.findByApn("48B-7141-62");
 		if (rpList.size() != 1) {
 			fail("Real property count for 48B-7241-62 is:" + rpList.size());
@@ -104,6 +104,11 @@ public class RealPropertyManagerTest {
 			assertNotNull(rp.getPropertyAdr());
 		}
 		
+	}
+	
+	@Test
+	public void testCleanAndFixAddresses() {
+		rpmgr.cleanAndFixAddresses();
 	}
 	
 	
