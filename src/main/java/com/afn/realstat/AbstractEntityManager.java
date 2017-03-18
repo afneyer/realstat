@@ -57,7 +57,14 @@ public class AbstractEntityManager<T extends AbstractEntity> {
 	@Transactional
 	private void performActionOnBatch(Function<T, Boolean> action, List<T> list) {
 		for (T e : list) {
-			Boolean result = action.apply(e);
+			
+			Boolean result = false;
+			try {
+				result = action.apply(e);
+			} catch (Exception ex) {
+				log.error("Cought Exception in applying function " + action.toString() + " to entity " + "Exception=" + e);
+				result = false;
+			}
 			if (!result) {
 				log.error("Cannot apply function = " + action.toString() + " to entity " + e);
 			}

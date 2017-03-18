@@ -9,30 +9,30 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Example;
 
 @Entity
-@Table(name = "app_param", indexes = { @Index(name = "idx_key_type", columnList = "key,paramType") })
+@Table(name = "app_param", indexes = @Index(name ="idx_key_type", columnList = "paramKey,paramType") )
 public class AppParam extends AbstractEntity {
 
 	public static final Logger log = LoggerFactory.getLogger("app");
 
-	private String key;
+	private String paramKey;
 	private String paramType;
-	private String value;
-	private String description;
+	private String paramValue;
+	private String paramDescription;
 
 	public AppParam() {
 	}
 
-	public AppParam(String key, String paramType, String value, String description) {
-		this.key = key;
-		this.paramType = paramType;
-		this.value = value;
-		this.description = description;
+	public AppParam(String key, String type, String value, String description) {
+		this.paramKey = key;
+		this.paramType = type;
+		this.paramValue = value;
+		this.paramDescription = description;
 	}
 
 	public String toString() {
-		String param = key;
+		String param = paramKey;
 		param += " " + paramType;
-		param += " " + value;
+		param += " " + paramValue;
 		return param;
 
 	}
@@ -49,18 +49,18 @@ public class AppParam extends AbstractEntity {
 	@Override
 	public Example<AppParam> getRefExample() {
 		AppParam param = new AppParam();
-		param.key = key;
+		param.paramKey = paramKey;
 		param.paramType = paramType;
 		Example<AppParam> e = Example.of(param);
 		return e;
 	}
 
-	public String getKey() {
-		return key;
+	public String getParamKey() {
+		return paramKey;
 	}
 
-	public void setKey(String key) {
-		this.key = key;
+	public void setParamKey(String key) {
+		this.paramKey = key;
 	}
 
 	public String getParamType() {
@@ -71,20 +71,20 @@ public class AppParam extends AbstractEntity {
 		this.paramType = paramType;
 	}
 
-	public String getValue() {
-		return value;
+	public String getParamValue() {
+		return paramValue;
 	}
 
-	public void setValue(String value) {
-		this.value = value;
+	public void setParamValue(String value) {
+		this.paramValue = value;
 	}
 
-	public String getDescription() {
-		return description;
+	public String getParamDescription() {
+		return paramDescription;
 	}
 
-	public void setDescription(String description) {
-		this.description = description;
+	public void setParamDescription(String description) {
+		this.paramDescription = description;
 	}
 
 }

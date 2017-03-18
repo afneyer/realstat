@@ -98,6 +98,6 @@ public class ByteString implements CharSequence {
   }
 
   public static void main(String[] args) throws Exception {
-    D.p(new ByteString("Hallo dü!"));
+    D.p(new ByteString("Hallo d!"));
   }
 }

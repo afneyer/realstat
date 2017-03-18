@@ -38,4 +38,9 @@ public class AfnDateUtil {
 		return years;
 	}
 
+	public static Date dateToday() {
+		LocalDate ld = LocalDate.now();
+		LocalDateTime ldt = ld.atStartOfDay();
+		return Date.from(ldt.atZone(ZoneId.systemDefault()).toInstant());	    
+	}
 }

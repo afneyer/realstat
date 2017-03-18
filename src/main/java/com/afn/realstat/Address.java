@@ -32,6 +32,7 @@ public class Address extends AbstractEntity {
 	private String county;
 	private String country;
 	private Point location;
+	private int mapLocCalls;
 
 	public Address() {
 	}
@@ -59,41 +60,53 @@ public class Address extends AbstractEntity {
 		setZip4(prsdAdr.getZip4());
 		setCounty(prsdAdr.getCounty());
 		setCountry(prsdAdr.getCountry());
-		// setMapLocationFields();
+		setMapLocCalls(0);
 	}
 
-	public void setMapLocationFields() {
+	public boolean setMapLocationFields() {
 		if (location == null) {
-			MapLocation mapLoc = new MapLocation(this.toString());
+			if (MapLocation.apiLimitReached()) {
+				log.warn("Google Maps daily api-limit reached! Limit = " + MapLocation.apiLimit());
+			} else {
+				MapLocation mapLoc = new MapLocation(this.toString());
+				setMapLocCalls(getMapLocCalls() +1);
 
-			location = mapLoc.getLocation();
-			state = mapLoc.getState();
-			zip4 = mapLoc.getZip4();
-			county = mapLoc.getCounty();
-			if (county != null) {
-				county = county.toUpperCase();
-			}
-
-			// Overwrite and correct zip and city from the map
-			String mapZip = mapLoc.getZip();
-			if (mapZip != null) {
-				if (zip != null && !zip.equals(mapZip) && zip == null) {
-					log.warn("Corrected address:" + this + "  Cur Zip:" + zip + "  New Zip:" + mapZip);
-					zip = mapZip;
+				location = mapLoc.getLocation();
+				state = mapLoc.getState();
+				zip4 = mapLoc.getZip4();
+				county = mapLoc.getCounty();
+				if (county != null) {
+					county = county.toUpperCase();
 				}
-			}
 
-			if (city != null) {
-				String mapCity = mapLoc.getCity();
-				if (mapCity != null) {
-					mapCity = mapCity.toUpperCase();
-					if (!city.equals(mapCity)) {
-						log.warn("Corrected address:" + this + "  Cur City:" + city + " New City: " + mapCity);
-						city = mapCity;
+				// Overwrite and correct zip and city from the map
+				String mapZip = mapLoc.getZip();
+				if (mapZip != null) {
+					if (zip != null && !zip.equals(mapZip) && zip == null) {
+						log.warn("Corrected address:" + this + "  Cur Zip:" + zip + "  New Zip:" + mapZip);
+						zip = mapZip;
+					}
+				}
+
+				if (city != null) {
+					String mapCity = mapLoc.getCity();
+					if (mapCity != null) {
+						mapCity = mapCity.toUpperCase();
+						if (!city.equals(mapCity)) {
+							log.warn("Corrected address:" + this + "  Cur City:" + city + " New City: " + mapCity);
+							city = mapCity;
+						}
 					}
 				}
 			}
+			if (location == null) {
+				return false;
+			} else {
+				return true;
+			}
 		}
+		return true;
+
 	}
 
 	public String getFullStreet() {
@@ -118,7 +131,7 @@ public class Address extends AbstractEntity {
 
 	public String toString() {
 		String adrStr = getFullStreet();
-		adrStr += ", " + city;
+		adrStr += "," + city;
 		adrStr += "," + zip;
 		if (zip4 != null) {
 			adrStr += "-" + zip4;
@@ -242,6 +255,14 @@ public class Address extends AbstractEntity {
 
 	public Point getLocation() {
 		return location;
+	}
+
+	public int getMapLocCalls() {
+		return mapLocCalls;
+	}
+	
+	public void setMapLocCalls(int i) {
+		mapLocCalls = i;
 	}
 
 	@Override

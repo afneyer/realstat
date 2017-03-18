@@ -3,18 +3,18 @@ package com.afn.util;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
-import org.assertj.core.util.DateUtil;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.geo.Point;
+import org.springframework.stereotype.Component;
 
-import com.google.gwt.maps.client.services.Geocoder;
-import com.google.gwt.maps.client.services.GeocoderRequest;
+import com.afn.realstat.AfnDateUtil;
+import com.afn.realstat.AppParamManager;
+import com.afn.realstat.framework.SpringApplicationContext;
 import com.google.maps.GeoApiContext;
 import com.google.maps.GeocodingApi;
 import com.google.maps.GeocodingApiRequest;
-import com.google.maps.PendingResult;
 import com.google.maps.GeolocationApi.Response;
-import com.google.maps.errors.ApiException;
 import com.google.maps.model.AddressComponent;
 import com.google.maps.model.AddressComponentType;
 import com.google.maps.model.GeocodingResult;
@@ -37,9 +37,11 @@ public class MapLocation {
 
 	private final static String apiKey = "AIzaSyCSgBJHB0XMVHlGaMrTgL-YO2_pHhPtuKc";
 
-	private static final Integer maxCallsPerDay = 2000;
+	private static AppParamManager  apmMgr = (AppParamManager) SpringApplicationContext.getBean("appParamManager");
+
+	private static Integer maxCallsPerDay = new Integer(apmMgr.getVal("maxCallsPerDay", "MAP"));
+	private static Integer maxCallsPerSecond = new Integer(apmMgr.getVal("maxCallsPerSecond", "MAP"));
 	private static Integer numCallsToday = null;
-	private static Integer maxCallsPerSecond = 50;
 	private static Date lastCall = null;
 
 	private Geometry geo = null;
@@ -50,29 +52,19 @@ public class MapLocation {
 
 	public MapLocation(String address) {
 
-	
-
-		/*
-		 * Geocoder geocoder =Geocoder.newInstance(); GeocoderRequest
-		 * geocoderRequest = GeocoderRequest.newInstance();
-		 * geocoderRequest.setAddress(address); Geocoder geocoderResponse =
-		 * geocoder.geocode(geocoderRequest, null);
-		 */
-
 		GeoApiContext context = new GeoApiContext().setApiKey(apiKey);
 		context.setQueryRateLimit(maxCallsPerSecond);
-		if (waitForApiReady()) {
+
+		if ( !apiLimitReached()) {
 			try {
 				updateCallData();
-				System.out.println("Calling geo-coder for: " + address);
+				System.out.println("Call number " + numCallsToday + " today to geo-coder for address: " + address);
 				results = GeocodingApi.geocode(context, address).await();
-				if (results != null) {
+				if (results != null && results.length != 0) {
 					geo = results[0].geometry;
 				}
 			} catch (Exception e) {
-				log.error("Error in MapLocation: Cannot convert address =" + address + e);
-				System.out.println(e);
-				e.printStackTrace();
+				log.error("Error in MapLocation: Cannot convert address =" + address + "Exception = " + e);
 			}
 
 		} else {
@@ -81,39 +73,43 @@ public class MapLocation {
 
 	}
 
-	private void updateCallData() {	
-		
-		numCallsToday++;
-		lastCall = new Date();
-		int numCallsBeforeSave = maxCallsPerDay / 100;
-		if (numCallsBeforeSave > 0 && numCallsToday % numCallsBeforeSave == 0) {
-			// save to database
+	private void updateCallData() {
+
+		// if last call is yesterday, set it today and reset the number of calls made today to zero
+		Date lastCallDate = apmMgr.getDateVal("lastCall", "MAP");
+		numCallsToday = new Integer(apmMgr.getVal("callsToday", "MAP"));
+		Date today = AfnDateUtil.dateToday();
+		if (lastCallDate.before(today)) {
+			lastCall = today;
+			numCallsToday = 0;
 		}
+		
+		// update call parameters
+		numCallsToday++;
+		apmMgr.setVal("callsToday", "MAP", Integer.toString(numCallsToday));
+		apmMgr.setVal("lastCall", "MAP", lastCall);
+		System.out.println("numCallsToday = " + numCallsToday);
+		System.out.println("lastCall = " + lastCall);
 	}
 
-	private boolean waitForApiReady() {
-		
+	public static boolean apiLimitReached() {
+
 		if (numCallsToday == null || lastCall == null) {
 			numCallsToday = 0;
 			lastCall = new Date();
 		}
-		
-		if (numCallsToday > maxCallsPerDay) {
-			return false;
-		} 
-		/*
-		else {
-			Date now = new Date();
-			int maxMilli = 1000 / maxCallsPerSecond;
-			long diffInMilli = DateUtil.timeDifference(now, lastCall);
-			if (diffInMilli < maxMilli) {
-				sleepInMilliseconds(maxMilli - diffInMilli);
-			}
+
+		if (numCallsToday >= maxCallsPerDay) {
 			return true;
-		} */
-		return true;
+		}
+		return false;
+	}
+	
+	public static Integer apiLimit() {
+		return maxCallsPerDay;
 	}
 
+	// TODO Move to Timer function
 	private void sleepInMilliseconds(long millis) {
 		try {
 			TimeUnit.MILLISECONDS.sleep(millis);

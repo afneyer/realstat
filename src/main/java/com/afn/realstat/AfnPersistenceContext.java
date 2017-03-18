@@ -17,6 +17,7 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import com.afn.realstat.framework.SpringApplicationContext;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 
 @Configuration
@@ -61,9 +62,12 @@ class AfnPersistenceContext {
 		return cpds;
 	}
 	
-
-
-	@Bean( name = "entityManagerFactory")
+    @Bean( name  = "springApplicationContext" )
+    public SpringApplicationContext springApplicationContext() {
+    	return new SpringApplicationContext();
+    }
+	
+    @Bean( name = "entityManagerFactory")
 	public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
 		
 		LocalContainerEntityManagerFactoryBean factory = 
