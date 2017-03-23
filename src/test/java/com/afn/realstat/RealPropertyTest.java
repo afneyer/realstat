@@ -24,6 +24,7 @@ public class RealPropertyTest {
 	RealPropertyRepository rpRepo;
 
 	// TODO: create the required property
+	// TODO: fix lat / lon
 	@Test
 	public void testSpatial() {
  
