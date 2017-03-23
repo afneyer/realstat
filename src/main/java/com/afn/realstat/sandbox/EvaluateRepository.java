@@ -32,8 +32,7 @@ public class EvaluateRepository {
 	
 	
 	public void saveOrUpdateEntity() {
-		AgentVolume av = new AgentVolume("Test", new Date() );
-		av.setUserCode( "testBre" );
+		AgentVolume av = new AgentVolume("Test - 0001", new Date() );
 		//String className= em.getClass().getName();
 		repository.saveOrUpdate(av);
 	}

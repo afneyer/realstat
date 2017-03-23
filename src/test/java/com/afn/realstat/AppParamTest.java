@@ -3,22 +3,22 @@
 
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Date;
 
 import org.assertj.core.util.DateUtil;
-import org.hibernate.event.spi.AbstractPreDatabaseOperationEvent;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 	
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = Application.class, webEnvironment = SpringBootTest.WebEnvironment.NONE)
+@ActiveProfiles("dev")
 public class AppParamTest {
 	
 	@Autowired
@@ -37,10 +37,10 @@ public class AppParamTest {
 
 	@Test
 	public void testParameterInitialization() {
-		assertEquals("50", apMgr.get("maxCallsPerSecond", "MAP").getParamValue());
-		assertEquals("2000", apMgr.get("maxCallsPerDay", "MAP").getParamValue());
-		assertEquals("0", apMgr.get("callsToday","MAP").getParamValue());
-	    assertEquals("2017-03-01 10:00:00.000", apMgr.getVal("lastCall","MAP"));	
+		assertEquals("50", apMgr.getVal("maxCallsPerSecond", "MAP"));
+		assertEquals("2000", apMgr.getVal("maxCallsPerDay", "MAP"));
+		assertEquals("0", apMgr.getVal("callsToday","MAP"));
+	    assertEquals("2017-03-01T10:00:00.000", apMgr.getVal("lastCall","MAP"));	
 	    
 	    long paramCount1 = apRepo.count();
 	    
@@ -52,7 +52,7 @@ public class AppParamTest {
 	
 	@Test
 	public void testChangingParameter() {
-		Date d1 = new Date();
+		Date d1 = AfnDateUtil.dateYesterday();
 		String str1 = DateUtil.formatAsDatetimeWithMs(d1);
 		apMgr.setVal("lastCall", "MAP", d1);
 		Date d2 = apMgr.getDateVal("lastCall", "MAP");

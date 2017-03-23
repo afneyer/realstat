@@ -3,10 +3,12 @@ package com.afn.realstat;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
+import org.springframework.test.context.ActiveProfiles;
 
 // @RunWith(SpringRunner.class)
 // @SpringBootTest(classes = Application.class,
 //        webEnvironment = SpringBootTest.WebEnvironment.NONE)
+@ActiveProfiles("dev")
 public class AbstractImporterTest {
 
 	// @Autowired TODO

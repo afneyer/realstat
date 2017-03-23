@@ -1,20 +1,16 @@
-package com.afn.util;
+package com.afn.realstat.util;
 
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.geo.Point;
-import org.springframework.stereotype.Component;
 
 import com.afn.realstat.AfnDateUtil;
 import com.afn.realstat.AppParamManager;
 import com.afn.realstat.framework.SpringApplicationContext;
 import com.google.maps.GeoApiContext;
 import com.google.maps.GeocodingApi;
-import com.google.maps.GeocodingApiRequest;
-import com.google.maps.GeolocationApi.Response;
 import com.google.maps.model.AddressComponent;
 import com.google.maps.model.AddressComponentType;
 import com.google.maps.model.GeocodingResult;
@@ -37,7 +33,7 @@ public class MapLocation {
 
 	private final static String apiKey = "AIzaSyCSgBJHB0XMVHlGaMrTgL-YO2_pHhPtuKc";
 
-	private static AppParamManager  apmMgr = (AppParamManager) SpringApplicationContext.getBean("appParamManager");
+	private static AppParamManager apmMgr = (AppParamManager) SpringApplicationContext.getBean("appParamManager");
 
 	private static Integer maxCallsPerDay = new Integer(apmMgr.getVal("maxCallsPerDay", "MAP"));
 	private static Integer maxCallsPerSecond = new Integer(apmMgr.getVal("maxCallsPerSecond", "MAP"));
@@ -45,17 +41,14 @@ public class MapLocation {
 	private static Date lastCall = null;
 
 	private Geometry geo = null;
-	private GeocodingResult result = null;
 	private GeocodingResult[] results = null;
-	private GeocodingApiRequest gar = null;
-	private Response resp = null;
 
 	public MapLocation(String address) {
 
 		GeoApiContext context = new GeoApiContext().setApiKey(apiKey);
 		context.setQueryRateLimit(maxCallsPerSecond);
 
-		if ( !apiLimitReached()) {
+		if (!apiLimitReached()) {
 			try {
 				updateCallData();
 				System.out.println("Call number " + numCallsToday + " today to geo-coder for address: " + address);
@@ -75,15 +68,21 @@ public class MapLocation {
 
 	private void updateCallData() {
 
-		// if last call is yesterday, set it today and reset the number of calls made today to zero
+		// if last call is yesterday, set it today and reset the number of calls
+		// made today to zero
 		Date lastCallDate = apmMgr.getDateVal("lastCall", "MAP");
+		if (lastCallDate == null) {
+			// lastCallDate = AfnDateUtil.dateYesterday();
+		}
+
 		numCallsToday = new Integer(apmMgr.getVal("callsToday", "MAP"));
+
 		Date today = AfnDateUtil.dateToday();
 		if (lastCallDate.before(today)) {
 			lastCall = today;
 			numCallsToday = 0;
 		}
-		
+
 		// update call parameters
 		numCallsToday++;
 		apmMgr.setVal("callsToday", "MAP", Integer.toString(numCallsToday));
@@ -104,7 +103,7 @@ public class MapLocation {
 		}
 		return false;
 	}
-	
+
 	public static Integer apiLimit() {
 		return maxCallsPerDay;
 	}

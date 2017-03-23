@@ -12,7 +12,7 @@ import com.afn.realstat.AgentRepository;
 import com.afn.realstat.PropertyTransaction;
 import com.afn.realstat.PropertyTransactionRepository;
 import com.afn.realstat.RealPropertyRepository;
-import com.afn.util.MapLocation;
+import com.afn.realstat.util.MapLocation;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.annotations.Widgetset;
@@ -48,7 +48,7 @@ import com.vaadin.ui.VerticalLayout;
 /**
  * Google Maps UI for testing and demoing.
  */
-@SpringUI(path = "/maps")
+@SpringUI(path = "/demo")
 @Theme("valo")
 @SuppressWarnings("serial")
 @Widgetset("AppWidgetset")

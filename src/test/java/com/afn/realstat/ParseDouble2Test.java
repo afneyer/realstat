@@ -7,7 +7,6 @@ import org.supercsv.cellprocessor.ParseDouble2;
 
 public class ParseDouble2Test {
 
-
 	@Test
 	public void testTranslateCsvFileDefault() {
 		

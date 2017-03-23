@@ -11,10 +11,12 @@ import java.text.SimpleDateFormat;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 	
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = Application.class, webEnvironment = SpringBootTest.WebEnvironment.NONE)
+@ActiveProfiles("dev")
 public class AgentVolumeTest {
 
 	@Test
@@ -22,7 +24,7 @@ public class AgentVolumeTest {
 		SimpleDateFormat year = new SimpleDateFormat("yyyy");
 		AgentVolume agv1 = null;
 		try {
-			agv1 = new AgentVolume("206", year.parse("2016"));
+			agv1 = new AgentVolume("ELLIS, THERESA - R01036301", year.parse("2016"));
 		} catch (ParseException e) {
 			fail("Cannot parse date");
 		}

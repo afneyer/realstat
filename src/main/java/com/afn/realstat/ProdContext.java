@@ -12,6 +12,7 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
@@ -25,7 +26,8 @@ import com.mchange.v2.c3p0.ComboPooledDataSource;
 @EnableTransactionManagement
 @EnableJpaRepositories(basePackages = "com.afn.realstat")
 @EnableAutoConfiguration
-class AfnPersistenceContext {
+@Profile("XXX")
+class ProdContext {
 	
 	public static final Logger log = LoggerFactory.getLogger("app");
 	
@@ -43,6 +45,7 @@ class AfnPersistenceContext {
 	
 	@Bean
 	public DataSource pooledDataSource() {
+		System.out.println("Running Production Profile");
 		ComboPooledDataSource cpds = new ComboPooledDataSource();
 		try {
 			cpds.setDriverClass( com.mysql.jdbc.Driver.class.getName() );

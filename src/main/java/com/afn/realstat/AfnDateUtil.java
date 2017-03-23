@@ -43,4 +43,11 @@ public class AfnDateUtil {
 		LocalDateTime ldt = ld.atStartOfDay();
 		return Date.from(ldt.atZone(ZoneId.systemDefault()).toInstant());	    
 	}
+
+	public static Date dateYesterday() {
+		LocalDate ld = LocalDate.now();
+		ld.minusDays(1);
+		LocalDateTime ldt = ld.atStartOfDay();
+		return Date.from(ldt.atZone(ZoneId.systemDefault()).toInstant());	
+	}
 }

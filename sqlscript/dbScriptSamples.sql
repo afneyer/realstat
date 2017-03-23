@@ -199,7 +199,21 @@ where listingAgent_id = 125823 or listingAgent2_id = 125823
 or sellingAgent_id = 125823 or sellingAgent2_id = 125823
 order by mlsNo asc
 */
+/*
 select count(*) from property_transaction;
 SHOW GLOBAL STATUS LIKE 'created_tmp%tables';
+*/
+/*
+update real_property set propertyAdr_id = null;
+
+delete from address;
+*/
+/*
+select * from real_property where propertyAdr_id is null;
+*/
+select count(*) from address;
+select count(location) from address;
+select count(mapLocCalls) from address where mapLocCalls != 0;
+
 
 

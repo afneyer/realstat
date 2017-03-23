@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.vaadin.server.VaadinRequest;
@@ -20,6 +21,7 @@ import com.vaadin.spring.boot.VaadinAutoConfiguration;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = VaadinUITests.Config.class,
         webEnvironment = SpringBootTest.WebEnvironment.NONE)
+@ActiveProfiles("dev")
 public class VaadinUITests {
 
     @Autowired CustomerRepository repository;

@@ -18,6 +18,7 @@ public class AgentVolume extends AbstractEntity {
 	@Basic(optional = false)
 	private Date year;
 	private String agentRaw;
+	// TODO add FirstName and LastName
 	private Integer rank;
 	private Integer unitsListed;
 	private Double volumeListed;
@@ -52,8 +53,8 @@ public class AgentVolume extends AbstractEntity {
 	}
 	
 	private void extractUserCode() {
-		String userCode = agentRaw.split("-")[1];
-		userCode.trim();
+		userCode = agentRaw.split("-")[1];
+		userCode = userCode.trim();
 	}
 
 	@Override
@@ -66,20 +67,18 @@ public class AgentVolume extends AbstractEntity {
 
 	@Override
 	public Example<AgentVolume> getRefExample() {
-		Example<AgentVolume> e = Example.of(new AgentVolume(getUserCode(), getYear()));
+  		Example<AgentVolume> e = Example.of(new AgentVolume(getUserCode(), getYear()));
 		return e;
-	}
-
-	public String getAgentUserCode() {
-		String userCode = agentRaw;
-		
-		return userCode;
 	}
 
 	// All getters and setters
 
 	public String getUserCode() {
+		if (userCode == null) {
+		   extractUserCode();
+		}
 		return userCode;
+
 	}
 
 	public void setUserCode(String userCode) {
@@ -148,6 +147,7 @@ public class AgentVolume extends AbstractEntity {
 
 	public void setAgentRaw(String agentRaw) {
 		this.agentRaw = agentRaw;
+		extractUserCode();
 	}
 
 	public String getOfficeRaw() {

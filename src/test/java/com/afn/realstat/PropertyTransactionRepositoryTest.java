@@ -1,5 +1,7 @@
 package com.afn.realstat;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.List;
 
 import org.junit.Before;
@@ -7,10 +9,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = Application.class, webEnvironment = SpringBootTest.WebEnvironment.NONE)
+@ActiveProfiles("dev")
 public class PropertyTransactionRepositoryTest {
 
 	@Autowired
@@ -60,9 +64,7 @@ public class PropertyTransactionRepositoryTest {
 	@Test
 	public void testFindallPropertyTransbyAgent() {
 		List<PropertyTransaction> ptList = ptRepo.findAllTransactionsByAgent(agt);
-		for (PropertyTransaction pt : ptList) {
-			System.out.println(pt.getMlsNo());
-		}
+		assertEquals(5, ptList.size());
 
 	}
 }

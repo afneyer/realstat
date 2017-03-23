@@ -1,15 +1,17 @@
 package com.afn.realstat;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Index;
 import javax.persistence.Table;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cglib.core.Local;
 import org.springframework.data.domain.Example;
 import org.springframework.data.geo.Point;
 
-import com.afn.util.MapLocation;
+import com.afn.realstat.util.MapLocation;
 
 @Entity
 @Table(name = "address", indexes = { @Index(name = "idx_streetNbr", columnList = "streetNbr"),
@@ -31,6 +33,8 @@ public class Address extends AbstractEntity {
 	private String zip4;
 	private String county;
 	private String country;
+	@Column(columnDefinition = "BLOB")   
+	/*@Lob(type = LobType.BLOB)*/
 	private Point location;
 	private int mapLocCalls;
 
@@ -61,6 +65,7 @@ public class Address extends AbstractEntity {
 		setCounty(prsdAdr.getCounty());
 		setCountry(prsdAdr.getCountry());
 		setMapLocCalls(0);
+		setMapLocationFields();
 	}
 
 	public boolean setMapLocationFields() {

@@ -14,19 +14,21 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.afn.util.QueryResultTable;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = Application.class, webEnvironment = SpringBootTest.WebEnvironment.NONE)
+@ActiveProfiles("dev")
 public class CsvFileWriterTest {
 	
 	@Autowired
 	private CustomerRepository cRepo;
 
 	@Autowired
-	private DataSource afnDataSource;
+	DataSource dataSource;
 	
 	private static String filePath = System.getProperty("user.dir") + "\\logs\\testoutput";
 
@@ -97,7 +99,7 @@ public class CsvFileWriterTest {
 		cRepo.save(new Customer("Kathleen", "Callahan"));
 
 		String query = "select id, substr(firstName,1,5), lastName from customer order by id";
-		QueryResultTable st = new QueryResultTable(afnDataSource, query);
+		QueryResultTable st = new QueryResultTable(dataSource, query);
 		
 		CsvFileWriter.writeQueryTable(st, file);
 		

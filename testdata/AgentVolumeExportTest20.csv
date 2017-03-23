@@ -1,21 +1,21 @@
-Year,Agent Raw,Office Raw,Units Listed,Volume Listed,Units Sold,Volume Sold,Units Total,Volume Total,% MLS Volume,Avg Ttl Price,Avg DOM
-2016,"Lesterhuis, Hendrik - 159521452",Discovery Realty Inc. - CCDCSL,861,"$483,104,850 ",313,"$168,867,379 ","1,174","$651,972,229 ",0.14%,"$555,343 ",36
-2016,"Frazzano, Joe - 159506233","J. Rockcliff, REALTORS? - SBLE26",510,"$463,193,800 ",316,"$293,886,007 ",826,"$757,079,807 ",0.16%,"$916,562 ",16
-2016,"Young, Linda - 206518132",Top Mission Realty & Invest - SEHU01,273,"$316,948,467 ",49,"$60,600,137 ",322,"$377,548,604 ",0.08%,"$1,172,511 ",16
-2016,"Crofton, Timothy - 206513565","Timothy Crofton, Inc. - SVLT02",272,"$305,458,955 ",38,"$43,472,870 ",310,"$348,931,825 ",0.07%,"$1,125,587 ",23
-2016,"Green, Dana - 159514161",Pacific Union International - CCPURB10,180,"$302,800,445 ",157,"$241,221,922 ",337,"$544,022,367 ",0.11%,"$1,614,310 ",17
-2016,"Jarvis, Khrista - 159500565",J. Rockcliff Realtors Inc. - CCJROCK,279,"$273,004,788 ",159,"$163,397,049 ",438,"$436,401,837 ",0.09%,"$996,351 ",18
-2016,"Chawla, Joujou - 159509930",J. Rockcliff Realtors Inc. - CCJROCK,211,"$225,086,701 ",186,"$174,955,928 ",397,"$400,042,629 ",0.08%,"$1,007,664 ",34
-2016,"MCRAE, BEBE - R00875159",THE GRUBB CO. INC. - BGRUCO,160,"$221,114,850 ",79,"$90,129,789 ",239,"$311,244,639 ",0.07%,"$1,302,279 ",21
-2016,"Gunderman, David - 149520297","Alain Pinel, REALTORS? - SHGM06",192,"$211,213,887 ",135,"$134,864,702 ",327,"$346,078,589 ",0.07%,"$1,058,344 ",21
-2016,"Schembri, Joe - 206508618",Coldwell Banker - SCCB02,263,"$209,668,336 ",76,"$67,281,876 ",339,"$276,950,212 ",0.06%,"$816,962 ",34
-2016,"Kehrig, Joe - 159513421",Pacific Union International - CCPURB11,312,"$206,712,509 ",52,"$53,519,200 ",364,"$260,231,709 ",0.05%,"$714,922 ",32
-2016,"Thompson, Clark - 159509947",Village Associates Real Estate - CCVARE,137,"$179,587,714 ",63,"$84,114,710 ",200,"$263,702,424 ",0.06%,"$1,318,512 ",31
-2016,"Doyle, Lisa - 159500870",J. Rockcliff Realtors Inc - CCJROCK02,215,"$174,618,094 ",39,"$33,447,956 ",254,"$208,066,050 ",0.04%,"$819,158 ",22
-2016,"Fohl, Les - 206502486",Fohl and McClellan - SLFR01,377,"$173,488,675 ",7,"$2,825,000 ",384,"$176,313,675 ",0.04%,"$459,150 ",25
-2016,"Chan, Eunice - 198023829","Toll Brothers Real Estate,Inc. - CCMTV",138,"$170,994,747 ",30,"$37,787,119 ",168,"$208,781,866 ",0.04%,"$1,242,749 ",68
-2016,"Cox, Patricia - 159502690",Alain Pinel Realtors - CCAPR,142,"$167,180,765 ",37,"$47,541,395 ",179,"$214,722,160 ",0.05%,"$1,199,565 ",25
-2016,"TUNNEY, ANIAN - R08127540",THE GRUBB COMPANY - OGRUB,88,"$165,829,862 ",44,"$92,893,770 ",132,"$258,723,632 ",0.05%,"$1,960,028 ",22
-2016,"Joy, Michele - 206533057",Standard Pacific Corp - SJZB01,224,"$155,124,985 ",0,$0 ,224,"$155,124,985 ",0.03%,"$692,522 ",66
-2016,"MASHORE, KRISTA - R01346304",HOMES BY KRISTA - DKRISTA,354,"$143,908,148 ",98,"$41,727,651 ",452,"$185,635,799 ",0.04%,"$410,699 ",23
-2016,"Martin, Monique - 159501957",Better Homes Realty - CCBHR4,133,"$143,871,703 ",59,"$69,924,683 ",192,"$213,796,386 ",0.05%,"$1,113,523 ",16
+Year,Rank,Agent,Office,UnitsListed,VolumeListed,UnitsSold,VolumeSold,UnitsTotal,VolumeTotal,% MLS Volume,Avg Ttl Price,Avg DOM
+2016,6033,"ELLIS, THERESA - R01036301",CALDECOTT PROPERTIES - OCCP,1,"$2,150,000 ",0,$0 ,1,"$2,150,000 ",0.00%,"2,150,000",0
+2016,6619,"Nguyen, Jacqueline - ML304200",Equity One Real Estate - ML5009481,1,"$1,765,000 ",0,$0 ,1,"$1,765,000 ",0.00%,"1,765,000",0
+2016,7545,"Olson, Lori - 149520613","Alain Pinel, REALTORS® - SHGM07",1,"$1,300,000 ",0,$0 ,1,"$1,300,000 ",0.00%,"1,300,000",0
+2016,8790,"HOFFMAN, PAMELA - R00545454",PACIFIC UNION INTERNATIONAL - OPACU 01,1,"$900,000 ",0,$0 ,1,"$900,000 ",0.00%,"900,000",0
+2016,9012,"Thumhart, Amy - QBB338014",Pacific Union International - QB7B429,1,"$850,000 ",0,$0 ,1,"$850,000 ",0.00%,"850,000",0
+2016,9016,"Attard, Charlene - QS324325",Intero Real Estate Services - QSINTR12,1,"$849,000 ",0,$0 ,1,"$849,000 ",0.00%,"849,000",0
+2016,9166,"Parker, Jessica - 159523605",IPA Realty - CCIPAI,1,"$815,000 ",0,$0 ,1,"$815,000 ",0.00%,"815,000",0
+2016,10377,"Kroeger, (R) Linda - LINDAKROEGER",AP Management - CCRCPAPMAN,1,"$590,000 ",0,$0 ,1,"$590,000 ",0.00%,"590,000",0
+2016,10505,"Aulakh, Neeta - 156507917",R H BROKERS - SRHD01,1,"$565,000 ",1,"$565,000 ",2,"$1,130,000 ",0.00%,"565,000",0
+2016,10550,"Anderson, Nick - QS808191",Vanguard Properties - QSVANG02,1,"$555,000 ",0,$0 ,1,"$555,000 ",0.00%,"555,000",0
+2016,10679,"JONES, ALTON - R01335658",REALTY WORLD GOLDEN GATE - ORWDG,1,"$535,000 ",1,"$535,000 ",2,"$1,070,000 ",0.00%,"535,000",0
+2016,10760,"Manno, John - QBA335862",SRG/SFHOD - QB7A0100,1,"$525,000 ",0,$0 ,1,"$525,000 ",0.00%,"525,000",0
+2016,10835,"Montero, Kelly - QMMMONTEKE",Century 21 M & M and Assoc. - QM01MMNA05,1,"$515,000 ",0,$0 ,1,"$515,000 ",0.00%,"515,000",0
+2016,9604,"Li, Devon - QS807028",Century 21 Realty Alliance Fine Homes and Estates - QSCAFH,1,"$725,000 ",1,"$250,000 ",2,"$975,000 ",0.00%,"487,500",0
+2016,11208,"CORRY, DEVONY - R01271296",SIX DEGREES REALTY - OFSCB,1,"$455,000 ",0,$0 ,1,"$455,000 ",0,"455,000",0
+2016,11251,"Hanley, Nicholas - QBC322142",Coldwell Banker Kappel Gateway Realty - QB7C605,1,"$450,000 ",0,$0 ,1,"$450,000 ",0,"450,000",0
+2016,11294,"Huie, Jeniffer - 159508379","HomeSmart Optima Realty, Inc - CCDRONKERS",1,"$445,000 ",0,$0 ,1,"$445,000 ",0,"445,000",0
+2016,11496,"Wagner, Dawn - QBC322437",Dunham Realty - QBCDUNHAM,1,"$416,000 ",0,$0 ,1,"$416,000 ",0,"416,000",0
+2016,11600,"Juricich, Mario - 159511752",Kropa Realty - CC21KR,1,"$400,000 ",0,$0 ,1,"$400,000 ",0,"400,000",0
+2016,11625,"Singh, Sangeeta - QMSSINGSAN",Statewide Realty & Mortgage - QM01SNGH,1,"$399,000 ",0,$0 ,1,"$399,000 ",0,"399,000",0

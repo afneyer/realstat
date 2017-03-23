@@ -29,13 +29,26 @@ public class AppParamManager extends AbstractEntityManager<AppParam> {
 		// Google Map Api Parameters (used in MapLocation)
 		list.add(new AppParam("maxCallsPerDay", "MAP", "2000", "Maximum number of calls to the Google Maps API per day"));
 		list.add(new AppParam("maxCallsPerSecond", "MAP", "50", "Maximum number of calls to the Google Maps API per second"));
-		list.add(new AppParam("callsToday", "MAP", "0", "Number of calls made so far today"));
-		list.add(new AppParam("lastCall", "MAP", "2017-03-01 10:00:00.000", "Date/time of the last call made"));
+		
+		if (get("callsToday","MAP") == null) {
+			list.add(new AppParam("callsToday", "MAP", "0", "Number of calls made so far today"));
+		}
+		if (get("callsToday","MAP") == null) {
+			list.add(new AppParam("lastCall", "MAP", "2017-03-01T10:00:00.000", "Date/time of the last call made"));
+		}
 		
 		list.forEach(ap -> apRepo.saveOrUpdate(ap));
 	}
 
-	public AppParam get(String key, String type) {
+	
+	/**
+	 * Function is private because it may return null
+	 * 
+	 * @param key
+	 * @param type
+	 * @return may be null
+	 */
+	private AppParam get(String key, String type) {
 		AppParam p = apRepo.findOneByParamKeyAndParamType(key, type);
 		return p;
 	}

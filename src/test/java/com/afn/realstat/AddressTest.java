@@ -7,10 +7,12 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Example;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = Application.class, webEnvironment = SpringBootTest.WebEnvironment.NONE)
+@ActiveProfiles("prod")
 public class AddressTest {
 
 	@Autowired
@@ -27,9 +29,11 @@ public class AddressTest {
 
 		assertEquals(addr01.getId(), addr01a.getId());
 
+		// check that the address will be updated and no new address created
+		long cntBefore = adrRepo.count();
 		adrRepo.saveOrUpdate(addr01a);
-		long cnt = adrRepo.count();
-		assertEquals(1, cnt);
+		long cntAfter = adrRepo.count();
+		assertEquals(cntBefore, cntAfter);
 
 		assertEquals("112", addr01.getStreetNbr());
 		assertEquals("", addr01.getStreetPreDir());

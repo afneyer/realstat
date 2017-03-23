@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.geo.Point;
+import org.springframework.stereotype.Component;
 
-import com.afn.util.MapLocation;
+import com.afn.realstat.util.MapLocation;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Widgetset;
 import com.vaadin.server.VaadinRequest;
@@ -42,11 +44,17 @@ import com.vaadin.ui.VerticalLayout;
 @Theme("valo")
 @SuppressWarnings("serial")
 @Widgetset("AppWidgetset")
+@Component
 public class GoogleMapUI extends UI {
-	
+
 	@Autowired
 	private PropertyTransactionService ptService;
-	
+
+	@Autowired
+	private AgentRepository agtRepo;
+
+	@Autowired
+	private AddressManager adrMgr;
 	private GoogleMap googleMap;
 	private GoogleMapMarker kakolaMarker = new GoogleMapMarker("DRAGGABLE: Kakolan vankila",
 			new LatLon(60.44291, 22.242415), true, null);
@@ -57,23 +65,24 @@ public class GoogleMapUI extends UI {
 	private Button componentToMaariaInfoWindowButton;
 
 	private final String center = "5541 Maxwellton Rd. Piedmont, CA 94611";
-	
+
 	/*
-	@WebServlet(value = "/maps", asyncSupported = true)
-	@VaadinServletConfiguration(productionMode = false, ui = GoogleMapUI.class, widgetset = "com.vaadin.tapio.googlemaps.demo.DemoWidgetset")
-	public static class Servlet extends VaadinServlet {
-	}
-	*/
-	
+	 * @WebServlet(value = "/maps", asyncSupported = true)
+	 * 
+	 * @VaadinServletConfiguration(productionMode = false, ui =
+	 * GoogleMapUI.class, widgetset =
+	 * "com.vaadin.tapio.googlemaps.demo.DemoWidgetset") public static class
+	 * Servlet extends VaadinServlet { }
+	 */
+
 	@Autowired
 	public GoogleMapUI(PropertyTransactionService ptService) {
 		this.ptService = ptService;
 	}
-	
+
 	public GoogleMapUI() {
 	}
-	
-	
+
 	@Override
 	protected void init(VaadinRequest request) {
 		CssLayout rootLayout = new CssLayout();
@@ -92,7 +101,7 @@ public class GoogleMapUI extends UI {
 		googleMap = new GoogleMap(null, null, null);
 		// uncomment to enable Chinese API.
 		// googleMap.setApiUrl("maps.google.cn");
-		
+
 		MapLocation cntr = new MapLocation(center);
 		googleMap.setCenter(new LatLon(cntr.getLat(), cntr.getLng()));
 		googleMap.setZoom(13);
@@ -178,23 +187,53 @@ public class GoogleMapUI extends UI {
 			}
 		});
 
-		Button moveCenterButton = new Button("Show results",
-				new Button.ClickListener() {
-					@Override
-					public void buttonClick(ClickEvent event) {
-						
-						// create markers for all properties of an agent
-						List<MapLocation> mlList = ptService.getPropertyLocationsForAgent("792768");
-						for (MapLocation ml : mlList) {
-							GoogleMapMarker mrkr = new GoogleMapMarker("", new LatLon(ml.getLat(), ml.getLng()), false);
-							googleMap.addMarker(mrkr);
-							googleMap.markAsDirty();
+		Button showAgentDealsTmp = new Button("Show deals for agent Tmp", new Button.ClickListener() {
+			@Override
+			public void buttonClick(ClickEvent event) {
+
+				// create markers for all properties of an agent
+				List<MapLocation> mlList = ptService.getPropertyLocationsForAgent("792768");
+				for (MapLocation ml : mlList) {
+					GoogleMapMarker mrkr = new GoogleMapMarker("", new LatLon(ml.getLat(), ml.getLng()), false);
+					googleMap.addMarker(mrkr);
+					googleMap.markAsDirty();
+				}
+				System.out.println("Done with Marking");
+
+			}
+
+		});
+		buttonLayoutRow1.addComponent(showAgentDealsTmp);
+
+		Button showAgentDeals = new Button("Show deals for agent", new Button.ClickListener() {
+			@Override
+			public void buttonClick(ClickEvent event) {
+
+				// create markers for all properties of an agent
+				// TODO create finder for agent
+				// TODO create finder for agent
+				// List<Agent> agt = agtRepo.findByLicense("792768");
+				// if (agt != null) {
+					List<RealProperty> rpList = ptService.getRealPropertiesForAgent("792768");
+					for (RealProperty rp : rpList) {
+						Address adr = rp.getPropertyAdr();
+						adrMgr.getLocation(adr);
+						if (adr != null) {
+							Point loc = adr.getLocation();
+							if (loc != null) {
+								GoogleMapMarker mrkr = new GoogleMapMarker("test", new LatLon(loc.getY(), loc.getX()), false);
+								googleMap.addMarker(mrkr);
+								googleMap.markAsDirty();
+							}
 						}
-						
 					}
-					
-				});
-		buttonLayoutRow1.addComponent(moveCenterButton);
+				// }
+					System.out.println("Done with Marking");
+
+			}
+
+		});
+		buttonLayoutRow1.addComponent(showAgentDeals);
 
 		Button limitCenterButton = new Button("Limit center between (60.619324, 22.712753), (60.373484, 21.945083)",
 				new Button.ClickListener() {

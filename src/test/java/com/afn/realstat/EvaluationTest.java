@@ -2,7 +2,7 @@ package com.afn.realstat;
 
 import org.junit.Test;
 
-public class TrialTest {
+public class EvaluationTest {
 
 	@Test
 	public void SystemOutTest() {
