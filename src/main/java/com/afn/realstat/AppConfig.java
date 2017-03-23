@@ -55,7 +55,7 @@ class AppConfig {
 
 		for (String profile : activeProfiles) {
 			if (profile.equals("dev")) {
-				return testDataSource();
+				return embeddedDataSource();
 			}
 			if (profile.equals("prod")) {
 				return prodDataSource();

@@ -28,7 +28,7 @@ public class AbstractEntityManagerTest {
 	public void setUp() {
 		cRepo.deleteAll();
 		cRepo.flush();
-		createCustomers(8);
+		createCustomers(1000);
 	}
 	
 	private void createCustomers(int numCust) {
@@ -37,23 +37,24 @@ public class AbstractEntityManagerTest {
 			String ln = "Neyer" + String.format("%04d", i);
 			Customer c = new Customer(fn, ln);
 			cRepo.save(c);
-			if (i==3) return;
 		}
 		
 	}
 
 	@Test
 	public void testBatchUpdate() {
-		int batchSize = 5;
-		int maxBatches = 1000;
+		int batchSize = 100;
+		int maxBatches = 100;
 		
 		Function<Customer, Boolean> updateCustomer = c -> {
 			c.setFirstName(c.getFirstName() + "_processed");
+			System.out.println("Processed Customer" + c);
 			return true;
 		};
 		
 		Predicate p = null;
 		cMgr.performActionOnEntities(updateCustomer, p, batchSize, maxBatches);
+		// TODO test count of processed
 	}
 
 }
