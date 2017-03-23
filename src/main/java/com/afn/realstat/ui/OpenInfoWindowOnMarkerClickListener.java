@@ -1,4 +1,4 @@
-package com.vaadin.tapio.googlemaps.demo.events;
+package com.afn.realstat.ui;
 
 import com.vaadin.tapio.googlemaps.GoogleMap;
 import com.vaadin.tapio.googlemaps.client.events.MarkerClickListener;

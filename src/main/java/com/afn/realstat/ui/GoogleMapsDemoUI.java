@@ -1,4 +1,4 @@
-package com.vaadin.tapio.googlemaps.demo;
+package com.afn.realstat.ui;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +33,6 @@ import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapInfoWindow;
 import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapMarker;
 import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapPolygon;
 import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapPolyline;
-import com.vaadin.tapio.googlemaps.demo.events.OpenInfoWindowOnMarkerClickListener;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.CssLayout;

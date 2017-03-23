@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.geo.Point;
 import org.springframework.stereotype.Component;
 
+import com.afn.realstat.ui.OpenInfoWindowOnMarkerClickListener;
 import com.afn.realstat.util.MapLocation;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Widgetset;
@@ -25,7 +26,6 @@ import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapInfoWindow;
 import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapMarker;
 import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapPolygon;
 import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapPolyline;
-import com.vaadin.tapio.googlemaps.demo.events.OpenInfoWindowOnMarkerClickListener;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.CssLayout;
@@ -95,13 +95,11 @@ public class GoogleMapUI extends UI {
 
 		VerticalLayout mapContent = new VerticalLayout();
 		mapContent.setSizeFull();
-		tabs.addTab(mapContent, "The map map");
+		tabs.addTab(mapContent, "Map");
 		tabs.addTab(new Label("An another tab"), "The other tab");
 
 		googleMap = new GoogleMap(null, null, null);
-		// uncomment to enable Chinese API.
-		// googleMap.setApiUrl("maps.google.cn");
-
+		
 		MapLocation cntr = new MapLocation(center);
 		googleMap.setCenter(new LatLon(cntr.getLat(), cntr.getLng()));
 		googleMap.setZoom(13);
