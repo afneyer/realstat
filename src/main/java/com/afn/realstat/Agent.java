@@ -15,6 +15,7 @@ import org.springframework.data.domain.Example;
 public class Agent extends AbstractEntity {
 
 	public static final Logger log = LoggerFactory.getLogger("app");
+	public static final Class<Agent> classType = Agent.class;
 
 	private String agentName;
 	private String userCode;
@@ -67,9 +68,14 @@ public class Agent extends AbstractEntity {
 		this.middleName = pn.getMiddleName();
 		this.middleInitial = pn.getMiddleInitial();
 	}
-
+	
 	@Override
 	public String toString() {
+		String str = firstName + " " + lastName + " = " + license;
+		return str;
+	}
+
+	public String toStringDetailed() {
 		return String.format("Agent [Lic='%s', Raw='%s', FN='%s', LN='%s', MI='%s']",
 				license, agentName, firstName, lastName, middleInitial);
 	}
@@ -213,5 +219,7 @@ public class Agent extends AbstractEntity {
 		}
 		return false;
 	}
+	
+	
 
 }

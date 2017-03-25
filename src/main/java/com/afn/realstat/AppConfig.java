@@ -152,7 +152,7 @@ class AppConfig {
 		}
 		properties.setProperty("hibernate.dialect", hibernateDialect);
 		properties.setProperty("hibernate.connection.isolation", String.valueOf(Connection.TRANSACTION_READ_COMMITTED));
-		properties.setProperty("hibernate.show_sql", "false");
+		properties.setProperty("hibernate.show_sql", "true");
 		properties.setProperty("hibernate.format_sql", "false");
 		properties.setProperty("hibernate.jdbc.batch_size", "1000");
 
