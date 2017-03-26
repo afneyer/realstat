@@ -1,8 +1,8 @@
 package com.afn.realstat.ui;
 
 import java.util.List;
+import java.util.function.Function;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.vaadin.viritin.LazyList;
@@ -12,18 +12,14 @@ import org.vaadin.viritin.fields.MValueChangeListener;
 
 import com.afn.realstat.AbstractEntity;
 import com.afn.realstat.AbstractEntityRepository;
-import com.afn.realstat.Agent;
-import com.afn.realstat.AgentRepository;
-import com.afn.realstat.QAgent;
+import com.afn.realstat.RealProperty;
 import com.querydsl.core.types.Predicate;
+import com.querydsl.core.types.dsl.StringPath;
 import com.vaadin.data.Property;
-import com.vaadin.spring.annotation.SpringComponent;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Component;
+import com.vaadin.server.Sizeable.Unit;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 
-@SpringComponent
 public class Lov<T extends AbstractEntity> {
 
 	public static String popUpWindow = "popUpWindow";
@@ -35,10 +31,16 @@ public class Lov<T extends AbstractEntity> {
 	private Window popUpWindowLov;
 	private T selected = null;
 	private Class<T> type;
+	private StringPath strPath;
+	private Function<T, Boolean> action;
 
-	public Lov() {
-		setType((Class<T>) Agent.class);
+	public Lov(Class<T> type, AbstractEntityRepository<T> repo, StringPath strPath, Function<T,Boolean> action) {
+		this.type = type;
+		this.repo = repo;
 		comboBoxLov = createLov();
+		this.strPath = strPath;
+		this.action = action;
+		this.selected = null;
 	}
 
 	public LazyComboBox<T> getComboBox() {
@@ -53,7 +55,8 @@ public class Lov<T extends AbstractEntity> {
 		// popupContent.addComponent(new Button("Button"));
 
 		// The component itself
-		popUpWindowLov = new Window("Agent Selector", popupContent);
+		popUpWindowLov = new Window("Select Agent", popupContent);
+		popUpWindowLov.setWidth(25.0f,Unit.PERCENTAGE);
 		popUpWindowLov.setModal(true);
 		popUpWindowLov.setContent(popupContent);
 		return popUpWindowLov;
@@ -61,29 +64,27 @@ public class Lov<T extends AbstractEntity> {
 	}
 
 	private LazyComboBox<T> createLov() {
-		LazyComboBox<AbstractEntity> lov = new LazyComboBox<AbstractEntity>(AbstractEntity.class,
+		LazyComboBox<T> lov = new LazyComboBox<T>(getType(),
 
-				new LazyComboBox.FilterablePagingProvider<AbstractEntity>() {
+				new LazyComboBox.FilterablePagingProvider<T>() {
 
 					@Override
-					public List<AbstractEntity> findEntities(int firstRow, String filter) {
-						// QAgent qa = QAgent.agent;
-						// Predicate predicate = qa.agentName.containsIgnoreCase(filter);
-						Predicate predicate = null; // TODO
+					public List<T> findEntities(int firstRow, String filter) {
+						
+						Predicate predicate = strPath.containsIgnoreCase(filter);
 						int batchSize = LazyList.DEFAULT_PAGE_SIZE;
 						int pageNumber = firstRow / batchSize;
 						PageRequest pr = new PageRequest(pageNumber, batchSize);
-						Page<AbstractEntity> page = (Page<AbstractEntity>) repo.findAll(predicate, pr);
-						List<AbstractEntity> list = page.getContent();
+						Page<T> page = (Page<T>) repo.findAll(predicate, pr);
+						List<T> list = page.getContent();
 						return list;
 					}
 				}, new LazyComboBox.FilterableCountProvider() {
 
 					@Override
 					public int size(String filter) {
-						// QAgent qa = QAgent.agent;
-						// Predicate predicate = qa.agentName.startsWith(filter);
-						Predicate predicate = null;
+						// Todo move up
+						Predicate predicate = strPath.containsIgnoreCase(filter);
 
 						long count = repo.count(predicate);
 						return (int) count;
@@ -99,10 +100,20 @@ public class Lov<T extends AbstractEntity> {
 				// TOOD figure out why case it necessary
 				Property<T> p = event.getProperty();
 				T entity = p.getValue();
-				setSelected(entity);
+				
+				action.apply(entity);
+				
+				if (popUpWindowLov != null) {
+					popUpWindowLov.close();
+				}
+				if (comboBoxLov != null) {
+					//TODO test combobox LOV
+					// comboBoxLov.close();
+				}
 			}
 		};
-		lov.addMValueChangeListener((MValueChangeListener<AbstractEntity>) listener);
+		lov.addMValueChangeListener((MValueChangeListener<T>) listener);
+		lov.setSizeFull();
 		return (LazyComboBox<T>) lov;
 
 	}
