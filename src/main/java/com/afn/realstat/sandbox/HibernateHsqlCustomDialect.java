@@ -1,4 +1,4 @@
-package com.afn.realstat;
+package com.afn.realstat.sandbox;
 
 import java.sql.Types;
 
