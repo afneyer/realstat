@@ -4,6 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.Index;
 import javax.persistence.Table;
 
+import org.apache.commons.lang3.text.WordUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Example;
@@ -57,6 +58,14 @@ public class Agent extends AbstractEntity {
 		cleanLicense();
 	}
 
+	void cleanAgentName() {
+		String name = agentName;
+		name = name.trim();
+		name = name.replaceAll(" +", " ");
+		name = WordUtils.capitalizeFully(name,' ','\'');
+		agentName = name;
+	}
+	
 	private void cleanLicense() {
 		license = RealStatUtil.cleanLicense(license);
 	}
@@ -71,7 +80,7 @@ public class Agent extends AbstractEntity {
 	
 	@Override
 	public String toString() {
-		String str = firstName + " " + lastName + " = " + license;
+		String str = agentName + " (" + license +")";
 		return str;
 	}
 

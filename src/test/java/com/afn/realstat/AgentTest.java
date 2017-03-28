@@ -12,8 +12,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 	
-@RunWith(SpringRunner.class)
-@SpringBootTest(classes = Application.class, webEnvironment = SpringBootTest.WebEnvironment.NONE)
+// @RunWith(SpringRunner.class)
+// @SpringBootTest(classes = Application.class, webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @ActiveProfiles("dev")
 public class AgentTest {
 
@@ -84,5 +84,28 @@ public class AgentTest {
 		assertFalse(agt.hasValidName());
 		agt = new Agent("1969778",null,null);
 		assertFalse(agt.hasValidName());
+	}
+	
+	@Test
+	public void testCleanAgentName() {
+		
+		Agent agt;
+		agt = new Agent("1969778","NEYER, ANDREAS F");
+		agt.cleanAgentName();
+		assertEquals("Neyer, Andreas F", agt.getAgentName());
+		
+		agt = new Agent("1969778","  NEYER,  ANDREAS    F");
+		agt.cleanAgentName();
+		assertEquals("Neyer, Andreas F", agt.getAgentName());
+		
+		agt = new Agent("1969778","  nEYER,  aNDREAS    F");
+		agt.cleanAgentName();
+		assertEquals("Neyer, Andreas F", agt.getAgentName());
+		
+		agt = new Agent("1969778","O'nEYER,  aNDREAS    F");
+		agt.cleanAgentName();
+		assertEquals("O'Neyer, Andreas F", agt.getAgentName());
+		
+	
 	}
 }

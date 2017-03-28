@@ -113,6 +113,7 @@ public class Lov<T extends AbstractEntity> {
 			}
 		};
 		lov.addMValueChangeListener((MValueChangeListener<T>) listener);
+		lov.setCaption("Enter Agent as 'LastName, FirstName' and then select");
 		lov.setSizeFull();
 		return (LazyComboBox<T>) lov;
 
