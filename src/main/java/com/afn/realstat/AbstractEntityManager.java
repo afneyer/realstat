@@ -49,7 +49,7 @@ public class AbstractEntityManager<T extends AbstractEntity> {
 
 			i++;
 			pr = new PageRequest(i, batchSize);
-			entities = repo.findAll(pr);
+			entities = repo.findAll(predicate,pr);
 
 		}
 	}
