@@ -7,8 +7,8 @@ import javax.persistence.Table;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cglib.core.Local;
 import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.geo.Point;
 
 import com.afn.realstat.util.MapLocation;
@@ -36,7 +36,7 @@ public class Address extends AbstractEntity {
 	@Column(columnDefinition = "BLOB")   
 	/*@Lob(type = LobType.BLOB)*/
 	private Point location;
-	private int mapLocCalls;
+	private Integer mapLocCalls;
 
 	public Address() {
 	}
@@ -136,8 +136,8 @@ public class Address extends AbstractEntity {
 
 	public String toString() {
 		String adrStr = getFullStreet();
-		adrStr += "," + city;
-		adrStr += "," + zip;
+		adrStr += ", " + city;
+		adrStr += ", " + zip;
 		if (zip4 != null) {
 			adrStr += "-" + zip4;
 		}
@@ -262,11 +262,11 @@ public class Address extends AbstractEntity {
 		return location;
 	}
 
-	public int getMapLocCalls() {
+	public Integer getMapLocCalls() {
 		return mapLocCalls;
 	}
 	
-	public void setMapLocCalls(int i) {
+	public void setMapLocCalls(Integer i) {
 		mapLocCalls = i;
 	}
 
@@ -279,11 +279,37 @@ public class Address extends AbstractEntity {
 		adr.streetPostDir = streetPostDir;
 		adr.unitNbr = unitNbr;
 		adr.unitName = unitName;
-		adr.zip = adr.zip;
-		adr.city = adr.city;
+		adr.zip = zip;
+		adr.city = city;
 
-		Example<Address> e = Example.of(adr);
+		System.out.println("Original Address=" + getDetails() );
+		System.out.println("Address Example =" + getDetails() );
+		
+		ExampleMatcher matcher = ExampleMatcher.matching()     
+				  // .withIgnorePaths("lastname")                         
+				 // .withIncludeNullValues()                             
+				  // .withStringMatcherEnding()
+				; 
+		Example<Address> e = Example.of(adr,matcher);
 		return e;
 	}
+	
+	public String getDetails() {
+		String str = "|";
+		str += printStringField(streetNbr) + "|";
+		str += printStringField(streetName) + "|";
+		str += printStringField(streetPreDir) + "|";
+		str += printStringField(streetPostDir) + "|";
+		str += printStringField(unitNbr) + "|";
+		str += printStringField(unitName) + "|";
+		str += printStringField(zip) + "|";
+		str += printStringField(city) + "|";
+		return str;
+	}
 
+	private String printStringField(String str) {
+		if (str == null) return "null";
+		if (str == "") return "empty";
+		return str;
+	}
 }

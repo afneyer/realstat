@@ -1,6 +1,9 @@
 package com.afn.realstat.ui;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.Function;
@@ -10,8 +13,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.geo.Point;
 import org.springframework.stereotype.Component;
 
+import com.afn.realstat.AdReviewTourList;
 import com.afn.realstat.Address;
 import com.afn.realstat.AddressManager;
+import com.afn.realstat.AddressRepository;
 import com.afn.realstat.Agent;
 import com.afn.realstat.AgentRepository;
 import com.afn.realstat.PropertyTransactionService;
@@ -58,6 +63,10 @@ public class GoogleMapUI extends UI {
 
 	@Autowired
 	private AddressManager adrMgr;
+	
+	@Autowired
+	private AddressRepository adrRepo;
+	
 	private GoogleMap googleMap;
 
 	@Autowired
@@ -157,6 +166,32 @@ public class GoogleMapUI extends UI {
 		});
 		buttonLayoutRow1.addComponent(showAgentDeals);
 		showAgentDeals.setWidth(100, Unit.PERCENTAGE);
+		
+		Button tour = new Button("Show properties on tour", new Button.ClickListener() {
+
+			@Override
+			public void buttonClick(ClickEvent event) {
+				addMarkersForTour();
+			}
+
+			private void addMarkersForTour() {
+				
+				AdReviewTourList adRevList = new AdReviewTourList(null, adrRepo);
+				Date date = null;
+				try {
+					date = new SimpleDateFormat("MMM-dd-yyyy").parse("Mar-27-2017");
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				List<Address> adrList = adRevList.getAdresses(date);
+				addMarkersForAddresses(adrList);
+
+			}
+
+		});
+		buttonLayoutRow1.addComponent(tour);
+		showAgentDeals.setWidth(100, Unit.PERCENTAGE);
 
 		Button clearMarkersButton = new Button("Remove all markers", new Button.ClickListener() {
 			@Override
@@ -177,21 +212,39 @@ public class GoogleMapUI extends UI {
 		// List<RealProperty> rpList = ptService.getRealPropertiesForAgent(agt);
 		for (RealProperty rp : rpList) {
 			Address adr = rp.getPropertyAdr();
-			adrMgr.getLocation(adr);
-			if (adr != null) {
-				Point loc = adr.getLocation();
-				if (loc != null) {
-					GoogleMapMarker mrkr = new GoogleMapMarker("test", new LatLon(loc.getY(), loc.getX()), false);
-					googleMap.addMarker(mrkr);
-					googleMap.markAsDirty();
-				}
-			}
+			addMarkerForAddress(adr);
 		}
 		// }
 
 		this.setMapCenter(googleMap);
 		System.out.println("Done with Marking");
 
+	}
+	
+	protected void addMarkersForAddresses(List<Address> list) {
+		
+		// TODO change to the following
+		// List<RealProperty> rpList = ptService.getRealPropertiesForAgent(agt);
+		for (Address adr : list) {
+			addMarkerForAddress(adr);
+		}
+		// }
+
+		this.setMapCenter(googleMap);
+		System.out.println("Done with Marking");
+
+	}
+	
+	private void addMarkerForAddress(Address adr) {
+		adrMgr.getLocation(adr);
+		if (adr != null) {
+			Point loc = adr.getLocation();
+			if (loc != null) {
+				GoogleMapMarker mrkr = new GoogleMapMarker("test", new LatLon(loc.getY(), loc.getX()), false);
+				googleMap.addMarker(mrkr);
+				googleMap.markAsDirty();
+			}
+		}	
 	}
 
 	

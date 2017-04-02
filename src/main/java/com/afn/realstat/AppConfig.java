@@ -14,13 +14,11 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseFactory;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -36,7 +34,7 @@ import com.mchange.v2.c3p0.ComboPooledDataSource;
 class AppConfig {
 
 	public static final Logger log = LoggerFactory.getLogger("app");
-	
+
 	@Autowired
 	private Environment environment;
 
@@ -106,7 +104,6 @@ class AppConfig {
 		cpds.setMaxPoolSize(20);
 		return cpds;
 	}
-	
 
 	@Bean(name = "springApplicationContext")
 	public SpringApplicationContext springApplicationContext() {
@@ -142,8 +139,8 @@ class AppConfig {
 		// "create-drop"
 		properties.setProperty("hibernate.hbm2ddl.auto", "update");
 		String hibernateDialect = null;
-		Class<? extends DataSource> dataSourceClass =  dataSource().getClass();
-		if (EmbeddedDatabase.class.isAssignableFrom( dataSourceClass) ) {
+		Class<? extends DataSource> dataSourceClass = dataSource().getClass();
+		if (EmbeddedDatabase.class.isAssignableFrom(dataSourceClass)) {
 			hibernateDialect = "org.hibernate.dialect.HSQLDialect";
 			log.info("Using hibernate dialect: org.hibernate.dialect.HSQLDialect");
 		} else {
