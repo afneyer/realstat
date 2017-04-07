@@ -1,11 +1,14 @@
 package com.afn.realstat.ui;
 
+import java.io.File;
+import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Function;
 
 // import org.hsqldb.lib.Iterator;
@@ -22,9 +25,12 @@ import com.afn.realstat.AgentRepository;
 import com.afn.realstat.PropertyTransactionService;
 import com.afn.realstat.QAgent;
 import com.afn.realstat.RealProperty;
+import com.afn.realstat.TourListEntry;
+import com.afn.realstat.TourListRepository;
 import com.querydsl.core.types.dsl.StringPath;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Widgetset;
+import com.vaadin.data.Property;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.tapio.googlemaps.GoogleMap;
@@ -39,9 +45,13 @@ import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.ListSelect;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.UI;
+import com.vaadin.ui.Upload;
+import com.vaadin.ui.Upload.SucceededEvent;
+import com.vaadin.ui.Upload.SucceededListener;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 
@@ -68,6 +78,9 @@ public class GoogleMapUI extends UI {
 	private AddressRepository adrRepo;
 	
 	private GoogleMap googleMap;
+
+	@Autowired
+	protected TourListRepository tlRepo;
 
 	@Autowired
 	public GoogleMapUI(PropertyTransactionService ptService) {
@@ -145,7 +158,7 @@ public class GoogleMapUI extends UI {
 			}
 		});
 
-		Button showAgentDeals = new Button("Show Transactions for Agent", new Button.ClickListener() {
+		Button showAgentDeals = new Button("Show transactions for agent", new Button.ClickListener() {
 
 			@Override
 			public void buttonClick(ClickEvent event) {
@@ -159,7 +172,7 @@ public class GoogleMapUI extends UI {
 
 				Lov<Agent> lov = new Lov<Agent>(Agent.class, agtRepo, strPath, addMarkers);
 				Window popUp = lov.getPopUpWindowLov();
-				UI.getCurrent().addWindow(lov.getPopUpWindowLov());
+				UI.getCurrent().addWindow(popUp);
 
 			}
 
@@ -167,31 +180,23 @@ public class GoogleMapUI extends UI {
 		buttonLayoutRow1.addComponent(showAgentDeals);
 		showAgentDeals.setWidth(100, Unit.PERCENTAGE);
 		
-		Button tour = new Button("Show properties on tour", new Button.ClickListener() {
-
+		Button tourFile = new Button("Import tour pdf-file", new Button.ClickListener() {
 			@Override
 			public void buttonClick(ClickEvent event) {
-				addMarkersForTour();
+				selectAndShowPropertiesForTour();
 			}
-
-			private void addMarkersForTour() {
-				
-				AdReviewTourList adRevList = new AdReviewTourList(null, adrRepo);
-				Date date = null;
-				try {
-					date = new SimpleDateFormat("MMM-dd-yyyy").parse("Mar-27-2017");
-				} catch (ParseException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				List<Address> adrList = adRevList.getAdresses(date);
-				addMarkersForAddresses(adrList);
-
+		});
+		buttonLayoutRow1.addComponent(tourFile);
+		tourFile.setWidth(100, Unit.PERCENTAGE);
+		
+		Button tour = new Button("Show properties on tour", new Button.ClickListener() {
+			@Override
+			public void buttonClick(ClickEvent event) {
+				tourDateSelector();
 			}
-
 		});
 		buttonLayoutRow1.addComponent(tour);
-		showAgentDeals.setWidth(100, Unit.PERCENTAGE);
+		tour.setWidth(100, Unit.PERCENTAGE);
 
 		Button clearMarkersButton = new Button("Remove all markers", new Button.ClickListener() {
 			@Override
@@ -203,6 +208,96 @@ public class GoogleMapUI extends UI {
 		clearMarkersButton.setWidth(100, Unit.PERCENTAGE);
 	}
 
+	protected void selectAndShowPropertiesForTour() {
+		// create a window to upload a pdf-file and select a tour date
+		Window popUp = new Window("Sub-window");
+        VerticalLayout subContent = new VerticalLayout();
+        popUp.setContent(subContent);
+
+        // Put some components in it
+        subContent.addComponent(new Label("Tour Upload and Date Selection"));
+        FileUpLoader receiver = new FileUpLoader();
+        
+		Upload upload = new Upload("Select AdReview Tour Pdf-File", receiver);
+        upload.setImmediate(false);
+        
+        //  upload.addSucceededListener((SucceededListener) receiver);
+        
+        upload.addSucceededListener(new SucceededListener() {
+
+			@Override
+			public void uploadSucceeded(SucceededEvent event) {
+				File file = receiver.getFile();
+				AdReviewTourList adRevList = new AdReviewTourList(file, adrRepo, tlRepo);
+				addMarkersForTour( adRevList );
+			}
+        	
+        });
+        
+        subContent.addComponent(upload);
+       
+        // Center it in the browser window
+        popUp.center();
+
+        // Open it in the UI
+        addWindow(popUp);	
+		
+	}
+	
+	protected void tourDateSelector() {
+		// create a window to upload a pdf-file and select a tour date
+		Window popUp = new Window("Sub-window");
+        VerticalLayout subContent = new VerticalLayout();
+        popUp.setContent(subContent);
+
+        // Put some components in it
+        subContent.addComponent(new Label("Select Tour Date"));
+        
+        // Create the selection component for tour dates
+        List<Date> tlDates = tlRepo.findAllDisctintDatesNewestFirst();
+        
+        ListSelect select = new ListSelect("Select tour date");
+
+        // Add some items
+        select.addItems(tlDates);
+
+        // Show 5 items and a scrollbar if there are more
+        select.setRows(6);
+
+        select.addValueChangeListener(event -> {
+        	@SuppressWarnings("unchecked")
+			Property<Date> p = event.getProperty();
+			Date date = p.getValue();
+			List<TourListEntry> teList = tlRepo.findByTourDate(date);
+			this.addMarkersForTourList(teList);
+			
+        });
+        
+        
+        subContent.addComponent(select);
+       
+        // Center it in the browser window
+        popUp.center();
+
+        // Open it in the UI
+        addWindow(popUp);	
+		
+	}
+	
+	private void addMarkersForTour( AdReviewTourList adRevList ) {
+		
+		Date date = null;
+		try {
+			date = new SimpleDateFormat("MMM-dd-yyyy").parse("Mar-27-2017");
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		List<Address> adrList = adRevList.getAdresses(date);
+		addMarkersForAddresses(adrList);
+
+	}
+
 	// Make this null safe TODO
 
 	protected void addMarkersForAgentDeals(Agent agt) {
@@ -212,7 +307,9 @@ public class GoogleMapUI extends UI {
 		// List<RealProperty> rpList = ptService.getRealPropertiesForAgent(agt);
 		for (RealProperty rp : rpList) {
 			Address adr = rp.getPropertyAdr();
-			addMarkerForAddress(adr);
+			GoogleMapMarker mrkr = addMarkerForAddress(adr);
+			String text = "Testing Info Window";
+			new GoogleMapInfoWindow(text, mrkr);
 		}
 		// }
 
@@ -235,16 +332,32 @@ public class GoogleMapUI extends UI {
 
 	}
 	
-	private void addMarkerForAddress(Address adr) {
-		adrMgr.getLocation(adr);
+protected void addMarkersForTourList(List<TourListEntry> list) {
+		
+		// TODO change to the following
+		// List<RealProperty> rpList = ptService.getRealPropertiesForAgent(agt);
+		for (TourListEntry te : list) {
+			Address adr = te.getPropertyAdr();
+			addMarkerForAddress(adr);
+		}
+		// }
+
+		this.setMapCenter(googleMap);
+		System.out.println("Done with Marking");
+
+	}
+	
+	private GoogleMapMarker addMarkerForAddress(Address adr) {
+		Point loc = adrMgr.getLocation(adr);
 		if (adr != null) {
-			Point loc = adr.getLocation();
 			if (loc != null) {
-				GoogleMapMarker mrkr = new GoogleMapMarker("test", new LatLon(loc.getY(), loc.getX()), false);
+				GoogleMapMarker mrkr = new GoogleMapMarker("testCaption", new LatLon(loc.getY(), loc.getX()), false);
 				googleMap.addMarker(mrkr);
 				googleMap.markAsDirty();
+				return mrkr;
 			}
-		}	
+		}
+		return null;
 	}
 
 	

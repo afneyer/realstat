@@ -1,5 +1,7 @@
 package com.afn.realstat;
 
+
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Index;
@@ -7,6 +9,8 @@ import javax.persistence.Table;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.geo.Point;
@@ -65,7 +69,7 @@ public class Address extends AbstractEntity {
 		setCounty(prsdAdr.getCounty());
 		setCountry(prsdAdr.getCountry());
 		setMapLocCalls(0);
-		setMapLocationFields();
+		// setMapLocationFields();
 	}
 
 	public boolean setMapLocationFields() {
@@ -312,4 +316,5 @@ public class Address extends AbstractEntity {
 		if (str == "") return "empty";
 		return str;
 	}
+	
 }

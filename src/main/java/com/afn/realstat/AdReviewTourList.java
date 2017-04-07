@@ -2,6 +2,7 @@ package com.afn.realstat;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -22,22 +23,24 @@ import org.springframework.transaction.annotation.Transactional;
 @Component
 public class AdReviewTourList {
 
-	public static final Logger log = LoggerFactory.getLogger("log");
+	public static final Logger log = LoggerFactory.getLogger("app");
 
-	private File file;
 	private Map<Date, List<Address>> tours = new HashMap<Date, List<Address>>();
 	private AddressRepository adrRepo;
+	private TourListRepository tlRepo;
+	private String text;
 
 	public AdReviewTourList() {
 	};
 
-	public AdReviewTourList(File file, AddressRepository adrRepo) {
+	public AdReviewTourList(File file, AddressRepository adrRepo, TourListRepository tlRepo) {
 		this.adrRepo = adrRepo;
-		this.file = file;
+		this.tlRepo = tlRepo;
 		if (file == null) {
-			this.file = new File("C:\\afndev\\apps\\realstat\\testdata", "17-03-25_Tour.pdf");
+			file = new File("C:\\afndev\\apps\\realstat\\testdata", "17-03-25_Tour.pdf");
 		}
-		createTourList();
+		text = getText(file);
+		createTourList(text);
 	}
 
 	public List<Address> getAdresses(Date date) {
@@ -53,28 +56,27 @@ public class AdReviewTourList {
 	}
 
 	@Transactional
-	public void createTourList() {
-		String text;
-		try {
-			text = getText(file);
+	public void createTourList(String text) {
 
-			// System.out.println("Text in PDF: " + text);
-			String[] lines = text.split(System.lineSeparator());
-			tours = new HashMap<Date, List<Address>>();
+		// System.out.println("Text in PDF: " + text);
+		// String[] lines = text.split(System.lineSeparator());
+		tours = new HashMap<Date, List<Address>>();
 
-			for (String line : lines) {
-				System.out.println("|" + line + "|");
-			}
+		String[] articles = text.split("\\^");
+
+		for (String article : articles) {
+			String[] lines = article.split("\n");
 
 			Date tourDate = null;
 			int i = 0;
 
 			while (i < lines.length) {
+				int processedLines = 0;
 				String line = lines[i];
 
-				int processedLines = 0;
+				String[] words1 = line.split("\\|");
 
-				Date tmpTourDate = getTourDate(line);
+				Date tmpTourDate = getTourDate(words1);
 				if (tmpTourDate != null) {
 					if (!tmpTourDate.equals(tourDate)) {
 						tourDate = tmpTourDate;
@@ -85,18 +87,41 @@ public class AdReviewTourList {
 					}
 				}
 
-				String city = getCity(line);
-				if (city != null) {
-					int numFields = getNumFields(i, lines);
+				String city = null;
+				int j = 0;
+				while (j < words1.length) {
+					city = getCity(words1[j]);
+					if (city != null)
+						break;
+					j++;
+				}
 
-					String[] adrArray = Arrays.copyOfRange(lines, i, i + numFields);
-					Address adr = getAddress(adrArray);
-					if (adr != null) {
+				if (city != null) {
+					int numLines = 2;
+					String[] words2 = lines[i + 1].split("\\|");
+
+					String street = words1[j + 1];
+					String zip = words2[0];
+
+					Address adr = new Address(street, city, zip);
+					log.info(adr.toString());
+
+					log.info(street + ", " + city + ", " + zip);
+
+					
+					 if (adr != null) {
+					  
 						adrRepo.saveOrUpdate(adr);
 						List<Address> adrList = tours.get(tourDate);
 						adrList.add(adr);
-					}
-					processedLines = numFields;
+
+						TourListEntry tourListEntry = new TourListEntry(tourDate, adr);
+						// setTourListEntryFields(tourListEntry,
+						// tourListEntryLines);
+						tlRepo.saveOrUpdate(tourListEntry);
+					 }
+					 
+					processedLines = numLines;
 				}
 
 				if (processedLines == 0) {
@@ -105,44 +130,17 @@ public class AdReviewTourList {
 
 				i += processedLines;
 			}
-
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 
 	}
 
-	private int getNumFields(int i, String[] lines) {
-		int j = i + 1;
-		String line = null;
-		while (j < lines.length) {
-			line = lines[j];
-			if (getCity(line) != null) {
-				return j - i;
-			}
+	private void setTourListEntryFields(TourListEntry tourListEntry, String[] adrArray) {
+		int numFields = adrArray.length;
+		tourListEntry.setDescription(adrArray[1]);
+		tourListEntry.setPrice(adrArray[numFields - 8]);
+		// tourListEntry.setAgent(agent);
+		// tourListEntry.setBedBath(bedBath);
 
-			if (getTourDate(line) != null) {
-				return j - i;
-			}
-
-			if (getFooter(line) != null) {
-				return j - i;
-			}
-
-			j++;
-		}
-		if (j >= lines.length) {
-			System.out.println("Got to the end of the text lines in the file");
-		}
-		return 1;
-	}
-
-	private String getFooter(String line) {
-		if (line.toLowerCase().contains("ad review")) {
-			return line;
-		}
-		return null;
 	}
 
 	private Address getAddress(String[] lines) {
@@ -203,20 +201,52 @@ public class AdReviewTourList {
 		}
 	}
 
-	private Date getTourDate(String line) {
-
+	private Date getTourDate(String[] words) {
 		Date date = null;
-		SimpleDateFormat formatter = new SimpleDateFormat("E, MMM dd, yyyy");
-		try {
-			date = formatter.parse(line);
-			return date;
-		} catch (ParseException e) {
-			return null;
+		// TODO iterate through words of the line
+		for (String word : words) {
+
+			SimpleDateFormat formatter = new SimpleDateFormat("E, MMM dd, yyyy");
+			try {
+				date = formatter.parse(word);
+				return date;
+			} catch (ParseException e) {
+			}
 		}
+		return date;
 	}
 
-	private String getText(File pdfFile) throws IOException {
-		PDDocument doc = PDDocument.load(pdfFile);
-		return new PDFTextStripper().getText(doc);
+	private String getText(File pdfFile) {
+
+		try {
+			PDDocument doc = PDDocument.load(pdfFile);
+			PDFTextStripper pdfStrip = new PDFTextStripper();
+			pdfStrip.setArticleStart("");
+			pdfStrip.setArticleEnd("^");
+			pdfStrip.setParagraphStart("");
+			pdfStrip.setParagraphEnd("\n");
+			pdfStrip.setWordSeparator("|");
+			pdfStrip.setLineSeparator("|");
+			pdfStrip.setSortByPosition(true);
+			/*
+			 * System.out.println("|" + pdfStrip.getArticleStart() + "|");
+			 * System.out.println("|" + pdfStrip.getArticleEnd() + "|");
+			 * System.out.println("|" + pdfStrip.getParagraphStart() + "|");
+			 * System.out.println("|" + pdfStrip.getParagraphEnd() + "|");
+			 * System.out.println("|" + pdfStrip.getWordSeparator() + "|");
+			 */
+
+			text = pdfStrip.getText(doc);
+
+			System.out.println("|" + pdfStrip.getArticleStart() + "|");
+			System.out.println("|" + pdfStrip.getArticleEnd() + "|");
+			System.out.println("|" + pdfStrip.getParagraphStart() + "|");
+			System.out.println("|" + pdfStrip.getParagraphEnd() + "|");
+			System.out.println("|" + pdfStrip.getWordSeparator() + "|");
+
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+		return text;
 	}
 }

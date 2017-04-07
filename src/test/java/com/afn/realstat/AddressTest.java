@@ -88,6 +88,11 @@ public class AddressTest {
 		System.out.println(addr);
 	}
 	
+	@Test
+	public void testSelfSave() {
+		Address adr = new Address("501 Hampton Rd.", "Oakland", "94611");
+		// adr.saveOrUpdate();
+	}
 
 	
 	

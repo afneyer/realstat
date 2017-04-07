@@ -2,9 +2,14 @@ package com.afn.realstat;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.text.PDFTextStripper;
+import org.assertj.core.util.DateUtil;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,31 +19,34 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = Application.class,
-        webEnvironment = SpringBootTest.WebEnvironment.NONE)
+@SpringBootTest(classes = Application.class, webEnvironment = SpringBootTest.WebEnvironment.NONE)
 
 @ActiveProfiles("prod")
 public class AdReviewTourListTest {
-	
+
 	@Autowired
 	AddressRepository adrRepo;
-	 
+
+	@Autowired
+	TourListRepository tlRepo;
+
 	private AdReviewTourList adReviewList = null;
-	
+
 	@Before
-	public void testConstructor () {
-		adReviewList = new AdReviewTourList(null, adrRepo);
+	public void testConstructor() {
+		File file = null;
+		adReviewList = new AdReviewTourList(file, adrRepo, tlRepo);
 	}
-	
+
 	@Test
 	public void testGetDates() {
 		List<Date> dates = adReviewList.getDates();
-		assertEquals(4,dates.size());
+		assertEquals(4, dates.size());
 		for (Date d : dates) {
 			System.out.println(d);
 		}
 	}
-	
+
 	@Test
 	public void testGetAddressesForDate() {
 		List<Date> dates = adReviewList.getDates();
@@ -52,5 +60,39 @@ public class AdReviewTourListTest {
 		adr = adReviewList.getAdresses(dates.get(3));
 		assertEquals(15, adr.size());
 	}
+
+	@Test
+	public void testPDFTestStripper() {
+
+		File file = new File("C:\\afndev\\apps\\realstat\\testdata", "17-03-25_Tour.pdf");
+		PDDocument doc;
+		String text = null;
+		try {
+			doc = PDDocument.load(file);
+			text = new PDFTextStripper().getText(doc);
+			System.out.println(text);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+	@Test
+	public void checkTourListByDate() {
+		Date date = AfnDateUtil.of(2017, 3, 27);
+		List<TourListEntry> tleList = tlRepo.findByTourDate(date);
+		for ( TourListEntry tle : tleList ) {
+			System.out.println(tle);
+		}
+	}
+	
+	@Test
+	public void testFindAllDistinctDates() {
+		Date date = AfnDateUtil.of(2017, 3, 27);
+		List<Date> dateList = tlRepo.findAllDisctintDatesNewestFirst();
+		for ( Date d : dateList ) {
+			System.out.println(d);
+		}
+	}
+
 
 }
