@@ -13,8 +13,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
+import org.jsoup.helper.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -28,7 +30,7 @@ public class AdReviewTourList {
 	private Map<Date, List<Address>> tours = new HashMap<Date, List<Address>>();
 	private AddressRepository adrRepo;
 	private TourListRepository tlRepo;
-	private String text;
+	private File file;
 
 	public AdReviewTourList() {
 	};
@@ -39,7 +41,11 @@ public class AdReviewTourList {
 		if (file == null) {
 			file = new File("C:\\afndev\\apps\\realstat\\testdata", "17-03-25_Tour.pdf");
 		}
-		text = getText(file);
+		this.file = file;
+	}
+	
+	public void createTourList() {
+		String text = getText(file);
 		createTourList(text);
 	}
 
@@ -74,7 +80,7 @@ public class AdReviewTourList {
 				int processedLines = 0;
 				String line = lines[i];
 
-				String[] words1 = line.split("\\|");
+				List<String> words1 = new ArrayList<String>(Arrays.asList(line.split("\\|")));
 
 				Date tmpTourDate = getTourDate(words1);
 				if (tmpTourDate != null) {
@@ -87,20 +93,15 @@ public class AdReviewTourList {
 					}
 				}
 
-				String city = null;
-				int j = 0;
-				while (j < words1.length) {
-					city = getCity(words1[j]);
-					if (city != null)
-						break;
-					j++;
-				}
-
+				removeExtraFields(words1);
+				String city = getCity(words1.get(0));
 				if (city != null) {
+					// TODO find the next city code because the number of lines per entry is not consistently 2
 					int numLines = 2;
 					String[] words2 = lines[i + 1].split("\\|");
 
-					String street = words1[j + 1];
+					String street = words1.get(1);
+
 					String zip = words2[0];
 
 					Address adr = new Address(street, city, zip);
@@ -108,19 +109,20 @@ public class AdReviewTourList {
 
 					log.info(street + ", " + city + ", " + zip);
 
-					
-					 if (adr != null) {
-					  
+					if (adr != null) {
+
 						adrRepo.saveOrUpdate(adr);
 						List<Address> adrList = tours.get(tourDate);
 						adrList.add(adr);
 
 						TourListEntry tourListEntry = new TourListEntry(tourDate, adr);
-						// setTourListEntryFields(tourListEntry,
-						// tourListEntryLines);
+						tourListEntry.setCity(city);
+						tourListEntry.setStreet(street);
+						tourListEntry.setZip(zip);
+						setTourListEntryFields(tourListEntry, words1, words2);
 						tlRepo.saveOrUpdate(tourListEntry);
-					 }
-					 
+					}
+
 					processedLines = numLines;
 				}
 
@@ -131,50 +133,87 @@ public class AdReviewTourList {
 				i += processedLines;
 			}
 		}
-
 	}
 
-	private void setTourListEntryFields(TourListEntry tourListEntry, String[] adrArray) {
-		int numFields = adrArray.length;
-		tourListEntry.setDescription(adrArray[1]);
-		tourListEntry.setPrice(adrArray[numFields - 8]);
-		// tourListEntry.setAgent(agent);
-		// tourListEntry.setBedBath(bedBath);
 
-	}
+	public void removeExtraFields(List<String> words1) {
 
-	private Address getAddress(String[] lines) {
-
+		// ensure the city is the first field
+		// rename words
 		String city = null;
-		String zip = null;
-		String fullStreet = null;
-
-		int streetIndex = lines.length - 2;
-		if (streetIndex < 0) {
-			System.out.println("Invalid street Index : " + Arrays.deepToString(lines));
-		} else {
-			fullStreet = lines[streetIndex];
+		int j = 0;
+		while (j < words1.size()) {
+			city = getCity(words1.get(j));
+			if (city != null) {
+				for (int i=0; i<j; i++) {
+					words1.remove(i);
+				}
+				break;
+			}
+			j++;
 		}
+		
+		
 
-		// System.out.println("--- city: " + city);
-		int zipIndex = lines.length - 1;
-		if (zipIndex < 0) {
-			System.out.println("Invalid zip Index : " + Arrays.deepToString(lines));
-		} else {
-			zip = lines[zipIndex];
-			if (zip == null) {
-				System.out.println("Invalid zip : " + Arrays.deepToString(lines));
-			} else {
-				zip = zip.trim();
+		// skip one word is the first word does not look like a
+		// street
+		if (words1.size() > 1 && words1.get(1) != null && StringUtils.isAllUpperCase(words1.get(1)) && words1.get(1).length() <= 5) {
+			// assume it's the second part of the city and skip
+			// move the city to the second field and remove the first
+			words1.remove(1);
+		}
+	}
+
+	private void setTourListEntryFields(TourListEntry tourListEntry, List<String> words1, String[] words2) {
+
+		int l1 = words1.size();
+		String description = words1.get(l1 - 1);
+		tourListEntry.setDescription(description);
+
+		String price = getPrice(words1);
+		tourListEntry.setPrice(price);
+
+		String cross = getCrossStreet(words1);
+		tourListEntry.setCrossStreet(cross);
+
+		String agent = words2[1];
+		tourListEntry.setAgent(agent);
+
+		String mlsNo = getMlsNo(words2);
+
+		tourListEntry.setMlsNo(mlsNo);
+
+	}
+
+	private String getMlsNo(String[] words2) {
+		String mlsNo = words2[words2.length - 1];
+		if (StringUtil.isNumeric(mlsNo)) {
+			return mlsNo;
+		}
+		return null;
+	}
+
+	private String getCrossStreet(List<String> words1) {
+
+		for (int i = 0; i < words1.size()-1; i++) {
+			String cross = words1.get(i);
+			if (cross.trim().startsWith("@")) {
+				if (words1.get(i + 1) != null) {
+					return words1.get(i + 1);
+				}
 			}
 		}
-		city = getCity(lines[0]);
+		return null;
 
-		// create address
-		Address adr = new Address(fullStreet, city, zip);
-		System.out.println(adr);
+	}
 
-		return adr;
+	private String getPrice(List<String> words1) {
+		for (String p : words1) {
+			if (p.trim().startsWith("$")) {
+				return p;
+			}
+		}
+		return null;
 	}
 
 	private String getCity(String line) {
@@ -185,9 +224,9 @@ public class AdReviewTourList {
 		case "OAK":
 			return "Oakland";
 		case "PLEAS":
-			return "Oakland";
+			return "Pleasant Hill";
 		case "ALA":
-			return "Oakland";
+			return "Alameda";
 		case "HAY":
 			return "Hayward";
 		case "KENS":
@@ -201,10 +240,10 @@ public class AdReviewTourList {
 		}
 	}
 
-	private Date getTourDate(String[] words) {
+	private Date getTourDate(List<String> words1) {
 		Date date = null;
 		// TODO iterate through words of the line
-		for (String word : words) {
+		for (String word : words1) {
 
 			SimpleDateFormat formatter = new SimpleDateFormat("E, MMM dd, yyyy");
 			try {
@@ -218,6 +257,7 @@ public class AdReviewTourList {
 
 	private String getText(File pdfFile) {
 
+		String text;
 		try {
 			PDDocument doc = PDDocument.load(pdfFile);
 			PDFTextStripper pdfStrip = new PDFTextStripper();

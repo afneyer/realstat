@@ -188,7 +188,7 @@ public class TourListEntry extends AbstractEntity {
 	
 	@Override
 	public String toString() {
-		String str = "TourListEntry" + tourDate + " - " + propertyAdr.toString();
+		String str = "TourListEntry: " + tourDate + " - " + propertyAdr.toString();
 		return str;
 	}
 

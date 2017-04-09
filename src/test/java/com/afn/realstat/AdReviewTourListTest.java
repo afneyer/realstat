@@ -1,9 +1,12 @@
 package com.afn.realstat;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -33,9 +36,38 @@ public class AdReviewTourListTest {
 	private AdReviewTourList adReviewList = null;
 
 	@Before
-	public void testConstructor() {
-		File file = null;
+	public void initialize() {
+		File file = new File("C:\\afndev\\apps\\realstat\\testdata", "17-03-25_Tour.pdf");
 		adReviewList = new AdReviewTourList(file, adrRepo, tlRepo);
+		tlRepo.deleteAll();
+	}
+	
+	@Test
+	// TODO: further testing needed, still some wrong fields
+	public void testConstructor() {
+		adReviewList.createTourList();
+		
+		Date tourDate = AfnDateUtil.of(2017, 3, 27);
+		List<TourListEntry> tourList = tlRepo.findByTourDate(tourDate);
+		assertEquals(23,tourList.size());
+		for (TourListEntry tle : tourList) {
+			if (tle.getStreet() == "5728 MORAGA AVE.") {
+				assertEquals("Oakland",tle.getCity());
+			}
+		}
+		
+		tourDate = AfnDateUtil.of(2017, 3, 28);
+		tourList = tlRepo.findByTourDate(tourDate);
+		assertEquals(2,tourList.size());
+		
+		tourDate = AfnDateUtil.of(2017, 3, 29);
+		tourList = tlRepo.findByTourDate(tourDate);
+		assertEquals(1,tourList.size());
+		
+		tourDate = AfnDateUtil.of(2017, 3, 30);
+		tourList = tlRepo.findByTourDate(tourDate);
+		assertEquals(15,tourList.size());
+		
 	}
 
 	@Test
@@ -94,5 +126,46 @@ public class AdReviewTourListTest {
 		}
 	}
 
+	@Test
+	public void testRemoveExtraFields() {
+		
+		/* Show that:
+		 * a) extra field before the city code is removed
+		 * b) second part of the city code ("HILL") is removed
+		*/ 
+		String[] example1 = {
+				"*",
+				"PLEAS",
+				"HILL",
+				"Stunning Modern Rancher in xxx. Dwell Magazine lvl detail & finish Park-like backyard",
+				"107Roberta.com",
+				"Patterson",
+				"(510) 919-3333 40774448MLS#",
+				"$1,100,000",
+				"10-1",
+				"❋ @ /3 2",
+				"@",
+				",",
+				"Mc Guire R. E.Scott Leverette",
+				"107 Roberta Ave.",
+				"94523"
+		};
+		
+		ArrayList<String> l1 = new ArrayList<String>(Arrays.asList(example1));
+		for ( String w : l1) {
+			System.out.println(w);
+		}
+		int sizeBefore = l1.size();
+		
+		
+		adReviewList.removeExtraFields(l1);
+		for ( String w : l1) {
+			System.out.println(w);
+		}
+		assertEquals(sizeBefore - 2, l1.size());
+		assertEquals("PLEAS",l1.get(0));
+		assertTrue(l1.get(1).startsWith("Stunning"));
+		
+	}
 
 }

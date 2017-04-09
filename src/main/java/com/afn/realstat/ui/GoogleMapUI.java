@@ -229,6 +229,7 @@ public class GoogleMapUI extends UI {
 			public void uploadSucceeded(SucceededEvent event) {
 				File file = receiver.getFile();
 				AdReviewTourList adRevList = new AdReviewTourList(file, adrRepo, tlRepo);
+				adRevList.createTourList();
 				addMarkersForTour( adRevList );
 			}
         	

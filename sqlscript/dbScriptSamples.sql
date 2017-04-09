@@ -209,11 +209,20 @@ update real_property set propertyAdr_id = null;
 delete from address;
 */
 /*
-select * from real_property where propertyAdr_id is null;
+select count(*) from real_property where propertyAdr_id is null;
+select count(*) from real_property;
 */
+/* check for duplicate addresses */
+
+/*
 select count(*) from address;
 select count(location) from address;
 select count(mapLocCalls) from address where mapLocCalls != 0;
+*/
 
+/*
+UPDATE agent SET agentName = ${agentName||Callahan, Kathleen M||String||nullable ds=255 dt=VARCHAR}$ WHERE id = ${id (where)||121534||Long||where pk unformatted ds=20 dt=BIGINT}$
+*/
 
-
+select distinct tourDate from tourlist_entry order by tourDate desc;
+delete from tourlist_entry;
