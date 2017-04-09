@@ -48,6 +48,7 @@ public class AddressManager extends AbstractEntityManager<Address> {
 		return false;
 	}
 
+	@Transactional
 	public Point getLocation(Address adr) {
 		Point p = null;
 		if (adr != null) {

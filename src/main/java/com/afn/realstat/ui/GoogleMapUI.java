@@ -38,6 +38,7 @@ import com.vaadin.tapio.googlemaps.client.LatLon;
 import com.vaadin.tapio.googlemaps.client.events.InfoWindowClosedListener;
 import com.vaadin.tapio.googlemaps.client.events.MapClickListener;
 import com.vaadin.tapio.googlemaps.client.events.MapMoveListener;
+import com.vaadin.tapio.googlemaps.client.events.MarkerClickListener;
 import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapInfoWindow;
 import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapMarker;
 import com.vaadin.ui.Button;
@@ -73,14 +74,16 @@ public class GoogleMapUI extends UI {
 
 	@Autowired
 	private AddressManager adrMgr;
-	
+
 	@Autowired
 	private AddressRepository adrRepo;
-	
+
 	private GoogleMap googleMap;
 
 	@Autowired
-	protected TourListRepository tlRepo;
+	protected TourListRepository tleRepo;
+
+	protected CssLayout consoleLayout;
 
 	@Autowired
 	public GoogleMapUI(PropertyTransactionService ptService) {
@@ -122,8 +125,10 @@ public class GoogleMapUI extends UI {
 		page.setExpandRatio(mapContent, 4.0f);
 
 		Panel console = new Panel();
-		final CssLayout consoleLayout = new CssLayout();
-		console.setContent(consoleLayout);
+		final CssLayout cnlt = new CssLayout();
+		consoleLayout = cnlt;
+		console.setContent(cnlt);
+		
 		page.addComponent(console);
 		page.setExpandRatio(console, 1.0f);
 
@@ -137,7 +142,7 @@ public class GoogleMapUI extends UI {
 				Label consoleEntry = new Label("Map moved to (" + center.getLat() + ", " + center.getLon() + "), zoom "
 						+ zoomLevel + ", boundsNE: (" + boundsNE.getLat() + ", " + boundsNE.getLon() + "), boundsSW: ("
 						+ boundsSW.getLat() + ", " + boundsSW.getLon() + ")");
-				consoleLayout.addComponent(consoleEntry, 0);
+				cnlt.addComponent(consoleEntry, 0);
 			}
 		});
 
@@ -145,7 +150,7 @@ public class GoogleMapUI extends UI {
 			@Override
 			public void mapClicked(LatLon position) {
 				Label consoleEntry = new Label("Map click to (" + position.getLat() + ", " + position.getLon() + ")");
-				consoleLayout.addComponent(consoleEntry, 0);
+				cnlt.addComponent(consoleEntry, 0);
 			}
 		});
 
@@ -154,7 +159,7 @@ public class GoogleMapUI extends UI {
 			@Override
 			public void infoWindowClosed(GoogleMapInfoWindow window) {
 				Label consoleEntry = new Label("InfoWindow \"" + window.getContent() + "\" closed");
-				consoleLayout.addComponent(consoleEntry, 0);
+				cnlt.addComponent(consoleEntry, 0);
 			}
 		});
 
@@ -179,7 +184,7 @@ public class GoogleMapUI extends UI {
 		});
 		buttonLayoutRow1.addComponent(showAgentDeals);
 		showAgentDeals.setWidth(100, Unit.PERCENTAGE);
-		
+
 		Button tourFile = new Button("Import tour pdf-file", new Button.ClickListener() {
 			@Override
 			public void buttonClick(ClickEvent event) {
@@ -188,7 +193,7 @@ public class GoogleMapUI extends UI {
 		});
 		buttonLayoutRow1.addComponent(tourFile);
 		tourFile.setWidth(100, Unit.PERCENTAGE);
-		
+
 		Button tour = new Button("Show properties on tour", new Button.ClickListener() {
 			@Override
 			public void buttonClick(ClickEvent event) {
@@ -211,92 +216,121 @@ public class GoogleMapUI extends UI {
 	protected void selectAndShowPropertiesForTour() {
 		// create a window to upload a pdf-file and select a tour date
 		Window popUp = new Window("Sub-window");
-        VerticalLayout subContent = new VerticalLayout();
-        popUp.setContent(subContent);
+		VerticalLayout subContent = new VerticalLayout();
+		popUp.setContent(subContent);
 
-        // Put some components in it
-        subContent.addComponent(new Label("Tour Upload and Date Selection"));
-        FileUpLoader receiver = new FileUpLoader();
-        
+		// Put some components in it
+		subContent.addComponent(new Label("Tour Upload and Date Selection"));
+		FileUpLoader receiver = new FileUpLoader();
+
 		Upload upload = new Upload("Select AdReview Tour Pdf-File", receiver);
-        upload.setImmediate(false);
-        
-        //  upload.addSucceededListener((SucceededListener) receiver);
-        
-        upload.addSucceededListener(new SucceededListener() {
+		upload.setImmediate(false);
+
+		// upload.addSucceededListener((SucceededListener) receiver);
+
+		upload.addSucceededListener(new SucceededListener() {
 
 			@Override
 			public void uploadSucceeded(SucceededEvent event) {
 				File file = receiver.getFile();
-				AdReviewTourList adRevList = new AdReviewTourList(file, adrRepo, tlRepo);
+				AdReviewTourList adRevList = new AdReviewTourList(file, adrRepo, tleRepo);
 				adRevList.createTourList();
-				addMarkersForTour( adRevList );
+				// addMarkersForTour(adRevList);
 			}
-        	
-        });
-        
-        subContent.addComponent(upload);
-       
-        // Center it in the browser window
-        popUp.center();
 
-        // Open it in the UI
-        addWindow(popUp);	
-		
+		});
+
+		subContent.addComponent(upload);
+
+		// Center it in the browser window
+		popUp.center();
+
+		// Open it in the UI
+		addWindow(popUp);
+
 	}
-	
+
 	protected void tourDateSelector() {
 		// create a window to upload a pdf-file and select a tour date
 		Window popUp = new Window("Sub-window");
-        VerticalLayout subContent = new VerticalLayout();
-        popUp.setContent(subContent);
+		VerticalLayout subContent = new VerticalLayout();
+		popUp.setContent(subContent);
 
-        // Put some components in it
-        subContent.addComponent(new Label("Select Tour Date"));
-        
-        // Create the selection component for tour dates
-        List<Date> tlDates = tlRepo.findAllDisctintDatesNewestFirst();
-        
-        ListSelect select = new ListSelect("Select tour date");
+		// Put some components in it
+		subContent.addComponent(new Label("Select Tour Date"));
 
-        // Add some items
-        select.addItems(tlDates);
+		// Create the selection component for tour dates
+		List<Date> tlDates = tleRepo.findAllDisctintDatesNewestFirst();
 
-        // Show 5 items and a scrollbar if there are more
-        select.setRows(6);
+		ListSelect select = new ListSelect("Select tour date");
 
-        select.addValueChangeListener(event -> {
-        	@SuppressWarnings("unchecked")
+		// Add some items
+		select.addItems(tlDates);
+
+		// Show 5 items and a scrollbar if there are more
+		select.setRows(6);
+
+		select.addValueChangeListener(event -> {
+			@SuppressWarnings("unchecked")
 			Property<Date> p = event.getProperty();
 			Date date = p.getValue();
-			List<TourListEntry> teList = tlRepo.findByTourDate(date);
-			this.addMarkersForTourList(teList);
-			
-        });
-        
-        
-        subContent.addComponent(select);
-       
-        // Center it in the browser window
-        popUp.center();
+			addMarkersForTour(date);
 
-        // Open it in the UI
-        addWindow(popUp);	
-		
+		});
+
+		subContent.addComponent(select);
+
+		// Center it in the browser window
+		popUp.center();
+
+		// Open it in the UI
+		addWindow(popUp);
+
 	}
-	
-	private void addMarkersForTour( AdReviewTourList adRevList ) {
-		
-		Date date = null;
-		try {
-			date = new SimpleDateFormat("MMM-dd-yyyy").parse("Mar-27-2017");
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		List<Address> adrList = adRevList.getAdresses(date);
-		addMarkersForAddresses(adrList);
 
+	private void addMarkersForTour(Date date) {
+		
+		List<TourListEntry> tleList = tleRepo.findByTourDate(date);
+		for (TourListEntry tle : tleList) {
+			addMarkerForTourListEntry(tle);
+		}
+	}
+
+	private GoogleMapMarker addMarkerForTourListEntry(TourListEntry tle) {
+		GoogleMapMarker returnMarker = null;
+		Address adr = tle.getPropertyAdr();
+		if (adr != null) {
+			Point loc = adrMgr.getLocation(adr);
+			if (loc != null) {
+				String caption = tle.getPropertyAdr().toString() + "\n" + tle.getPrice();		
+				final GoogleMapMarker mrkr = new GoogleMapMarker(caption, new LatLon(loc.getY(), loc.getX()), false);
+				returnMarker = mrkr;
+				googleMap.addMarker(mrkr);
+				
+				googleMap.addMarkerClickListener( new MarkerClickListener () {
+
+					@Override
+					public void markerClicked(GoogleMapMarker clickedMarker) {
+						
+						String infoString = tle.getPropertyAdr().toString();
+						GoogleMapInfoWindow infoWindow = new GoogleMapInfoWindow(
+						        infoString, mrkr);
+						 if (clickedMarker.equals(mrkr)) {
+					            googleMap.openInfoWindow(infoWindow);
+						 };
+						 
+						 Label consoleEntry = new Label("Marker \""
+				                    + clickedMarker.getCaption() + "\" at ("
+				                    + clickedMarker.getPosition().getLat() + ", "
+				                    + clickedMarker.getPosition().getLon() + ") clicked.");
+				                consoleLayout.addComponent(consoleEntry, 0);
+						
+					}
+					
+				});
+			}
+		}
+		return returnMarker;
 	}
 
 	// Make this null safe TODO
@@ -318,9 +352,9 @@ public class GoogleMapUI extends UI {
 		System.out.println("Done with Marking");
 
 	}
-	
+
 	protected void addMarkersForAddresses(List<Address> list) {
-		
+
 		// TODO change to the following
 		// List<RealProperty> rpList = ptService.getRealPropertiesForAgent(agt);
 		for (Address adr : list) {
@@ -332,9 +366,9 @@ public class GoogleMapUI extends UI {
 		System.out.println("Done with Marking");
 
 	}
-	
-protected void addMarkersForTourList(List<TourListEntry> list) {
-		
+
+	protected void addMarkersForTourList(List<TourListEntry> list) {
+
 		// TODO change to the following
 		// List<RealProperty> rpList = ptService.getRealPropertiesForAgent(agt);
 		for (TourListEntry te : list) {
@@ -347,7 +381,7 @@ protected void addMarkersForTourList(List<TourListEntry> list) {
 		System.out.println("Done with Marking");
 
 	}
-	
+
 	private GoogleMapMarker addMarkerForAddress(Address adr) {
 		Point loc = adrMgr.getLocation(adr);
 		if (adr != null) {
@@ -361,9 +395,10 @@ protected void addMarkersForTourList(List<TourListEntry> list) {
 		return null;
 	}
 
-	
 	/**
-	 * Set the scale (zoom) and the boundaries of the map so that all markers are shown on the map
+	 * Set the scale (zoom) and the boundaries of the map so that all markers
+	 * are shown on the map
+	 * 
 	 * @param map
 	 */
 	protected void setMapCenter(GoogleMap map) {
@@ -387,11 +422,11 @@ protected void addMarkersForTourList(List<TourListEntry> list) {
 			double lon = m.getPosition().getLon();
 			lonMin = Math.min(lonMin, lon);
 			lonMax = Math.max(lonMax, lon);
-			
-		    // TODO remove
-			System.out.println("Latitude=" + lat + " Longitude=" + lon); 
+
+			// TODO remove
+			System.out.println("Latitude=" + lat + " Longitude=" + lon);
 		}
-		
+
 		if (markers.size() != 0) {
 			LatLon boundsNE = new LatLon(latMax, lonMax);
 			LatLon boundsSW = new LatLon(latMin, lonMin);
