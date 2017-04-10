@@ -39,6 +39,7 @@ import com.vaadin.tapio.googlemaps.client.events.InfoWindowClosedListener;
 import com.vaadin.tapio.googlemaps.client.events.MapClickListener;
 import com.vaadin.tapio.googlemaps.client.events.MapMoveListener;
 import com.vaadin.tapio.googlemaps.client.events.MarkerClickListener;
+import com.vaadin.tapio.googlemaps.client.events.MarkerDragListener;
 import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapInfoWindow;
 import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapMarker;
 import com.vaadin.ui.Button;
@@ -128,7 +129,7 @@ public class GoogleMapUI extends UI {
 		final CssLayout cnlt = new CssLayout();
 		consoleLayout = cnlt;
 		console.setContent(cnlt);
-		
+
 		page.addComponent(console);
 		page.setExpandRatio(console, 1.0f);
 
@@ -289,7 +290,7 @@ public class GoogleMapUI extends UI {
 	}
 
 	private void addMarkersForTour(Date date) {
-		
+
 		List<TourListEntry> tleList = tleRepo.findByTourDate(date);
 		for (TourListEntry tle : tleList) {
 			addMarkerForTourListEntry(tle);
@@ -302,31 +303,51 @@ public class GoogleMapUI extends UI {
 		if (adr != null) {
 			Point loc = adrMgr.getLocation(adr);
 			if (loc != null) {
-				String caption = tle.getPropertyAdr().toString() + "\n" + tle.getPrice();		
-				final GoogleMapMarker mrkr = new GoogleMapMarker(caption, new LatLon(loc.getY(), loc.getX()), false);
+				String caption = tle.getPropertyAdr().toString() + "\n" + tle.getPrice();
+				GoogleMapMarker mrkr = new GoogleMapMarker(caption, new LatLon(loc.getY(), loc.getX()), false);
 				returnMarker = mrkr;
 				googleMap.addMarker(mrkr);
-				
-				googleMap.addMarkerClickListener( new MarkerClickListener () {
+				mrkr.setDraggable(true);
+
+				googleMap.addMarkerClickListener(new MarkerClickListener() {
 
 					@Override
 					public void markerClicked(GoogleMapMarker clickedMarker) {
-						
+
 						String infoString = tle.getPropertyAdr().toString();
-						GoogleMapInfoWindow infoWindow = new GoogleMapInfoWindow(
-						        infoString, mrkr);
-						 if (clickedMarker.equals(mrkr)) {
-					            googleMap.openInfoWindow(infoWindow);
-						 };
-						 
-						 Label consoleEntry = new Label("Marker \""
-				                    + clickedMarker.getCaption() + "\" at ("
-				                    + clickedMarker.getPosition().getLat() + ", "
-				                    + clickedMarker.getPosition().getLon() + ") clicked.");
-				                consoleLayout.addComponent(consoleEntry, 0);
-						
+						GoogleMapInfoWindow infoWindow = new GoogleMapInfoWindow(infoString, mrkr);
+						if (clickedMarker.equals(mrkr)) {
+							googleMap.openInfoWindow(infoWindow);
+						}
+						;
+
+						Label consoleEntry = new Label("Marker \"" + clickedMarker.getCaption() + "\" at ("
+								+ clickedMarker.getPosition().getLat() + ", " + clickedMarker.getPosition().getLon()
+								+ ") clicked.");
+						consoleLayout.addComponent(consoleEntry, 0);
+
 					}
-					
+
+				});
+
+				googleMap.addMarkerDragListener(new MarkerDragListener() {
+
+					@Override
+					public void markerDragged(GoogleMapMarker draggedMarker, LatLon oldPosition) {
+						if (draggedMarker.equals(mrkr)) {
+							Label consoleEntry = new Label("Marker " + draggedMarker.getCaption() + "dragged from ("
+									+ oldPosition.getLat() + ", " + +oldPosition.getLon() + ") + to ("
+									+ draggedMarker.getPosition().getLat() + ", " + draggedMarker.getPosition().getLon()
+									+ ")");
+							consoleLayout.addComponent(consoleEntry, 0);
+							LatLon newPosition = draggedMarker.getPosition();
+							mrkr.setPosition(oldPosition);
+							googleMap.addMarker(mrkr);
+							GoogleMapMarker mk = new GoogleMapMarker("TestMarker Old", newPosition, true);
+							googleMap.addMarker(mk);
+						}
+					}
+
 				});
 			}
 		}
