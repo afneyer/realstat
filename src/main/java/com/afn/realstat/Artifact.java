@@ -1,55 +1,88 @@
 package com.afn.realstat;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.sql.Blob;
+import java.sql.SQLException;
 import java.util.Date;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Index;
+import javax.persistence.Lob;
 import javax.persistence.Table;
+import javax.sql.rowset.serial.SerialBlob;
+import javax.sql.rowset.serial.SerialException;
 
+import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Example;
 
 @Entity
-// TODO fix
-@Table(name = "agent",  indexes = {
-		@Index(name = "idx_firstName", columnList = "firstName"),
-		@Index(name = "idx_lastName", columnList = "lastName"), @Index(name = "idx_license", columnList = "license") })
-
+@Table(name = "artifact", indexes = { @Index(name = "idx_identifier", columnList = "identifier"),
+		@Index(name = "idx_category", columnList = "category") })
 /*
  * TODO this class needs to be finished
  */
-public class Artifacts extends AbstractEntity {
+public class Artifact extends AbstractEntity {
 
 	public static final Logger log = LoggerFactory.getLogger("app");
-	public static final Class<Artifacts> classType = Artifacts.class;
+	public static final Class<Artifact> classType = Artifact.class;
 
 	private String identifier;
 	private String category;
 	private String description;
 	private String fileName;
-	private Blob content;
 	
+	@Lob
+	@Column(length = 5000000) // for now set to 5Mb
+	private Blob content;
+
 	private String mimeType;
 	private String mimeSubtype;
 	private Date created;
 	private Date deleteAfter;
 
-	public Artifacts() {
+	public Artifact() {
 	}
 
-	public Artifacts(File file, String description) {
+	public Artifact(File file, String category) {
+		this(file, category, null);
 	}
 
-	public Artifacts(String description, Blob blob, String contentType) {
+	public Artifact(File file, String category, String description) {
+		fileName = file.getName();
+		identifier = FilenameUtils.getBaseName(fileName);
+		this.category = category;
+		if (description == null) {
+			this.description = identifier;
+		}
+		byte[] fileBytes;
+		try {
+			mimeType = Files.probeContentType(file.toPath());
+			fileBytes = Files.readAllBytes(file.toPath());
+			this.content = new SerialBlob(fileBytes);
+			
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (SerialException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		this.created = new Date();
+		this.deleteAfter = AfnDateUtil.never();
 	}
 
 	@Override
 	public void clean() {
 	}
-	
+
 	@Override
 	public String toString() {
 		String str = description + " " + fileName;
@@ -57,12 +90,11 @@ public class Artifacts extends AbstractEntity {
 	}
 
 	@Override
-	public Example<Artifacts> getRefExample() {
-		Artifacts sample = new Artifacts();
+	public Example<Artifact> getRefExample() {
+		Artifact sample = new Artifact();
 		sample.identifier = identifier;
 		sample.category = category;
-		Example<Artifacts> e = Example.of(sample);
-
+		Example<Artifact> e = Example.of(sample);
 		return e;
 	}
 
@@ -95,13 +127,15 @@ public class Artifacts extends AbstractEntity {
 		this.fileName = fileName;
 	}
 
+	/*
 	public Blob getContent() {
 		return content;
 	}
 
 	public void setContent(Blob content) {
 		this.content = content;
-	}
+	}*/
+
 	public String getMimeType() {
 		return mimeType;
 	}
@@ -118,7 +152,6 @@ public class Artifacts extends AbstractEntity {
 		this.mimeSubtype = mimeSubtype;
 	}
 
-
 	public Date getCreated() {
 		return created;
 	}
@@ -134,6 +167,5 @@ public class Artifacts extends AbstractEntity {
 	public void setDeleteAfter(Date deleteAfter) {
 		this.deleteAfter = deleteAfter;
 	}
-	
-	
+
 }

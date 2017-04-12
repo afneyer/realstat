@@ -31,7 +31,10 @@ import com.querydsl.core.types.dsl.StringPath;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Widgetset;
 import com.vaadin.data.Property;
+import com.vaadin.server.FileResource;
+import com.vaadin.server.Resource;
 import com.vaadin.server.VaadinRequest;
+import com.vaadin.server.VaadinService;
 import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.tapio.googlemaps.GoogleMap;
 import com.vaadin.tapio.googlemaps.client.LatLon;
@@ -47,6 +50,7 @@ import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.Link;
 import com.vaadin.ui.ListSelect;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.TabSheet;
@@ -306,8 +310,14 @@ public class GoogleMapUI extends UI {
 				String caption = tle.getPropertyAdr().toString() + "\n" + tle.getPrice();
 				GoogleMapMarker mrkr = new GoogleMapMarker(caption, new LatLon(loc.getY(), loc.getX()), false);
 				returnMarker = mrkr;
+				// Find the application directory
+				String basepath = VaadinService.getCurrent()
+				                  .getBaseDirectory().getAbsolutePath();
+
+				mrkr.setIconUrl("VAADIN/house-32Green.ico");
 				googleMap.addMarker(mrkr);
 				mrkr.setDraggable(true);
+				
 
 				googleMap.addMarkerClickListener(new MarkerClickListener() {
 
