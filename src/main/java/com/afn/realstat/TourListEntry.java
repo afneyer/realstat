@@ -12,6 +12,7 @@ import javax.persistence.Table;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Example;
+import org.springframework.data.geo.Point;
 
 @Entity
 // TODO
@@ -88,6 +89,10 @@ public class TourListEntry extends AbstractEntity {
 
 	public void setPropertyAdr(Address propertyAdr) {
 		this.propertyAdr = propertyAdr;
+	}
+	
+	public Point getLocation() {
+		return propertyAdr.getLocation();
 	}
 
 	public String getCity() {

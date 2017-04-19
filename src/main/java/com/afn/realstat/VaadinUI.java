@@ -5,7 +5,6 @@ import org.springframework.util.StringUtils;
 
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Widgetset;
-import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.spring.annotation.SpringUI;
@@ -56,14 +55,15 @@ public class VaadinUI extends UI {
 		grid.setHeight(300, Unit.PIXELS);
 		grid.setColumns("id", "firstName", "lastName");
 
-		filter.setInputPrompt("Filter by last name");
+		// TODO fix filter.setInputPrompt("Filter by last name");
 
 		// Hook logic to components
 
 		// Replace listing with filtered content when user changes filter
-		filter.addTextChangeListener(e -> listCustomers(e.getText()));
+		// TODO fix filter.addTextChangeListener(e -> listCustomers(e.getText()));
 
 		// Connect selected Customer to editor or hide if none is selected
+		/* TODO fix
 		grid.addSelectionListener(e -> {
 			if (e.getSelected().isEmpty()) {
 				editor.setVisible(false);
@@ -72,6 +72,7 @@ public class VaadinUI extends UI {
 				editor.editCustomer((Customer) grid.getSelectedRow());
 			}
 		});
+		*/
 
 		// Instantiate and edit new Customer the new button is clicked
 		addNewBtn.addClickListener(e -> editor.editCustomer(new Customer("", "")));
@@ -90,12 +91,12 @@ public class VaadinUI extends UI {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	void listCustomers(String text) {
 		if (StringUtils.isEmpty(text)) {
-			grid.setContainerDataSource(
-					new BeanItemContainer(Customer.class, repo.findAll()));
+			// TODO fix grid.setContainerDataSource(
+			//		new BeanItemContainer(Customer.class, repo.findAll()));
 		}
 		else {
-			grid.setContainerDataSource(new BeanItemContainer(Customer.class,
-					repo.findByLastNameStartsWithIgnoreCase(text)));
+			// TODO fix grid.setContainerDataSource(new BeanItemContainer(Customer.class,
+			// TODO fix		repo.findByLastNameStartsWithIgnoreCase(text)));
 		}
 	}
 	// end::listCustomers[]

@@ -38,9 +38,6 @@ public class AdReviewTourList {
 	public AdReviewTourList(File file, AddressRepository adrRepo, TourListRepository tlRepo) {
 		this.adrRepo = adrRepo;
 		this.tlRepo = tlRepo;
-		if (file == null) {
-			file = new File("C:\\afndev\\apps\\realstat\\testdata", "17-03-25_Tour.pdf");
-		}
 		this.file = file;
 	}
 	
@@ -288,5 +285,10 @@ public class AdReviewTourList {
 			throw new RuntimeException(e);
 		}
 		return text;
+	}
+
+	public List<TourListEntry> getTourList(Date tourDate) {
+		List<TourListEntry> tleList = tlRepo.findByTourDate(tourDate);
+		return tleList;
 	}
 }

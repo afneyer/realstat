@@ -2,7 +2,6 @@ package com.afn.realstat;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.vaadin.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.spring.annotation.SpringComponent;
@@ -82,7 +81,7 @@ public class CustomerEditor extends VerticalLayout {
 		// Bind customer properties to similarly named fields
 		// Could also use annotation or "manual binding" or programmatically
 		// moving values from fields to entities before saving
-		BeanFieldGroup.bindFieldsUnbuffered(customer, this);
+		// TODO fix BeanFieldGroup.bindFieldsUnbuffered(customer, this);
 
 		setVisible(true);
 

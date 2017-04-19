@@ -1,8 +1,6 @@
 package com.afn.realstat.ui;
 
 import java.io.File;
-import java.io.InputStream;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
@@ -22,6 +20,7 @@ import com.afn.realstat.AddressManager;
 import com.afn.realstat.AddressRepository;
 import com.afn.realstat.Agent;
 import com.afn.realstat.AgentRepository;
+import com.afn.realstat.MyTour;
 import com.afn.realstat.PropertyTransactionService;
 import com.afn.realstat.QAgent;
 import com.afn.realstat.RealProperty;
@@ -30,18 +29,15 @@ import com.afn.realstat.TourListRepository;
 import com.querydsl.core.types.dsl.StringPath;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Widgetset;
-import com.vaadin.data.Property;
-import com.vaadin.server.FileResource;
-import com.vaadin.server.Resource;
+import com.vaadin.server.ClientConnector;
 import com.vaadin.server.VaadinRequest;
-import com.vaadin.server.VaadinService;
 import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.tapio.googlemaps.GoogleMap;
+import com.vaadin.tapio.googlemaps.client.GoogleMapControl;
 import com.vaadin.tapio.googlemaps.client.LatLon;
 import com.vaadin.tapio.googlemaps.client.events.InfoWindowClosedListener;
 import com.vaadin.tapio.googlemaps.client.events.MapClickListener;
 import com.vaadin.tapio.googlemaps.client.events.MapMoveListener;
-import com.vaadin.tapio.googlemaps.client.events.MarkerClickListener;
 import com.vaadin.tapio.googlemaps.client.events.MarkerDragListener;
 import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapInfoWindow;
 import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapMarker;
@@ -49,8 +45,8 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.ItemCaptionGenerator;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.Link;
 import com.vaadin.ui.ListSelect;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.TabSheet;
@@ -83,12 +79,13 @@ public class GoogleMapUI extends UI {
 	@Autowired
 	private AddressRepository adrRepo;
 
-	private GoogleMap googleMap;
+	private AfnGoogleMap googleMap;
 
 	@Autowired
 	protected TourListRepository tleRepo;
 
 	protected CssLayout consoleLayout;
+	protected MapClickListener dummyListener;
 
 	@Autowired
 	public GoogleMapUI(PropertyTransactionService ptService) {
@@ -118,12 +115,11 @@ public class GoogleMapUI extends UI {
 		mapContent.setWidth(100, Unit.PERCENTAGE);
 		page.addComponent(mapContent);
 
-		googleMap = new GoogleMap(null, null, null);
+		googleMap = new AfnGoogleMap(null, null, null);
 
 		googleMap.setCenter(new LatLon(37.83, -122.226));
 		googleMap.setZoom(13);
-		googleMap.setHeight(100, Unit.PERCENTAGE);
-		googleMap.setWidth(100, Unit.PERCENTAGE);
+		googleMap.setSizeFull();
 
 		mapContent.addComponent(googleMap);
 		mapContent.setExpandRatio(googleMap, 3.0f);
@@ -229,7 +225,6 @@ public class GoogleMapUI extends UI {
 		FileUpLoader receiver = new FileUpLoader();
 
 		Upload upload = new Upload("Select AdReview Tour Pdf-File", receiver);
-		upload.setImmediate(false);
 
 		// upload.addSucceededListener((SucceededListener) receiver);
 
@@ -262,24 +257,32 @@ public class GoogleMapUI extends UI {
 		popUp.setContent(subContent);
 
 		// Put some components in it
-		subContent.addComponent(new Label("Select Tour Date"));
+		// subContent.addComponent(new Label("Select Tour Date"));
 
 		// Create the selection component for tour dates
 		List<Date> tlDates = tleRepo.findAllDisctintDatesNewestFirst();
 
-		ListSelect select = new ListSelect("Select tour date");
+		ListSelect<Date> select = new ListSelect<Date>("Select tour date");
+
+		select.setItemCaptionGenerator(d -> {
+			SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
+	        String ds = df.format(d);
+	        return ds;
+		} );
 
 		// Add some items
-		select.addItems(tlDates);
+		select.setItems(tlDates);
 
-		// Show 5 items and a scrollbar if there are more
+		// Show 6 items and a scroll-bar if there are more
 		select.setRows(6);
 
 		select.addValueChangeListener(event -> {
-			@SuppressWarnings("unchecked")
-			Property<Date> p = event.getProperty();
-			Date date = p.getValue();
-			addMarkersForTour(date);
+			Set<Date> dates = event.getValue();
+			Date date = dates.iterator().next();
+			if (date != null) {
+				MyTour myTour = new MyTour(date, tleRepo);
+				addMarkersForTour(myTour);
+			}
 
 		});
 
@@ -293,53 +296,29 @@ public class GoogleMapUI extends UI {
 
 	}
 
-	private void addMarkersForTour(Date date) {
+	private void addMarkersForTour(MyTour myTour) {
 
-		List<TourListEntry> tleList = tleRepo.findByTourDate(date);
+		List<TourListEntry> tleList = tleRepo.findByTourDate(myTour.getTourDate());
 		for (TourListEntry tle : tleList) {
-			addMarkerForTourListEntry(tle);
+			addMarkerForTourListEntry(tle, myTour);
 		}
+		this.setMapCenter(googleMap);
+		System.out.println("Done with Marking");
 	}
 
-	private GoogleMapMarker addMarkerForTourListEntry(TourListEntry tle) {
-		GoogleMapMarker returnMarker = null;
-		Address adr = tle.getPropertyAdr();
-		if (adr != null) {
-			Point loc = adrMgr.getLocation(adr);
+	private MyTourListMarker addMarkerForTourListEntry(TourListEntry tle, MyTour myTour) {
+			MyTourListMarker mrkr = null;
+			Point loc = tle.getLocation();
 			if (loc != null) {
-				String caption = tle.getPropertyAdr().toString() + "\n" + tle.getPrice();
-				GoogleMapMarker mrkr = new GoogleMapMarker(caption, new LatLon(loc.getY(), loc.getX()), false);
-				returnMarker = mrkr;
-				// Find the application directory
-				String basepath = VaadinService.getCurrent()
-				                  .getBaseDirectory().getAbsolutePath();
+				 
+				mrkr = new MyTourListMarker(tle, myTour, googleMap);
 
-				mrkr.setIconUrl("VAADIN/house-32Green.ico");
 				googleMap.addMarker(mrkr);
-				mrkr.setDraggable(true);
-				
+				googleMap.markAsDirty();
 
-				googleMap.addMarkerClickListener(new MarkerClickListener() {
+				googleMap.addMarkerClickListener(new TourListMarkerClickListener(googleMap, mrkr));
 
-					@Override
-					public void markerClicked(GoogleMapMarker clickedMarker) {
-
-						String infoString = tle.getPropertyAdr().toString();
-						GoogleMapInfoWindow infoWindow = new GoogleMapInfoWindow(infoString, mrkr);
-						if (clickedMarker.equals(mrkr)) {
-							googleMap.openInfoWindow(infoWindow);
-						}
-						;
-
-						Label consoleEntry = new Label("Marker \"" + clickedMarker.getCaption() + "\" at ("
-								+ clickedMarker.getPosition().getLat() + ", " + clickedMarker.getPosition().getLon()
-								+ ") clicked.");
-						consoleLayout.addComponent(consoleEntry, 0);
-
-					}
-
-				});
-
+				/* TODO eventually remove
 				googleMap.addMarkerDragListener(new MarkerDragListener() {
 
 					@Override
@@ -359,9 +338,9 @@ public class GoogleMapUI extends UI {
 					}
 
 				});
+				*/
 			}
-		}
-		return returnMarker;
+		return mrkr;
 	}
 
 	// Make this null safe TODO
@@ -464,5 +443,7 @@ public class GoogleMapUI extends UI {
 			googleMap.fitToBounds(boundsNE, boundsSW);
 		}
 	}
+
+	
 
 }
