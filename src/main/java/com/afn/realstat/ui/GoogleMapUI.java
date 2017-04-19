@@ -44,6 +44,7 @@ import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapMarker;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.CssLayout;
+import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.ItemCaptionGenerator;
 import com.vaadin.ui.Label;
@@ -80,6 +81,8 @@ public class GoogleMapUI extends UI {
 	private AddressRepository adrRepo;
 
 	private AfnGoogleMap googleMap;
+	
+	private Grid<TourListEntry> tourListView;
 
 	@Autowired
 	protected TourListRepository tleRepo;
@@ -114,6 +117,11 @@ public class GoogleMapUI extends UI {
 		mapContent.setHeight(100, Unit.PERCENTAGE);
 		mapContent.setWidth(100, Unit.PERCENTAGE);
 		page.addComponent(mapContent);
+		
+		tourListView = new Grid<TourListEntry>();
+		tourListView.addColumn(TourListEntry::toString);
+		tourListView.setCaption("Tour");
+		mapContent.addComponent(tourListView);
 
 		googleMap = new AfnGoogleMap(null, null, null);
 
@@ -124,6 +132,8 @@ public class GoogleMapUI extends UI {
 		mapContent.addComponent(googleMap);
 		mapContent.setExpandRatio(googleMap, 3.0f);
 		page.setExpandRatio(mapContent, 4.0f);
+		
+		
 
 		Panel console = new Panel();
 		final CssLayout cnlt = new CssLayout();
@@ -256,6 +266,13 @@ public class GoogleMapUI extends UI {
 		VerticalLayout subContent = new VerticalLayout();
 		popUp.setContent(subContent);
 
+		
+
+		// Center it in the browser window
+		popUp.center();
+
+		// Open it in the UI
+		addWindow(popUp);
 		// Put some components in it
 		// subContent.addComponent(new Label("Select Tour Date"));
 
@@ -263,6 +280,8 @@ public class GoogleMapUI extends UI {
 		List<Date> tlDates = tleRepo.findAllDisctintDatesNewestFirst();
 
 		ListSelect<Date> select = new ListSelect<Date>("Select tour date");
+		
+		subContent.addComponent(select);
 
 		select.setItemCaptionGenerator(d -> {
 			SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
@@ -282,17 +301,10 @@ public class GoogleMapUI extends UI {
 			if (date != null) {
 				MyTour myTour = new MyTour(date, tleRepo);
 				addMarkersForTour(myTour);
+				popUp.close();
 			}
 
 		});
-
-		subContent.addComponent(select);
-
-		// Center it in the browser window
-		popUp.center();
-
-		// Open it in the UI
-		addWindow(popUp);
 
 	}
 
@@ -316,7 +328,7 @@ public class GoogleMapUI extends UI {
 				googleMap.addMarker(mrkr);
 				googleMap.markAsDirty();
 
-				googleMap.addMarkerClickListener(new TourListMarkerClickListener(googleMap, mrkr));
+				googleMap.addMarkerClickListener(new TourListMarkerClickListener(googleMap, mrkr, tourListView));
 
 				/* TODO eventually remove
 				googleMap.addMarkerDragListener(new MarkerDragListener() {

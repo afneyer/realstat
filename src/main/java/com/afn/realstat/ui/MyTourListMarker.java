@@ -15,6 +15,7 @@ public class MyTourListMarker extends GoogleMapMarker {
 	private MyTour myTour;
 	private TourListEntry tourListEntry;
 	private AfnGoogleMap googleMap;
+	private TourListMarkerClickListener clickListener;
 
 	public MyTourListMarker() {
 		// TODO Auto-generated constructor stub
@@ -41,7 +42,7 @@ public class MyTourListMarker extends GoogleMapMarker {
 	}
 	
 	public void toggleTour() {
-		if (myTour.contains(tourListEntry)) {
+		if (myTour.isSelected(tourListEntry)) {
 			excludeFromTour();
 		} else {
 			includeInTour();
@@ -52,7 +53,7 @@ public class MyTourListMarker extends GoogleMapMarker {
 		// change icon
 		setIconUrl(inIconUrl);
 		// add/remove from tour
-		myTour.addEntry(tourListEntry);
+		myTour.selectEntry(tourListEntry);
 		refresh();
 	}
 	
@@ -60,14 +61,16 @@ public class MyTourListMarker extends GoogleMapMarker {
 		// change icon
 		setIconUrl(outIconUrl);
 		// add/remove from tour
-		myTour.removeEntry(tourListEntry);
+		myTour.deselectEntry(tourListEntry);
 		refresh();
 	}
 	
 	public void refresh() {
 		MyTourListMarker newMarker = this.getCopy();
+		googleMap.removeMarkerClickListener(clickListener);
 		googleMap.removeMarker(this);
 		googleMap.addMarker(newMarker);
+		googleMap.addMarkerClickListener(new TourListMarkerClickListener(googleMap, newMarker, clickListener.getTourListView()));
 	}
 	
 	private MyTourListMarker getCopy() {
@@ -82,6 +85,14 @@ public class MyTourListMarker extends GoogleMapMarker {
 		tlm.setOptimized(this.isOptimized());
 		tlm.setPosition(this.getPosition());
 		return tlm;
+	}
+	
+	public MyTour getTour() {
+		return myTour;
+	}
+
+	public void setListener(TourListMarkerClickListener tourListMarkerClickListener) {
+		clickListener = tourListMarkerClickListener;
 	}
 
 }

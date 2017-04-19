@@ -1,5 +1,7 @@
 package com.afn.realstat;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -7,18 +9,20 @@ public class MyTour {
 
 	private Date tourDate;
 	private List<TourListEntry> tourList;
+	private ArrayList<TourListEntry> selectedList;
 
 	public MyTour(Date tourDate, TourListRepository tlRepo) {
 		this.tourDate = tourDate;
 		tourList = tlRepo.findByTourDate(tourDate);
+		selectedList = new ArrayList<TourListEntry>();
 	}
 
-	public boolean addEntry(TourListEntry tourListEntry) {
-		return tourList.add(tourListEntry);
+	public boolean selectEntry(TourListEntry tourListEntry) {
+		return selectedList.add(tourListEntry);
 	}
 
-	public boolean removeEntry(TourListEntry tourListEntry) {
-		return tourList.remove(tourListEntry);
+	public boolean deselectEntry(TourListEntry tourListEntry) {
+		return selectedList.remove(tourListEntry);
 	}
 
 	public Date getTourDate() {
@@ -27,6 +31,19 @@ public class MyTour {
 
 	public boolean contains(TourListEntry tourListEntry) {
 		return tourList.contains(tourListEntry);
+	}
+	
+	public boolean isSelected(TourListEntry tourListEntry) {
+		return selectedList.contains(tourListEntry);
+	}
+
+	public Collection<TourListEntry> getTourList() {
+		// TODO Auto-generated method stub
+		return tourList;
+	}
+	
+	public Collection<TourListEntry> getSelected() {
+		return selectedList;
 	}
 
 }
