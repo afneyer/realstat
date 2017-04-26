@@ -66,6 +66,7 @@ public class GoogleMapsDemoUI extends UI {
 
     @Override
     protected void init(VaadinRequest request) {
+    	
         CssLayout rootLayout = new CssLayout();
         rootLayout.setSizeFull();
         setContent(rootLayout);

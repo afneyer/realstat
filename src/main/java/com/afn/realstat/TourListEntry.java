@@ -75,6 +75,27 @@ public class TourListEntry extends AbstractEntity {
 	public void clean() {
 	}
 
+	public String htmlString() {
+		String html = "";
+		html += "<p style=\"text-align:left;\">";
+		html += street + city;
+		html += "<span style=\"float:right;\">";
+		html += "<bold>";
+		html += price; 
+		html += "</span>";
+		html += "</bold>";
+		html += "</p>";
+		html += "<p>";
+		html += description;
+		html += "</p>";
+		html += "<p style=\"text-align:left;\">";
+		html += agent;
+		html += "<span style=\"float:right;\">";
+		html += "</span>";
+		html += "</p>";
+		return html;
+	}
+	
 	public Date getTourDate() {
 		return tourDate;
 	}

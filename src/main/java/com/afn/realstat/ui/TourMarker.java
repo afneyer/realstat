@@ -8,7 +8,7 @@ import com.vaadin.tapio.googlemaps.client.LatLon;
 import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapMarker;
 
 @SuppressWarnings("serial")
-public class MyTourListMarker extends GoogleMapMarker {
+public class TourMarker extends GoogleMapMarker {
 	
 	private final String inIconUrl = "VAADIN/house-32Red.ico";
 	private final String outIconUrl = "VAADIN/star32.png";
@@ -17,11 +17,11 @@ public class MyTourListMarker extends GoogleMapMarker {
 	private AfnGoogleMap googleMap;
 	private TourListMarkerClickListener clickListener;
 
-	public MyTourListMarker() {
+	public TourMarker() {
 		// TODO Auto-generated constructor stub
 	}
 
-	public MyTourListMarker(TourListEntry tle, MyTour mt, AfnGoogleMap map) {
+	public TourMarker(TourListEntry tle, MyTour mt, AfnGoogleMap map) {
 		super();
 		
 		this.myTour = mt;
@@ -54,7 +54,7 @@ public class MyTourListMarker extends GoogleMapMarker {
 		setIconUrl(inIconUrl);
 		// add/remove from tour
 		myTour.selectEntry(tourListEntry);
-		refresh();
+		googleMap.refresh();
 	}
 	
 	public void excludeFromTour() {
@@ -62,19 +62,19 @@ public class MyTourListMarker extends GoogleMapMarker {
 		setIconUrl(outIconUrl);
 		// add/remove from tour
 		myTour.deselectEntry(tourListEntry);
-		refresh();
+		googleMap.refresh();
 	}
 	
 	public void refresh() {
-		MyTourListMarker newMarker = this.getCopy();
+		TourMarker newMarker = this.getCopy();
 		googleMap.removeMarkerClickListener(clickListener);
 		googleMap.removeMarker(this);
 		googleMap.addMarker(newMarker);
 		googleMap.addMarkerClickListener(new TourListMarkerClickListener(googleMap, newMarker, clickListener.getTourListView()));
 	}
 	
-	private MyTourListMarker getCopy() {
-		MyTourListMarker tlm = new MyTourListMarker();
+	private TourMarker getCopy() {
+		TourMarker tlm = new TourMarker();
 		tlm.googleMap = googleMap;
 		tlm.myTour = myTour;
 		tlm.tourListEntry = tourListEntry;

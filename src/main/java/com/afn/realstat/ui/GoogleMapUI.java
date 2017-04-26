@@ -2,9 +2,7 @@ package com.afn.realstat.ui;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
-import java.util.Collection;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
@@ -12,7 +10,6 @@ import java.util.function.Function;
 // import org.hsqldb.lib.Iterator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.geo.Point;
-import org.springframework.stereotype.Component;
 
 import com.afn.realstat.AdReviewTourList;
 import com.afn.realstat.Address;
@@ -29,24 +26,21 @@ import com.afn.realstat.TourListRepository;
 import com.querydsl.core.types.dsl.StringPath;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Widgetset;
-import com.vaadin.server.ClientConnector;
 import com.vaadin.server.VaadinRequest;
+import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.SpringUI;
-import com.vaadin.tapio.googlemaps.GoogleMap;
-import com.vaadin.tapio.googlemaps.client.GoogleMapControl;
 import com.vaadin.tapio.googlemaps.client.LatLon;
 import com.vaadin.tapio.googlemaps.client.events.InfoWindowClosedListener;
 import com.vaadin.tapio.googlemaps.client.events.MapClickListener;
 import com.vaadin.tapio.googlemaps.client.events.MapMoveListener;
-import com.vaadin.tapio.googlemaps.client.events.MarkerDragListener;
 import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapInfoWindow;
 import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapMarker;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.Grid;
+import com.vaadin.ui.Grid.SelectionMode;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.ItemCaptionGenerator;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.ListSelect;
 import com.vaadin.ui.Panel;
@@ -57,6 +51,7 @@ import com.vaadin.ui.Upload.SucceededEvent;
 import com.vaadin.ui.Upload.SucceededListener;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
+import com.vaadin.ui.renderers.HtmlRenderer;
 
 /**
  * Google Maps UI for displaying properties on maps
@@ -65,7 +60,7 @@ import com.vaadin.ui.Window;
 @Theme("valo")
 @SuppressWarnings("serial")
 @Widgetset("AppWidgetset")
-@Component
+@SpringComponent
 public class GoogleMapUI extends UI {
 
 	@Autowired
@@ -111,7 +106,10 @@ public class GoogleMapUI extends UI {
 		VerticalLayout page = new VerticalLayout();
 		page.setSizeFull();
 		tabs.addTab(page, "Map");
-		tabs.addTab(new Label("An another tab"), "The other tab");
+		
+		TourListTab tourListTab = new TourListTab(tleRepo);
+		com.vaadin.ui.Component tourListComp = tourListTab.getTourListPage();
+		tabs.addTab(tourListComp, "Tour");
 
 		HorizontalLayout mapContent = new HorizontalLayout();
 		mapContent.setHeight(100, Unit.PERCENTAGE);
@@ -119,7 +117,8 @@ public class GoogleMapUI extends UI {
 		page.addComponent(mapContent);
 		
 		tourListView = new Grid<TourListEntry>();
-		tourListView.addColumn(TourListEntry::toString);
+		tourListView.addColumn(TourListEntry::htmlString, new HtmlRenderer());
+		tourListView.setSelectionMode(SelectionMode.MULTI);
 		tourListView.setCaption("Tour");
 		mapContent.addComponent(tourListView);
 
@@ -300,6 +299,7 @@ public class GoogleMapUI extends UI {
 			Date date = dates.iterator().next();
 			if (date != null) {
 				MyTour myTour = new MyTour(date, tleRepo);
+				tourListView.setItems(myTour.getTourList());
 				addMarkersForTour(myTour);
 				popUp.close();
 			}
@@ -314,43 +314,20 @@ public class GoogleMapUI extends UI {
 		for (TourListEntry tle : tleList) {
 			addMarkerForTourListEntry(tle, myTour);
 		}
-		this.setMapCenter(googleMap);
+		googleMap.centerOnTourMarkers();
 		System.out.println("Done with Marking");
 	}
 
-	private MyTourListMarker addMarkerForTourListEntry(TourListEntry tle, MyTour myTour) {
-			MyTourListMarker mrkr = null;
+	private TourMarker addMarkerForTourListEntry(TourListEntry tle, MyTour myTour) {
+			TourMarker mrkr = null;
 			Point loc = tle.getLocation();
 			if (loc != null) {
 				 
-				mrkr = new MyTourListMarker(tle, myTour, googleMap);
+				mrkr = new TourMarker(tle, myTour, googleMap);
 
 				googleMap.addMarker(mrkr);
-				googleMap.markAsDirty();
 
 				googleMap.addMarkerClickListener(new TourListMarkerClickListener(googleMap, mrkr, tourListView));
-
-				/* TODO eventually remove
-				googleMap.addMarkerDragListener(new MarkerDragListener() {
-
-					@Override
-					public void markerDragged(GoogleMapMarker draggedMarker, LatLon oldPosition) {
-						if (draggedMarker.equals(mrkr)) {
-							Label consoleEntry = new Label("Marker " + draggedMarker.getCaption() + "dragged from ("
-									+ oldPosition.getLat() + ", " + +oldPosition.getLon() + ") + to ("
-									+ draggedMarker.getPosition().getLat() + ", " + draggedMarker.getPosition().getLon()
-									+ ")");
-							consoleLayout.addComponent(consoleEntry, 0);
-							LatLon newPosition = draggedMarker.getPosition();
-							mrkr.setPosition(oldPosition);
-							googleMap.addMarker(mrkr);
-							GoogleMapMarker mk = new GoogleMapMarker("TestMarker Old", newPosition, true);
-							googleMap.addMarker(mk);
-						}
-					}
-
-				});
-				*/
 			}
 		return mrkr;
 	}
@@ -370,7 +347,7 @@ public class GoogleMapUI extends UI {
 		}
 		// }
 
-		this.setMapCenter(googleMap);
+		googleMap.centerOnMarkers();
 		System.out.println("Done with Marking");
 
 	}
@@ -384,7 +361,7 @@ public class GoogleMapUI extends UI {
 		}
 		// }
 
-		this.setMapCenter(googleMap);
+		googleMap.centerOnMarkers();
 		System.out.println("Done with Marking");
 
 	}
@@ -399,7 +376,7 @@ public class GoogleMapUI extends UI {
 		}
 		// }
 
-		this.setMapCenter(googleMap);
+		googleMap.centerOnTourMarkers();
 		System.out.println("Done with Marking");
 
 	}
@@ -417,45 +394,7 @@ public class GoogleMapUI extends UI {
 		return null;
 	}
 
-	/**
-	 * Set the scale (zoom) and the boundaries of the map so that all markers
-	 * are shown on the map
-	 * 
-	 * @param map
-	 */
-	protected void setMapCenter(GoogleMap map) {
-
-		Collection<GoogleMapMarker> markers = map.getMarkers();
-
-		double latMin = 90.0;
-		double latMax = -90.0;
-		double lonMin = 180.0;
-		double lonMax = -180.0;
-		Iterator<GoogleMapMarker> iter = markers.iterator();
-
-		GoogleMapMarker m;
-		while (iter.hasNext()) {
-			m = iter.next();
-
-			double lat = m.getPosition().getLat();
-			latMin = Math.min(latMin, lat);
-			latMax = Math.max(latMax, lat);
-
-			double lon = m.getPosition().getLon();
-			lonMin = Math.min(lonMin, lon);
-			lonMax = Math.max(lonMax, lon);
-
-			// TODO remove
-			System.out.println("Latitude=" + lat + " Longitude=" + lon);
-		}
-
-		if (markers.size() != 0) {
-			LatLon boundsNE = new LatLon(latMax, lonMax);
-			LatLon boundsSW = new LatLon(latMin, lonMin);
-			googleMap.fitToBounds(boundsNE, boundsSW);
-		}
-	}
-
+	
 	
 
 }
