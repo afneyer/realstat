@@ -10,10 +10,12 @@ import org.springframework.data.geo.Point;
 import com.afn.realstat.MyTour;
 import com.afn.realstat.TourListEntry;
 import com.afn.realstat.TourListRepository;
+import com.vaadin.data.SelectionModel;
 import com.vaadin.data.provider.DataProvider;
 import com.vaadin.data.provider.DataProviderWrapper;
 import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.shared.data.sort.SortDirection;
+import com.vaadin.shared.ui.grid.ColumnState;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.tapio.googlemaps.client.LatLon;
 import com.vaadin.ui.ComboBox;
@@ -22,7 +24,9 @@ import com.vaadin.ui.Grid;
 import com.vaadin.ui.Grid.SelectionMode;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.ListSelect;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.components.grid.MultiSelectionModel;
 import com.vaadin.ui.renderers.HtmlRenderer;
 
 public class TourListTab {
@@ -59,10 +63,37 @@ public class TourListTab {
 
 		// initialize tourList view
 		tourListView = new Grid<TourListEntry>();
+		tourListView.setStyleName("3high");
 		tourListView.addColumn(TourListEntry::htmlString, new HtmlRenderer());
 		tourListView.setSelectionMode(SelectionMode.MULTI);
-		tourListView.setCaption("Tour");
+		tourListView.setSizeFull();
+		
+		// tourListView.setCaption("Tour");
+		
+		MultiSelectionModel<TourListEntry> selectionModel = (MultiSelectionModel<TourListEntry>) tourListView.getSelectionModel();
+		selectionModel.addMultiSelectionListener( event -> {
+			Set<TourListEntry> added = event.getAddedSelection();
+			for ( TourListEntry tle : added ) {
+				myTour.selectEntry(tle);
+				TourMarker tm = map.getMarker(tle);
+				if ( tm != null) {
+					tm.includeInTour();	
+				}
+			}
+			
+			Set<TourListEntry> removed = event.getRemovedSelection();
+			for ( TourListEntry tle : removed ) {
+				myTour.selectEntry(tle);
+				TourMarker tm = map.getMarker(tle);
+				if ( tm != null) {
+					tm.excludeFromTour();;	
+				}
+			}
+		});
 
+		tourListView.addItemClickListener(event ->
+	    Notification.show("Value: " + event.getItem()));
+		
 		tourDisplay.addComponent(tourListView);
 		tourDisplay.setExpandRatio(tourListView, 1.0f);
 

@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import com.afn.realstat.TourListEntry;
 import com.vaadin.tapio.googlemaps.GoogleMap;
 import com.vaadin.tapio.googlemaps.client.LatLon;
 import com.vaadin.tapio.googlemaps.client.events.MapClickListener;
@@ -43,6 +44,17 @@ public class AfnGoogleMap extends GoogleMap {
 		}
 		
 		return markerList;
+	}
+	
+	public TourMarker getMarker( TourListEntry tle ) {
+		Iterator<TourMarker> markerIter = getTourMarkers().iterator();
+		while (markerIter.hasNext() ) {
+			TourMarker tm = markerIter.next();
+			if (tle.getId().equals(tm.getTourListEntry().getId())) {
+				return tm;
+			}
+		}
+		return null;
 	}
 
 	/**

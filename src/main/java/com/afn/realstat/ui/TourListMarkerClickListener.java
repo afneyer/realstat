@@ -1,8 +1,11 @@
 package com.afn.realstat.ui;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
+import com.afn.realstat.MyTour;
 import com.afn.realstat.TourListEntry;
 import com.vaadin.tapio.googlemaps.GoogleMap;
 import com.vaadin.tapio.googlemaps.client.events.MarkerClickListener;
@@ -35,13 +38,11 @@ public class TourListMarkerClickListener implements MarkerClickListener {
             marker.toggleTour();
             // select all the items that are part of the TourListView
             // TODO remove: tourListView.setItems(marker.getTour().getSelected());
-            List<TourListEntry> selected = new ArrayList<TourListEntry>(marker.getTour().getSelected());
-            for ( TourListEntry tle : selected) {
-            	tourListView.select(tle);
-            }
-            tourListView.markAsDirtyRecursive();
-            tourListView.getDataProvider().refreshAll();
-            marker.refresh();
+            MyTour tour = marker.getTour();
+            TourListEntry tle = marker.getTourListEntry();
+            tourListView.select(tle);
+            tourListView.getDataCommunicator().refresh(tle);
+            tourListView.getSelectionModel().markAsDirtyRecursive();
         }
     }
 

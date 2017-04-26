@@ -37,7 +37,7 @@ public class MyTour {
 		return selectedList.contains(tourListEntry);
 	}
 
-	public Collection<TourListEntry> getTourList() {
+	public List<TourListEntry> getTourList() {
 		// TODO Auto-generated method stub
 		return tourList;
 	}

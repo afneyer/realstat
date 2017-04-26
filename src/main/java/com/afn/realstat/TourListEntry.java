@@ -78,7 +78,7 @@ public class TourListEntry extends AbstractEntity {
 	public String htmlString() {
 		String html = "";
 		html += "<p style=\"text-align:left;\">";
-		html += street + city;
+		html += street + ", " + city;
 		html += "<span style=\"float:right;\">";
 		html += "<bold>";
 		html += price; 

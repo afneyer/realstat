@@ -90,6 +90,10 @@ public class TourMarker extends GoogleMapMarker {
 	public MyTour getTour() {
 		return myTour;
 	}
+	
+	public TourListEntry getTourListEntry() {
+		return tourListEntry;
+	}
 
 	public void setListener(TourListMarkerClickListener tourListMarkerClickListener) {
 		clickListener = tourListMarkerClickListener;
