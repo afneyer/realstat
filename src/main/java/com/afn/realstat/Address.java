@@ -349,7 +349,7 @@ public class Address extends AbstractEntity {
 
 	@Override
 	public void saveOrUpdate() {
-		getRepo().save(this);
+		getRepo().saveOrUpdate(this);
 	}
 
 	String emptyToNull(String s) {
