@@ -254,6 +254,10 @@ public class AdReviewTourList {
 			}
 
 		}
+		
+		Address propertyAddress = new Address(tourListEntry.getStreet(), tourListEntry.getCity(), tourListEntry.getZip());
+		propertyAddress.saveOrUpdate();
+		tourListEntry.setPropertyAdr(propertyAddress);
 		return tourListEntry;
 	}
 
