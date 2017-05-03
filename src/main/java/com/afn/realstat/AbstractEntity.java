@@ -4,7 +4,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 
+import org.springframework.data.annotation.AccessType;
+import org.springframework.data.annotation.AccessType.Type;
 import org.springframework.data.domain.Example;
+
+import com.afn.realstat.framework.SpringApplicationContext;
 
 @MappedSuperclass
 public abstract class AbstractEntity {
@@ -33,5 +37,9 @@ public abstract class AbstractEntity {
 	public abstract void clean();
 	
 	public abstract boolean isValid();
+	
+	public abstract void save();
+
+	public abstract void saveOrUpdate();
 	
 }

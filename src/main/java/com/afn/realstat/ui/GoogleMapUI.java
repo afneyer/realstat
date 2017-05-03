@@ -231,24 +231,9 @@ public class GoogleMapUI extends UI {
 
 		// Put some components in it
 		subContent.addComponent(new Label("Tour Upload and Date Selection"));
-		FileUpLoader receiver = new FileUpLoader();
+		FileUpLoader receiver = new FileUpLoader(adrRepo, tleRepo);
 
 		Upload upload = new Upload("Select AdReview Tour Pdf-File", receiver);
-
-		// upload.addSucceededListener((SucceededListener) receiver);
-
-		upload.addSucceededListener(new SucceededListener() {
-
-			@Override
-			public void uploadSucceeded(SucceededEvent event) {
-				File file = receiver.getFile();
-				AdReviewTourList adRevList = new AdReviewTourList(file, adrRepo, tleRepo);
-				adRevList.createTourList();
-				// addMarkersForTour(adRevList);
-			}
-
-		});
-
 		subContent.addComponent(upload);
 
 		// Center it in the browser window

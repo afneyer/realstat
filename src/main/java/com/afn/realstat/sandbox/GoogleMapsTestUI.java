@@ -2,6 +2,7 @@ package com.afn.realstat.sandbox;
 
 import javax.servlet.annotation.WebServlet;
 
+import com.vaadin.annotations.Push;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.annotations.Widgetset;
@@ -31,6 +32,7 @@ import com.vaadin.ui.VerticalLayout;
 @SuppressWarnings("serial")
 @Widgetset("AppWidgetset")
 
+@Push
 public class GoogleMapsTestUI extends UI {
 
 	private GoogleMap googleMap;
@@ -118,7 +120,7 @@ public class GoogleMapsTestUI extends UI {
 					googleMap.removeMarker(dummyMarker);
 				} else {
 					googleMap.addMarker(dummyMarker);
-				}
+				} 
 
 			}
 		});

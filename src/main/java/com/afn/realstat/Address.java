@@ -1,7 +1,7 @@
 package com.afn.realstat;
 
 
-
+import javax.persistence.Access;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Index;
@@ -10,12 +10,17 @@ import javax.persistence.Table;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.annotation.AccessType;
+import org.springframework.data.annotation.AccessType.Type;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.geo.Point;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.afn.realstat.framework.SpringApplicationContext;
 import com.afn.realstat.util.MapLocation;
+import com.asprise.ocr.util.StringUtils;
 
 @Entity
 @Table(name = "address", indexes = { @Index(name = "idx_streetNbr", columnList = "streetNbr"),
@@ -23,6 +28,7 @@ import com.afn.realstat.util.MapLocation;
 public class Address extends AbstractEntity {
 
 	public static final Logger log = LoggerFactory.getLogger("app");
+	private static AddressRepository repo;
 
 	private String streetNbr;
 	private String streetPreDir;
@@ -37,12 +43,13 @@ public class Address extends AbstractEntity {
 	private String zip4;
 	private String county;
 	private String country;
-	@Column(columnDefinition = "BLOB")   
-	/*@Lob(type = LobType.BLOB)*/
+	@Column(columnDefinition = "BLOB")
+	/* @Lob(type = LobType.BLOB) */
 	private Point location;
 	private Integer mapLocCalls;
 
 	public Address() {
+		mapLocCalls = new Integer(0);
 	}
 
 	public Address(String inStreet, String inUnit, String inCity, String inZip) {
@@ -69,7 +76,7 @@ public class Address extends AbstractEntity {
 		setCounty(prsdAdr.getCounty());
 		setCountry(prsdAdr.getCountry());
 		setMapLocCalls(0);
-		// setMapLocationFields();
+		setMapLocationFields();
 	}
 
 	public boolean setMapLocationFields() {
@@ -78,7 +85,7 @@ public class Address extends AbstractEntity {
 				log.warn("Google Maps daily api-limit reached! Limit = " + MapLocation.apiLimit());
 			} else {
 				MapLocation mapLoc = new MapLocation(this.toString());
-				setMapLocCalls(getMapLocCalls() +1);
+				setMapLocCalls(getMapLocCalls() + 1);
 
 				location = mapLoc.getLocation();
 				state = mapLoc.getState();
@@ -120,18 +127,18 @@ public class Address extends AbstractEntity {
 
 	public String getFullStreet() {
 		StringBuffer sb = new StringBuffer();
-		sb.append(streetNbr);
+		sb.append( nullToEmpty(streetNbr));
 		sb.append(" ");
-		sb.append(streetPreDir);
+		sb.append( nullToEmpty(streetPreDir));
 		sb.append(" ");
-		sb.append(streetName);
+		sb.append( nullToEmpty(streetName));
 		sb.append(" ");
-		sb.append(streetPostDir);
+		sb.append( nullToEmpty(streetPostDir));
 		sb.append(" ");
-		sb.append(streetType);
+		sb.append( nullToEmpty(streetType));
 		sb.append(" ");
-		sb.append(unitName);
-		sb.append(unitNbr);
+		sb.append( nullToEmpty(unitName));
+		sb.append( nullToEmpty(unitNbr));
 		String fs = sb.toString();
 		fs = fs.trim();
 		fs = fs.replaceAll(" +", " ");
@@ -140,17 +147,16 @@ public class Address extends AbstractEntity {
 
 	public String toString() {
 		String adrStr = getFullStreet();
-		adrStr += ", " + city;
-		adrStr += ", " + zip;
-		if (zip4 != null) {
-			adrStr += "-" + zip4;
-		}
+		adrStr += ", " + nullToEmpty(city);
+		adrStr += ", " + nullToEmpty(state);
+		adrStr += " " + nullToEmpty(zip);
+		adrStr += nullToEmpty(zip4);
 		return adrStr;
-
 	}
 
 	@Override
 	public void clean() {
+
 	}
 
 	@Override
@@ -170,8 +176,8 @@ public class Address extends AbstractEntity {
 		return streetPreDir;
 	}
 
-	public void setStreetPreDir(String streetPreDir) {
-		this.streetPreDir = streetPreDir;
+	public void setStreetPreDir(String streetPreDir) {		
+		this.streetPreDir = emptyToNull( streetPreDir );
 	}
 
 	public String getStreetName() {
@@ -195,7 +201,7 @@ public class Address extends AbstractEntity {
 	}
 
 	public void setStreetPostDir(String streetPostDir) {
-		this.streetPostDir = streetPostDir;
+		this.streetPostDir = emptyToNull(streetPostDir);
 	}
 
 	public String getUnitNbr() {
@@ -203,7 +209,7 @@ public class Address extends AbstractEntity {
 	}
 
 	public void setUnitNbr(String unitNbr) {
-		this.unitNbr = unitNbr;
+		this.unitNbr = emptyToNull(unitNbr);
 	}
 
 	public String getUnitName() {
@@ -211,7 +217,7 @@ public class Address extends AbstractEntity {
 	}
 
 	public void setUnitName(String unitName) {
-		this.unitName = unitName;
+		this.unitName = emptyToNull(unitName);
 	}
 
 	public String getCity() {
@@ -265,11 +271,19 @@ public class Address extends AbstractEntity {
 	public Point getLocation() {
 		return location;
 	}
+	
+	public Point getLoc() {
+		if (location == null) {
+			setMapLocationFields();
+			saveOrUpdate();
+		}
+		return location;
+	}
 
 	public Integer getMapLocCalls() {
 		return mapLocCalls;
 	}
-	
+
 	public void setMapLocCalls(Integer i) {
 		mapLocCalls = i;
 	}
@@ -277,6 +291,7 @@ public class Address extends AbstractEntity {
 	@Override
 	public Example<Address> getRefExample() {
 		Address adr = new Address();
+		adr.mapLocCalls = null;
 		adr.streetNbr = streetNbr;
 		adr.streetName = streetName;
 		adr.streetPreDir = streetPreDir;
@@ -286,18 +301,18 @@ public class Address extends AbstractEntity {
 		adr.zip = zip;
 		adr.city = city;
 
-		System.out.println("Original Address=" + getDetails() );
-		System.out.println("Address Example =" + getDetails() );
-		
-		ExampleMatcher matcher = ExampleMatcher.matching()     
-				  // .withIgnorePaths("lastname")                         
-				 // .withIncludeNullValues()                             
-				  // .withStringMatcherEnding()
-				; 
-		Example<Address> e = Example.of(adr,matcher);
+		System.out.println("Original Address=" + getDetails());
+		System.out.println("Address Example =" + getDetails());
+
+		ExampleMatcher matcher = ExampleMatcher.matching()
+		// .withIgnorePaths("lastname")
+		// .withIncludeNullValues()
+		// .withStringMatcherEnding()
+		;
+		Example<Address> e = Example.of(adr, matcher);
 		return e;
 	}
-	
+
 	public String getDetails() {
 		String str = "|";
 		str += printStringField(streetNbr) + "|";
@@ -312,9 +327,42 @@ public class Address extends AbstractEntity {
 	}
 
 	private String printStringField(String str) {
-		if (str == null) return "null";
-		if (str == "") return "empty";
+		if (str == null)
+			return "null";
+		if (str == "")
+			return "empty";
 		return str;
 	}
+
+	public AddressRepository getRepo() {
+		if (repo == null) {
+			repo = (AddressRepository) SpringApplicationContext.getBean("addressRepository");
+		}
+		return repo;
+	}
+
+	@Override
+	public void save() {
+		getRepo().save(this);
+
+	}
+
+	@Override
+	public void saveOrUpdate() {
+		getRepo().save(this);
+	}
+
+	String emptyToNull(String s) {
+		if (StringUtils.isEmpty(s)) {
+			s = null;
+		}
+		return s;
+	}
 	
+	String nullToEmpty(String s) {
+		if (s == null) {
+			s = "";
+		}
+		return s;
+	}
 }

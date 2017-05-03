@@ -20,6 +20,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Example;
 
+import com.afn.realstat.framework.SpringApplicationContext;
+
 @Entity
 @Table(name = "artifact", indexes = { @Index(name = "idx_identifier", columnList = "identifier"),
 		@Index(name = "idx_category", columnList = "category") })
@@ -30,6 +32,7 @@ public class Artifact extends AbstractEntity {
 
 	public static final Logger log = LoggerFactory.getLogger("app");
 	public static final Class<Artifact> classType = Artifact.class;
+	public static ArtifactRepository repo;
 
 	private String identifier;
 	private String category;
@@ -168,4 +171,21 @@ public class Artifact extends AbstractEntity {
 		this.deleteAfter = deleteAfter;
 	}
 
+	public ArtifactRepository getRepo() {
+		if (repo == null) {
+			repo =  (ArtifactRepository) SpringApplicationContext.getBean("artifactRepository");
+		}
+		return repo;
+	}
+
+	@Override
+	public void save() {
+		getRepo().save(this);
+		
+	}
+
+	@Override
+	public void saveOrUpdate() {
+		getRepo().save(this);
+	}
 }

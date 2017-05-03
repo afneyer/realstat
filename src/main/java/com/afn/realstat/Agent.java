@@ -9,6 +9,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Example;
 
+import com.afn.realstat.framework.SpringApplicationContext;
+
 @Entity
 @Table(name = "agent",  indexes = {
 		@Index(name = "idx_firstName", columnList = "firstName"),
@@ -16,7 +18,7 @@ import org.springframework.data.domain.Example;
 public class Agent extends AbstractEntity {
 
 	public static final Logger log = LoggerFactory.getLogger("app");
-	public static final Class<Agent> classType = Agent.class;
+	private static AgentRepository repo;
 
 	private String agentName;
 	private String userCode;
@@ -229,6 +231,21 @@ public class Agent extends AbstractEntity {
 		return false;
 	}
 	
-	
+	public AgentRepository getRepo() {
+		if (repo == null) {
+			repo =  (AgentRepository) SpringApplicationContext.getBean("agentRepository");
+		}
+		return repo;
+	}
 
+	@Override
+	public void save() {
+		getRepo().save(this);
+		
+	}
+
+	@Override
+	public void saveOrUpdate() {
+		getRepo().save(this);
+	}
 }

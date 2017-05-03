@@ -2,7 +2,6 @@ package com.afn.realstat;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -30,7 +29,7 @@ public class AdReviewTourList {
 	private Map<Date, List<Address>> tours = new HashMap<Date, List<Address>>();
 	private AddressRepository adrRepo;
 	private TourListRepository tlRepo;
-	private File file;
+	private File pdfFile;
 
 	public AdReviewTourList() {
 	};
@@ -38,12 +37,13 @@ public class AdReviewTourList {
 	public AdReviewTourList(File file, AddressRepository adrRepo, TourListRepository tlRepo) {
 		this.adrRepo = adrRepo;
 		this.tlRepo = tlRepo;
-		this.file = file;
+		this.pdfFile = file;
 	}
-	
+
 	public void createTourList() {
-		String text = getText(file);
-		createTourList(text);
+		String text = getText();
+		// createTourList(text);
+		createTourListBasedOnFields(text);
 	}
 
 	public List<Address> getAdresses(Date date) {
@@ -93,7 +93,8 @@ public class AdReviewTourList {
 				removeExtraFields(words1);
 				String city = getCity(words1.get(0));
 				if (city != null) {
-					// TODO find the next city code because the number of lines per entry is not consistently 2
+					// TODO find the next city code because the number of lines
+					// per entry is not consistently 2
 					int numLines = 2;
 					String[] words2 = lines[i + 1].split("\\|");
 
@@ -102,6 +103,7 @@ public class AdReviewTourList {
 					String zip = words2[0];
 
 					Address adr = new Address(street, city, zip);
+					adr.setState("CA");
 					log.info(adr.toString());
 
 					log.info(street + ", " + city + ", " + zip);
@@ -132,6 +134,285 @@ public class AdReviewTourList {
 		}
 	}
 
+	public void createTourListBasedOnFields(String text) {
+
+		// Cleanup text
+
+		// Remove all new line markers. They seem to be less reliable than the
+		// field markers "|"
+		text = text.replaceAll("\\n", " ");
+
+		// Ensure that the @-sign is in a separate field
+		text = text.replaceAll(" @", "|@");
+		text = text.replaceAll("@ ", "@|");
+
+		// Split Ad Review into fields
+		List<String> allFields = Arrays.asList(text.split("\\|"));
+
+		// System.out.println("Text in PDF: " + text);
+		// String[] lines = text.split(System.lineSeparator());
+		HashMap<Date, List<String>> tourDays = splitByDates(allFields);
+
+		List<List<String>> tourElements = new ArrayList<List<String>>();
+		for (Date tourDate : tourDays.keySet()) {
+
+			List<String> tourDayFields = tourDays.get(tourDate);
+
+			tourElements.addAll(splitIntoTourStops(tourDayFields));
+			int numStops = tourElements.size();
+
+			// process all tourElements
+			for (List<String> tourElement : tourElements) {
+
+				// process tourElements
+				TourListEntry te = parseTourElement(tourElement);
+				te.setTourDate(tourDate);
+				te.save();
+
+			}
+		}
+	}
+
+	private HashMap<Date, List<String>> splitByDates(List<String> allFields) {
+
+		HashMap<Date, List<String>> tourDays = new HashMap<Date, List<String>>();
+
+		ArrayList<String> tourDay = null;
+		Date date = null;
+		Date previousDate = null;
+		for (String field : allFields) {
+			field = field.trim();
+			date = getTourDate(field);
+			if (date != null) {
+				// found a new date
+				if (date != previousDate) {
+					previousDate = date;
+					tourDay = new ArrayList<String>();
+					tourDays.put(date, tourDay);
+				}
+			} else {
+				// all non-date fields get added to the list
+				if (tourDay != null) {
+					tourDay.add(field);
+				}
+			}
+		}
+		return tourDays;
+
+	}
+
+	private TourListEntry parseTourElement(List<String> tourElement) {
+
+		int cityIndex = 0;
+		int priceIndex = getPriceIndex(tourElement);
+		int streetIndex = 1;
+		int crossStreetIndex = getCrossStreetIndex(tourElement);
+		int descriptionIndex = getDescriptionIndex(tourElement);
+		int zipIndex = getZipIndex(tourElement);
+		int mlsTagIndex = getMlsTagIndex(tourElement);
+		int agentIndex = getZipIndex(tourElement) + 1;
+		int officeIndex = getOfficeIndex(tourElement);
+		String bedBath = getBedBath(tourElement);
+
+		TourListEntry tourListEntry = new TourListEntry();
+		tourListEntry.setCity(tourElement.get(cityIndex));
+		tourListEntry.setZip(getFieldForIndex(tourElement, zipIndex));
+		tourListEntry.setStreet(getFieldForIndex(tourElement, streetIndex));
+		tourListEntry.setCrossStreet(getFieldForIndex(tourElement, crossStreetIndex));
+		tourListEntry.setBedBath(bedBath);
+		tourListEntry.setPrice(getFieldForIndex(tourElement, priceIndex));
+		tourListEntry.setDescription(tourElement.get(descriptionIndex));
+		tourListEntry.setAgent(tourElement.get(agentIndex));
+		
+		// office
+		String office = tourElement.get(officeIndex);
+		office = cleanOffice(office);
+		tourListEntry.setOffice(office);
+
+		// phone number
+		String phone = tourElement.get(getMlsTagIndex(tourElement) - 1);
+		phone = cleanPhone(phone);
+		tourListEntry.setPhone(phone);
+
+		String mlsNo = null;
+		if (mlsTagIndex + 1 >= tourElement.size()) {
+			mlsNo = null;
+		} else {
+			mlsNo = tourElement.get(mlsTagIndex + 1);
+			mlsNo = mlsNo.replaceAll("[^\\d]", "");
+			Long mlsNoLong;
+			try {
+				mlsNoLong = new Long(mlsNo);
+				if (mlsNoLong > 10000000) {
+					mlsNo = mlsNo.trim();
+					tourListEntry.setMlsNo(mlsNo);
+				} else {
+					mlsNo = null;
+				}
+			} catch (NumberFormatException e) {
+				mlsNo = null;
+			}
+
+		}
+		return tourListEntry;
+	}
+
+	private String cleanPhone(String phone) {
+		phone = phone.replaceAll("[^\\d-]", "");
+		return phone;
+	}
+
+	private String cleanOffice(String office) {
+		office = office.replaceAll("[\\d-]", "");
+		return office;
+	}
+
+	private String getFieldForIndex(List<String> tourElement, int index) {
+		String str = "";
+		if (index == 0) {
+			return str;
+		} else {
+			return tourElement.get(index);
+		}
+
+	}
+
+	private int getPriceIndex(List<String> tourElement) {
+
+		for (int i = 0; i < tourElement.size(); i++) {
+			String field = tourElement.get(i);
+			if (field.contains("$")) {
+				field = field.replaceAll(",", "");
+				field = field.replaceAll("[$]", "");
+				if (StringUtils.isNumeric(field)) {
+					return i;
+				}
+			}
+		}
+		log.warn("Parsing Tour List Element : " + "Cannot find Price for " + printTourElement(tourElement));
+		return 0;
+	}
+
+	private int getCrossStreetIndex(List<String> tourElement) {
+
+		for (int i = 0; i < tourElement.size(); i++) {
+			String field = tourElement.get(i);
+			field.trim();
+			if (field.equals("@")) {
+				return i + 1;
+			}
+		}
+		log.warn("Parsing Tour List Element : " + "Cannot find CrossStreet marker @ for "
+				+ printTourElement(tourElement));
+		return 0;
+	}
+
+	private int getDescriptionIndex(List<String> tourElement) {
+
+		int index = getPriceIndex(tourElement);
+		int stringLen = 0;
+		for (int i = getPriceIndex(tourElement); i < getZipIndex(tourElement); i++) {
+			String field = tourElement.get(i);
+			if (field.length() > stringLen) {
+				stringLen = field.length();
+				index = i;
+			}
+		}
+		if (index == getPriceIndex(tourElement)) {
+			log.warn("Parsing Tour List Element : " + "Cannot find description for " + printTourElement(tourElement));
+		}
+		return 0;
+	}
+
+	private int getZipIndex(List<String> tourElement) {
+
+		for (int i = 0; i < tourElement.size(); i++) {
+			String field = tourElement.get(i);
+			field = field.trim();
+			field = field.replaceAll("\\n", "");
+			if (field.startsWith("94") && StringUtils.isNumeric(field)) {
+				return i;
+			}
+		}
+
+		log.warn("Parsing Tour List Element : " + "Cannot find zip for " + printTourElement(tourElement));
+		return 0;
+	}
+
+	private int getMlsTagIndex(List<String> tourElement) {
+
+		for (int i = 0; i < tourElement.size(); i++) {
+			String field = tourElement.get(i);
+			field = field.trim();
+			if (field.startsWith("MLS#")) {
+				if (i < tourElement.size()) {
+					return i;
+				}
+			}
+		}
+
+		log.warn("Parsing Tour List Element : " + "Cannot find MLS# tag for " + printTourElement(tourElement));
+		return 0;
+	}
+
+	private int getOfficeIndex(List<String> tourElement) {
+		int index = getMlsTagIndex(tourElement) - 2;
+		if (index > 0) {
+			return index;
+		} else {
+			log.warn("Parsing Tour List Element : " + "Cannot find Office " + printTourElement(tourElement));
+			return 0;
+		}
+	}
+
+	private String getBedBath(List<String> tourElement) {
+		String bb = new String();
+		int start = getCrossStreetIndex(tourElement);
+		int end = getPriceIndex(tourElement);
+		for (int i = start + 1; i < end; i++) {
+			bb += tourElement.get(i);
+		}
+		return bb;
+	}
+
+	private String printTourElement(List<String> tourElement) {
+		String printStr = "|";
+		for (String e : tourElement) {
+			printStr += e + "|";
+		}
+		return printStr;
+	}
+
+	private List<List<String>> splitIntoTourStops(List<String> tourDayFields) {
+
+		List<List<String>> tourStops = new ArrayList<List<String>>();
+		List<String> tourStop = null;
+		for (String field : tourDayFields) {
+
+			String city = getCity(field);
+			if (city != null) {
+				// found the beginning of a tour stop
+
+				// add the previous tour stop
+				if (tourStop != null) {
+					tourStops.add(tourStop);
+				}
+				tourStop = new ArrayList<String>();
+				tourStop.add(city);
+			} else {
+				if (tourStop != null) {
+					tourStop.add(field);
+				}
+			}
+		}
+
+		// add the last tourStop
+		if (tourStop != null) {
+			tourStops.add(tourStop);
+		}
+
+		return tourStops;
+	}
 
 	public void removeExtraFields(List<String> words1) {
 
@@ -142,19 +423,18 @@ public class AdReviewTourList {
 		while (j < words1.size()) {
 			city = getCity(words1.get(j));
 			if (city != null) {
-				for (int i=0; i<j; i++) {
+				for (int i = 0; i < j; i++) {
 					words1.remove(i);
 				}
 				break;
 			}
 			j++;
 		}
-		
-		
 
 		// skip one word is the first word does not look like a
 		// street
-		if (words1.size() > 1 && words1.get(1) != null && StringUtils.isAllUpperCase(words1.get(1)) && words1.get(1).length() <= 5) {
+		if (words1.size() > 1 && words1.get(1) != null && StringUtils.isAllUpperCase(words1.get(1))
+				&& words1.get(1).length() <= 5) {
 			// assume it's the second part of the city and skip
 			// move the city to the second field and remove the first
 			words1.remove(1);
@@ -192,7 +472,7 @@ public class AdReviewTourList {
 
 	private String getCrossStreet(List<String> words1) {
 
-		for (int i = 0; i < words1.size()-1; i++) {
+		for (int i = 0; i < words1.size() - 1; i++) {
 			String cross = words1.get(i);
 			if (cross.trim().startsWith("@")) {
 				if (words1.get(i + 1) != null) {
@@ -232,7 +512,14 @@ public class AdReviewTourList {
 			return "Berkeley";
 		case "RICH":
 			return "Richmond";
+		case "E.C.":
+			return "El Ceritto";
+		case "ALB":
+			return "Albany";
+		case "EMERY":
+			return "Emeryville";
 		default:
+			log.error("Parsing Ad Review List Error: Cannot find city tag for " + city);
 			return null;
 		}
 	}
@@ -242,17 +529,23 @@ public class AdReviewTourList {
 		// TODO iterate through words of the line
 		for (String word : words1) {
 
-			SimpleDateFormat formatter = new SimpleDateFormat("E, MMM dd, yyyy");
-			try {
-				date = formatter.parse(word);
-				return date;
-			} catch (ParseException e) {
-			}
+			date = getTourDate(word);
 		}
 		return date;
 	}
 
-	private String getText(File pdfFile) {
+	private Date getTourDate(String field) {
+		Date date = null;
+		SimpleDateFormat formatter = new SimpleDateFormat("E, MMM dd, yyyy");
+		try {
+			date = formatter.parse(field);
+			return date;
+		} catch (ParseException e) {
+		}
+		return date;
+	}
+
+	public String getText() {
 
 		String text;
 		try {
@@ -265,13 +558,6 @@ public class AdReviewTourList {
 			pdfStrip.setWordSeparator("|");
 			pdfStrip.setLineSeparator("|");
 			pdfStrip.setSortByPosition(true);
-			/*
-			 * System.out.println("|" + pdfStrip.getArticleStart() + "|");
-			 * System.out.println("|" + pdfStrip.getArticleEnd() + "|");
-			 * System.out.println("|" + pdfStrip.getParagraphStart() + "|");
-			 * System.out.println("|" + pdfStrip.getParagraphEnd() + "|");
-			 * System.out.println("|" + pdfStrip.getWordSeparator() + "|");
-			 */
 
 			text = pdfStrip.getText(doc);
 
@@ -281,10 +567,33 @@ public class AdReviewTourList {
 			System.out.println("|" + pdfStrip.getParagraphEnd() + "|");
 			System.out.println("|" + pdfStrip.getWordSeparator() + "|");
 
+			// ensure that there is a line separation before the zip code
+			// text = text.replaceAll("\\|94", "\n\\|94");
+			// text = text.replaceAll("\n\n", "\n");
+
+			text = ensureLineBreakAfterPrice(text);
+
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 		return text;
+	}
+
+	private String ensureLineBreakAfterPrice(String text) {
+
+		String[] fields = text.split("\\|");
+		ArrayList<String> list = new ArrayList<String>();
+		for (String field : fields) {
+			list.add(field);
+			if (field.startsWith("$")) {
+				String sep = "\n";
+				list.add(sep);
+			}
+		}
+
+		String resString = StringUtils.join(list, "|");
+
+		return resString;
 	}
 
 	public List<TourListEntry> getTourList(Date tourDate) {

@@ -14,6 +14,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Example;
 import org.springframework.data.geo.Point;
 
+import com.afn.realstat.framework.SpringApplicationContext;
+
 @Entity
 // TODO
 @Table(name = "tourlist_entry", indexes = {
@@ -25,6 +27,7 @@ public class TourListEntry extends AbstractEntity {
 	
 	public static final Logger log = LoggerFactory.getLogger("app");
 	public static final Class<TourListEntry> classType = TourListEntry.class;
+	public static TourListRepository repo;
 
 	@Basic(optional = false)
 	private Date tourDate;
@@ -113,7 +116,7 @@ public class TourListEntry extends AbstractEntity {
 	}
 	
 	public Point getLocation() {
-		return propertyAdr.getLocation();
+		return propertyAdr.getLoc();
 	}
 
 	public String getCity() {
@@ -216,6 +219,24 @@ public class TourListEntry extends AbstractEntity {
 	public String toString() {
 		String str = "TourListEntry: " + tourDate + " - " + propertyAdr.toString();
 		return str;
+	}
+	
+	public TourListRepository getRepo() {
+		if (repo == null) {
+			repo =  (TourListRepository) SpringApplicationContext.getBean("tourListRepository");
+		}
+		return repo;
+	}
+
+	@Override
+	public void save() {
+		getRepo().save(this);
+		
+	}
+
+	@Override
+	public void saveOrUpdate() {
+		getRepo().save(this);
 	}
 
 }

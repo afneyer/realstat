@@ -15,6 +15,8 @@ import org.hibernate.annotations.Type;
 import org.springframework.data.domain.Example;
 import org.springframework.data.geo.Point;
 
+import com.afn.realstat.framework.SpringApplicationContext;
+
 @Entity
 @Table(name = "real_property", uniqueConstraints = @UniqueConstraint(columnNames = { "apn" }), indexes = {
 		@Index(name = "idx_apnClean", columnList = "apnClean"),
@@ -22,6 +24,8 @@ import org.springframework.data.geo.Point;
 		@Index(name = "idx_propertyCity", columnList = "propertyCity"), @Index(name = "idx_landUse", columnList = "landUse")})
 
 public class RealProperty extends AbstractEntity {
+	
+	private static RealPropertyRepository repo;
 
 	@Basic(optional = false)
 	private String apn;
@@ -482,6 +486,24 @@ public class RealProperty extends AbstractEntity {
 
 	public void setPropertyAdr(Address propertyAdr) {
 		this.propertyAdr = propertyAdr;
+	}
+	
+	public RealPropertyRepository getRepo() {
+		if (repo == null) {
+			repo =  (RealPropertyRepository) SpringApplicationContext.getBean("realPropertyRepository");
+		}
+		return repo;
+	}
+
+	@Override
+	public void save() {
+		getRepo().save(this);
+		
+	}
+
+	@Override
+	public void saveOrUpdate() {
+		getRepo().save(this);
 	}
 
 }

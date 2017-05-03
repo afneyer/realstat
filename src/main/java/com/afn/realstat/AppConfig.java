@@ -53,7 +53,7 @@ class AppConfig {
 
 		for (String profile : activeProfiles) {
 			if (profile.equals("dev")) {
-				return embeddedDataSource();
+				return testDataSource();
 			}
 			if (profile.equals("prod")) {
 				return prodDataSource();
@@ -114,7 +114,8 @@ class AppConfig {
 	public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
 
 		LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
-		factory.setDataSource(dataSource());
+		DataSource ds = dataSource();
+		factory.setDataSource(ds);
 		factory.setPackagesToScan(getClass().getPackage().getName());
 		HibernateJpaVendorAdapter hjva = new HibernateJpaVendorAdapter();
 		factory.setJpaVendorAdapter(hjva);
