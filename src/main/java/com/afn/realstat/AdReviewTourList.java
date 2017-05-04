@@ -15,11 +15,9 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
-import org.jsoup.helper.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 @Component
 public class AdReviewTourList {
@@ -27,16 +25,14 @@ public class AdReviewTourList {
 	public static final Logger log = LoggerFactory.getLogger("app");
 
 	private Map<Date, List<Address>> tours = new HashMap<Date, List<Address>>();
-	private AddressRepository adrRepo;
 	private TourListRepository tlRepo;
 	private File pdfFile;
 
 	public AdReviewTourList() {
+		this.tlRepo = TourListEntry.repo;
 	};
 
-	public AdReviewTourList(File file, AddressRepository adrRepo, TourListRepository tlRepo) {
-		this.adrRepo = adrRepo;
-		this.tlRepo = tlRepo;
+	public AdReviewTourList(File file) {
 		this.pdfFile = file;
 	}
 
@@ -56,82 +52,6 @@ public class AdReviewTourList {
 		Collections.sort(dates);
 		return dates;
 
-	}
-
-	@Transactional
-	public void createTourList(String text) {
-
-		// System.out.println("Text in PDF: " + text);
-		// String[] lines = text.split(System.lineSeparator());
-		tours = new HashMap<Date, List<Address>>();
-
-		String[] articles = text.split("\\^");
-
-		for (String article : articles) {
-			String[] lines = article.split("\n");
-
-			Date tourDate = null;
-			int i = 0;
-
-			while (i < lines.length) {
-				int processedLines = 0;
-				String line = lines[i];
-
-				List<String> words1 = new ArrayList<String>(Arrays.asList(line.split("\\|")));
-
-				Date tmpTourDate = getTourDate(words1);
-				if (tmpTourDate != null) {
-					if (!tmpTourDate.equals(tourDate)) {
-						tourDate = tmpTourDate;
-						System.out.println("- dat: " + tourDate);
-						tours.put(tourDate, new ArrayList<Address>());
-					} else {
-						System.out.println("- dat: " + tourDate + " found same tour date again");
-					}
-				}
-
-				removeExtraFields(words1);
-				String city = getCity(words1.get(0));
-				if (city != null) {
-					// TODO find the next city code because the number of lines
-					// per entry is not consistently 2
-					int numLines = 2;
-					String[] words2 = lines[i + 1].split("\\|");
-
-					String street = words1.get(1);
-
-					String zip = words2[0];
-
-					Address adr = new Address(street, city, zip);
-					adr.setState("CA");
-					log.info(adr.toString());
-
-					log.info(street + ", " + city + ", " + zip);
-
-					if (adr != null) {
-
-						adrRepo.saveOrUpdate(adr);
-						List<Address> adrList = tours.get(tourDate);
-						adrList.add(adr);
-
-						TourListEntry tourListEntry = new TourListEntry(tourDate, adr);
-						tourListEntry.setCity(city);
-						tourListEntry.setStreet(street);
-						tourListEntry.setZip(zip);
-						setTourListEntryFields(tourListEntry, words1, words2);
-						tlRepo.saveOrUpdate(tourListEntry);
-					}
-
-					processedLines = numLines;
-				}
-
-				if (processedLines == 0) {
-					processedLines = 1;
-				}
-
-				i += processedLines;
-			}
-		}
 	}
 
 	public void createTourListBasedOnFields(String text) {
@@ -170,7 +90,13 @@ public class AdReviewTourList {
 				te.save();
 
 			}
+			int tourListEntryCount = TourListEntry.repo.findByTourDate(tourDate).size();
+			if (tourListEntryCount != numStops) {
+				log.error("AdReviewParsing for date " + tourDate + " is missing " + (numStops - tourListEntryCount)
+						+ "properties. New city codes?");
+			}
 		}
+
 	}
 
 	private HashMap<Date, List<String>> splitByDates(List<String> allFields) {
@@ -223,7 +149,7 @@ public class AdReviewTourList {
 		tourListEntry.setPrice(getFieldForIndex(tourElement, priceIndex));
 		tourListEntry.setDescription(tourElement.get(descriptionIndex));
 		tourListEntry.setAgent(tourElement.get(agentIndex));
-		
+
 		// office
 		String office = tourElement.get(officeIndex);
 		office = cleanOffice(office);
@@ -254,8 +180,9 @@ public class AdReviewTourList {
 			}
 
 		}
-		
-		Address propertyAddress = new Address(tourListEntry.getStreet(), tourListEntry.getCity(), tourListEntry.getZip());
+
+		Address propertyAddress = new Address(tourListEntry.getStreet(), tourListEntry.getCity(),
+				tourListEntry.getZip());
 		propertyAddress.saveOrUpdate();
 		tourListEntry.setPropertyAdr(propertyAddress);
 		return tourListEntry;
@@ -418,87 +345,8 @@ public class AdReviewTourList {
 		return tourStops;
 	}
 
-	public void removeExtraFields(List<String> words1) {
-
-		// ensure the city is the first field
-		// rename words
-		String city = null;
-		int j = 0;
-		while (j < words1.size()) {
-			city = getCity(words1.get(j));
-			if (city != null) {
-				for (int i = 0; i < j; i++) {
-					words1.remove(i);
-				}
-				break;
-			}
-			j++;
-		}
-
-		// skip one word is the first word does not look like a
-		// street
-		if (words1.size() > 1 && words1.get(1) != null && StringUtils.isAllUpperCase(words1.get(1))
-				&& words1.get(1).length() <= 5) {
-			// assume it's the second part of the city and skip
-			// move the city to the second field and remove the first
-			words1.remove(1);
-		}
-	}
-
-	private void setTourListEntryFields(TourListEntry tourListEntry, List<String> words1, String[] words2) {
-
-		int l1 = words1.size();
-		String description = words1.get(l1 - 1);
-		tourListEntry.setDescription(description);
-
-		String price = getPrice(words1);
-		tourListEntry.setPrice(price);
-
-		String cross = getCrossStreet(words1);
-		tourListEntry.setCrossStreet(cross);
-
-		String agent = words2[1];
-		tourListEntry.setAgent(agent);
-
-		String mlsNo = getMlsNo(words2);
-
-		tourListEntry.setMlsNo(mlsNo);
-
-	}
-
-	private String getMlsNo(String[] words2) {
-		String mlsNo = words2[words2.length - 1];
-		if (StringUtil.isNumeric(mlsNo)) {
-			return mlsNo;
-		}
-		return null;
-	}
-
-	private String getCrossStreet(List<String> words1) {
-
-		for (int i = 0; i < words1.size() - 1; i++) {
-			String cross = words1.get(i);
-			if (cross.trim().startsWith("@")) {
-				if (words1.get(i + 1) != null) {
-					return words1.get(i + 1);
-				}
-			}
-		}
-		return null;
-
-	}
-
-	private String getPrice(List<String> words1) {
-		for (String p : words1) {
-			if (p.trim().startsWith("$")) {
-				return p;
-			}
-		}
-		return null;
-	}
-
-	private String getCity(String line) {
-		String city = line.trim();
+	private String getCity(String str) {
+		String city = str.trim();
 		switch (city) {
 		case "PIED":
 			return "Piedmont";
@@ -523,19 +371,8 @@ public class AdReviewTourList {
 		case "EMERY":
 			return "Emeryville";
 		default:
-			log.error("Parsing Ad Review List Error: Cannot find city tag for " + city);
 			return null;
 		}
-	}
-
-	private Date getTourDate(List<String> words1) {
-		Date date = null;
-		// TODO iterate through words of the line
-		for (String word : words1) {
-
-			date = getTourDate(word);
-		}
-		return date;
 	}
 
 	private Date getTourDate(String field) {
