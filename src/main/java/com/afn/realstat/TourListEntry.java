@@ -12,6 +12,9 @@ import javax.persistence.Table;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Example;
+import org.springframework.data.geo.Point;
+
+import com.afn.realstat.framework.SpringApplicationContext;
 
 @Entity
 // TODO
@@ -24,6 +27,7 @@ public class TourListEntry extends AbstractEntity {
 	
 	public static final Logger log = LoggerFactory.getLogger("app");
 	public static final Class<TourListEntry> classType = TourListEntry.class;
+	public static TourListRepository repo;
 
 	@Basic(optional = false)
 	private Date tourDate;
@@ -74,6 +78,27 @@ public class TourListEntry extends AbstractEntity {
 	public void clean() {
 	}
 
+	public String htmlString() {
+		String html = "";
+		html += "<p style=\"text-align:left;\">";
+		html += street + ", " + city;
+		html += "<span style=\"float:right;\">";
+		html += "<bold>";
+		html += price; 
+		html += "</span>";
+		html += "</bold>";
+		html += "</p>";
+		html += "<p>";
+		html += description;
+		html += "</p>";
+		html += "<p style=\"text-align:left;\">";
+		html += agent;
+		html += "<span style=\"float:right;\">";
+		html += "</span>";
+		html += "</p>";
+		return html;
+	}
+	
 	public Date getTourDate() {
 		return tourDate;
 	}
@@ -88,6 +113,10 @@ public class TourListEntry extends AbstractEntity {
 
 	public void setPropertyAdr(Address propertyAdr) {
 		this.propertyAdr = propertyAdr;
+	}
+	
+	public Point getLocation() {
+		return propertyAdr.getLoc();
 	}
 
 	public String getCity() {
@@ -190,6 +219,24 @@ public class TourListEntry extends AbstractEntity {
 	public String toString() {
 		String str = "TourListEntry: " + tourDate + " - " + propertyAdr.toString();
 		return str;
+	}
+	
+	public TourListRepository getRepo() {
+		if (repo == null) {
+			repo =  (TourListRepository) SpringApplicationContext.getBean("tourListRepository");
+		}
+		return repo;
+	}
+
+	@Override
+	public void save() {
+		getRepo().save(this);
+		
+	}
+
+	@Override
+	public void saveOrUpdate() {
+		getRepo().save(this);
 	}
 
 }

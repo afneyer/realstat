@@ -50,4 +50,10 @@ public class AfnDateUtil {
 		LocalDateTime ldt = ld.atStartOfDay();
 		return Date.from(ldt.atZone(ZoneId.systemDefault()).toInstant());	
 	}
+
+	public static Date never() {
+		// set to maximal MySql value
+		Date never = AfnDateUtil.of(9999,1,1);
+		return never;
+	}
 }

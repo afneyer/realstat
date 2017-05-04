@@ -8,11 +8,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Example;
 
+import com.afn.realstat.framework.SpringApplicationContext;
+
 @Entity
 @Table(name = "app_param", indexes = @Index(name ="idx_key_type", columnList = "paramKey,paramType") )
 public class AppParam extends AbstractEntity {
 
 	public static final Logger log = LoggerFactory.getLogger("app");
+	public static AppParamRepository repo;
 
 	private String paramKey;
 	private String paramType;
@@ -87,4 +90,21 @@ public class AppParam extends AbstractEntity {
 		this.paramDescription = description;
 	}
 
+	public AppParamRepository getRepo() {
+		if (repo == null) {
+			repo =  (AppParamRepository) SpringApplicationContext.getBean("appParamRepository");
+		}
+		return repo;
+	}
+
+	@Override
+	public void save() {
+		getRepo().save(this);
+		
+	}
+
+	@Override
+	public void saveOrUpdate() {
+		getRepo().save(this);
+	}
 }

@@ -12,10 +12,8 @@ import org.vaadin.viritin.fields.MValueChangeListener;
 
 import com.afn.realstat.AbstractEntity;
 import com.afn.realstat.AbstractEntityRepository;
-import com.afn.realstat.RealProperty;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.StringPath;
-import com.vaadin.data.Property;
 import com.vaadin.server.Sizeable.Unit;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
@@ -98,8 +96,7 @@ public class Lov<T extends AbstractEntity> {
 			@Override
 			public void valueChange(MValueChangeEvent<T> event) {
 				// TOOD figure out why case it necessary
-				Property<T> p = event.getProperty();
-				T entity = p.getValue();
+				T entity = event.getValue();
 				
 				action.apply(entity);
 				

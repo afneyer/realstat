@@ -4,6 +4,8 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -14,6 +16,8 @@ import com.afn.realstat.util.MapLocation;
 @SpringBootTest(classes = Application.class, webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @ActiveProfiles("dev")
 public class MapLocationTest {
+	
+	public static final Logger log = LoggerFactory.getLogger("app");
 
 	@Test
 	public void testGeoCodingApi() {
@@ -46,13 +50,20 @@ public class MapLocationTest {
 	
 	@Test
 	// Verify that Google Map corrects a wrong city when the zip-code is correct
-	public void testWrongCity() {
+	public void testWrongCity01() {
 		MapLocation mapLoc = new MapLocation("112 Indian Road, Oakland, 94610");
 		assertEquals("112 Indian Rd, Piedmont, CA 94610, USA", mapLoc.getFormattedAddress());
 		assertEquals("Piedmont", mapLoc.getCity());
 		assertEquals("CA",mapLoc.getState());
 		assertEquals("94610",mapLoc.getZip());
 		assertEquals("1201",mapLoc.getZip4());
+	}
+	
+	@Test
+	// The following finds the wrong city outside the state of california
+	public void testWrongCity02() {
+		MapLocation mapLoc = new MapLocation("6167 Bernhard Ave., CA 94805");
+		log.warn(mapLoc.getFormattedAddress());
 	}
 	
 	

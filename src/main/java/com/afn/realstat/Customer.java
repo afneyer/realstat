@@ -5,6 +5,9 @@ import javax.persistence.Table;
 
 import org.springframework.data.domain.Example;
 
+
+import com.afn.realstat.framework.SpringApplicationContext;
+
 @Entity
 @Table(name="customer")
 public class Customer extends AbstractEntity {	
@@ -12,11 +15,14 @@ public class Customer extends AbstractEntity {
 	private String firstName;
 
 	private String lastName;
-
-	protected Customer() {
+	
+	private static CustomerRepository repo;
+	
+	public Customer() {
 	}
 
 	public Customer(String firstName, String lastName) {
+		
 		this.firstName = firstName;
 		this.lastName = lastName;
 	}
@@ -58,5 +64,24 @@ public class Customer extends AbstractEntity {
 	public boolean isValid() {
 		return true;
 	}
+	
+	public CustomerRepository getRepo() {
+		if (repo == null) {
+			repo =  (CustomerRepository) SpringApplicationContext.getBean("customerRepository");
+		}
+		return repo;
+	}
 
+	@Override
+	public void save() {
+		getRepo().save(this);
+		
+	}
+
+	@Override
+	public void saveOrUpdate() {
+		getRepo().saveOrUpdate(this);
+		
+	}
+	
 }

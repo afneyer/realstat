@@ -14,6 +14,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Example;
 
+import com.afn.realstat.framework.SpringApplicationContext;
+
 @Entity
 @Table(name = "property_transaction", uniqueConstraints = @UniqueConstraint(columnNames = { "mlsNo" }), indexes = {
 		@Index(name = "idx_zip5", columnList = "zip5"), @Index(name = "idx_city", columnList = "city"),
@@ -29,6 +31,7 @@ import org.springframework.data.domain.Example;
 public class PropertyTransaction extends AbstractEntity {
 
 	public static final Logger log = LoggerFactory.getLogger("app");
+	public static PropertyTransactionRepository repo;
 
 	@Basic(optional = false)
 	private Integer mlsNo;
@@ -914,6 +917,24 @@ public class PropertyTransaction extends AbstractEntity {
 
 	public void setSellingAgent2(Agent sellingAgent2) {
 		this.sellingAgent2 = sellingAgent2;
+	}
+	
+	public PropertyTransactionRepository getRepo() {
+		if (repo == null) {
+			repo =  (PropertyTransactionRepository) SpringApplicationContext.getBean("artifactRepository");
+		}
+		return repo;
+	}
+
+	@Override
+	public void save() {
+		getRepo().save(this);
+		
+	}
+
+	@Override
+	public void saveOrUpdate() {
+		getRepo().save(this);
 	}
 
 }

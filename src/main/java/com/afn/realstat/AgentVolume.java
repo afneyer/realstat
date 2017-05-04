@@ -9,9 +9,13 @@ import javax.persistence.UniqueConstraint;
 
 import org.springframework.data.domain.Example;
 
+import com.afn.realstat.framework.SpringApplicationContext;
+
 @Entity
 @Table(name = "agent_volume", uniqueConstraints = @UniqueConstraint(columnNames = { "userCode", "year" }))
 public class AgentVolume extends AbstractEntity {
+	
+	private static AgentVolumeRepostitory repo;
 
 	@Basic(optional = false)
 	private String userCode;
@@ -190,6 +194,22 @@ public class AgentVolume extends AbstractEntity {
 		this.rank = rank;
 	}
 
-	
+	public AgentVolumeRepostitory getRepo() {
+		if (repo == null) {
+			repo =  (AgentVolumeRepostitory) SpringApplicationContext.getBean("agentVolumeRepository");
+		}
+		return repo;
+	}
+
+	@Override
+	public void save() {
+		getRepo().save(this);
+		
+	}
+
+	@Override
+	public void saveOrUpdate() {
+		getRepo().save(this);
+	}
 
 }

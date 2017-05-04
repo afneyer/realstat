@@ -52,10 +52,10 @@ public class AddressManager extends AbstractEntityManager<Address> {
 	public Point getLocation(Address adr) {
 		Point p = null;
 		if (adr != null) {
-			p = adr.getLocation();
+			p = adr.getLoc();
 			if (p == null) {
 				if (adr.setMapLocationFields()) {
-					p = adr.getLocation();
+					p = adr.getLoc();
 					if (p != null) {
 						adrRepo.save(adr);
 					}
