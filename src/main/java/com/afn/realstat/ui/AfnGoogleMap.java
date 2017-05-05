@@ -7,10 +7,13 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.afn.realstat.TourListEntry;
+import com.google.maps.model.EncodedPolyline;
+import com.google.maps.model.LatLng;
 import com.vaadin.tapio.googlemaps.GoogleMap;
 import com.vaadin.tapio.googlemaps.client.LatLon;
 import com.vaadin.tapio.googlemaps.client.events.MapClickListener;
 import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapMarker;
+import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapPolyline;
 import com.vaadin.ui.TextField;
 
 @SuppressWarnings("serial")
@@ -27,28 +30,28 @@ public class AfnGoogleMap extends GoogleMap {
 	}
 
 	public AfnGoogleMap() {
-		this(null,null,null);
+		this(null, null, null);
 	}
 
 	public List<TourMarker> getTourMarkers() {
 		List<TourMarker> markerList = new ArrayList<TourMarker>();
-		
+
 		Iterator<GoogleMapMarker> markerIter = getMarkers().iterator();
-		
+
 		GoogleMapMarker m;
-		while (markerIter.hasNext() ) {
+		while (markerIter.hasNext()) {
 			m = markerIter.next();
-			if ( TourMarker.class.isInstance(m)) {
+			if (TourMarker.class.isInstance(m)) {
 				markerList.add((TourMarker) m);
 			}
 		}
-		
+
 		return markerList;
 	}
-	
-	public TourMarker getMarker( TourListEntry tle ) {
+
+	public TourMarker getMarker(TourListEntry tle) {
 		Iterator<TourMarker> markerIter = getTourMarkers().iterator();
-		while (markerIter.hasNext() ) {
+		while (markerIter.hasNext()) {
 			TourMarker tm = markerIter.next();
 			if (tle.getId().equals(tm.getTourListEntry().getId())) {
 				return tm;
@@ -88,24 +91,22 @@ public class AfnGoogleMap extends GoogleMap {
 	public void centerOnTourMarkers() {
 
 		Collection<TourMarker> markers = getTourMarkers();
-		
+
 		Collection<GoogleMapMarker> gMarkers = Collections.unmodifiableCollection(markers);
 
 		this.centerOnMarkers(gMarkers);
 
 	}
 
-	
 	/**
 	 * Centers map on markers excluding the dummy marker
 	 */
 	public void centerOnMarkers() {
 		centerOnMarkers(this.getMarkers());
 	}
-	
+
 	/**
-	 * Centers map on a collection of markers
-	 * Excludes dummy marker
+	 * Centers map on a collection of markers Excludes dummy marker
 	 */
 	private void centerOnMarkers(Collection<GoogleMapMarker> markers) {
 
@@ -118,7 +119,7 @@ public class AfnGoogleMap extends GoogleMap {
 		GoogleMapMarker m;
 		while (iter.hasNext()) {
 			m = iter.next();
-			
+
 			// Skip dummyMarker
 			if (m == dummyMarker) {
 				break;
@@ -139,6 +140,18 @@ public class AfnGoogleMap extends GoogleMap {
 			LatLon boundsSW = new LatLon(latMin, lonMin);
 			fitToBounds(boundsNE, boundsSW);
 		}
+
+	}
+
+	public void addPolyline(EncodedPolyline polyline) {
+		List<LatLng> latLngPoly = polyline.decodePath();
+		List<LatLon> latLonPoly = new ArrayList<LatLon>();
+		for (LatLng latLng : latLngPoly) {
+			LatLon latLon = new LatLon(latLng.lat, latLng.lng);
+			latLonPoly.add(latLon);
+		}
+		GoogleMapPolyline gmPoly = new GoogleMapPolyline(latLonPoly);
+		this.addPolyline(gmPoly);
 
 	}
 

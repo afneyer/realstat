@@ -34,6 +34,13 @@ public class AddressParser {
 		snt.put("PLEASANT", "PLEASANT VALLEY");
 		streetNameTranslator = Collections.unmodifiableMap(snt);
 	}
+	
+	final static Map<String, String> streetTypeTranslator;
+	static {
+		Map<String, String> snt = new HashMap<String, String>();
+		snt.put("LA", "LN");
+		streetTypeTranslator = Collections.unmodifiableMap(snt);
+	}
 
 	public AddressParser() {
 	};
@@ -102,6 +109,11 @@ public class AddressParser {
 		String newStreetName = streetNameTranslator.get(this.parsedAddress.getStreetName());
 		if (newStreetName != null) {
 			parsedAddress.setStreetName(newStreetName);
+		}
+		
+		String newStreetType = streetTypeTranslator.get(this.parsedAddress.getStreetType());
+		if (newStreetType != null) {
+			parsedAddress.setStreetType(newStreetType);
 		}
 	}
 	

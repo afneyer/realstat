@@ -1,6 +1,7 @@
 package com.afn.realstat;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -128,6 +129,25 @@ public class AddressTest {
 		Address addr = new Address("4928 Proctor Ave", "Oakland", "94618");
 		System.out.println(addr);
 	}
+
+	@Test
+	// test street type lane
+	public void testStreetTypeLn() {
+		
+		Address addr = new Address("85 NORMAN LN.", "Oakland", "94681");
+		System.out.println(addr);
+		assertNotNull(addr.getLoc());
+	}
+	
+	@Test
+	// test no city
+	public void testNoCity() {
+		
+		Address addr = new Address("6167 Bernhard Ave.", null, "94805");
+		System.out.println(addr);
+	}
+	
+	
 	
 	@Test
 	public void testSelfSave() {

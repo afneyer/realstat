@@ -1,15 +1,8 @@
 package com.afn.realstat.util;
 
-import java.util.Date;
-import java.util.concurrent.TimeUnit;
-
 import org.slf4j.LoggerFactory;
 import org.springframework.data.geo.Point;
 
-import com.afn.realstat.AfnDateUtil;
-import com.afn.realstat.AppParamManager;
-import com.afn.realstat.framework.SpringApplicationContext;
-import com.google.maps.GeoApiContext;
 import com.google.maps.GeocodingApi;
 import com.google.maps.model.AddressComponent;
 import com.google.maps.model.AddressComponentType;
@@ -19,8 +12,7 @@ import com.google.maps.model.Geometry;
 import ch.qos.logback.classic.Logger;
 
 /**
- * MapLocation is initialized with an address. The getters return the
- * information about the location.
+ * 
  * 
  * @author Andreas Neyer
  *
@@ -31,31 +23,23 @@ public class MapLocation {
 
 	private static final Logger log = (Logger) LoggerFactory.getLogger("app");
 
-	private final static String apiKey = "AIzaSyCSgBJHB0XMVHlGaMrTgL-YO2_pHhPtuKc";
-
-	private static AppParamManager apmMgr = (AppParamManager) SpringApplicationContext.getBean("appParamManager");
-
-	private static Integer maxCallsPerDay = new Integer(apmMgr.getVal("maxCallsPerDay", "MAP"));
-	private static Integer maxCallsPerSecond = new Integer(apmMgr.getVal("maxCallsPerSecond", "MAP"));
 	private static Integer numCallsToday = null;
-	private static Date lastCall = null;
-
 	private Geometry geo = null;
 	private GeocodingResult[] results = null;
 
 	public MapLocation(String address) {
 
-		GeoApiContext context = new GeoApiContext().setApiKey(apiKey);
-		context.setQueryRateLimit(maxCallsPerSecond);
+		GoogleMapApi api = new GoogleMapApi();
 
-		if (!apiLimitReached()) {
+		if (!GoogleMapApi.apiLimitReached()) {
 			try {
-				updateCallData();
+				GoogleMapApi.updateCallData();
 				System.out.println("Call number " + numCallsToday + " today to geo-coder for address: " + address);
-				results = GeocodingApi.geocode(context, address).await();
+				results = GeocodingApi.geocode(api.getContext(), address).await();
 				if (results != null && results.length != 0) {
 					geo = results[0].geometry;
 				}
+			
 			} catch (Exception e) {
 				log.error("Error in MapLocation: Cannot convert address =" + address + "Exception = " + e);
 			}
@@ -66,6 +50,7 @@ public class MapLocation {
 
 	}
 
+	/* TODO remove
 	private void updateCallData() {
 
 		// if last call is yesterday, set it today and reset the number of calls
@@ -90,7 +75,9 @@ public class MapLocation {
 		System.out.println("numCallsToday = " + numCallsToday);
 		System.out.println("lastCall = " + lastCall);
 	}
+	*/
 
+	/*
 	public static boolean apiLimitReached() {
 
 		if (numCallsToday == null || lastCall == null) {
@@ -107,8 +94,10 @@ public class MapLocation {
 	public static Integer apiLimit() {
 		return maxCallsPerDay;
 	}
+	*/
 
 	// TODO Move to Timer function
+	/*
 	private void sleepInMilliseconds(long millis) {
 		try {
 			TimeUnit.MILLISECONDS.sleep(millis);
@@ -118,7 +107,7 @@ public class MapLocation {
 		}
 		;
 
-	}
+	}*/
 
 	public String getFormattedAddress() {
 		String r = null;

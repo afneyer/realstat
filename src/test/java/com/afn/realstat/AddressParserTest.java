@@ -61,7 +61,6 @@ public class AddressParserTest {
 		targetStr = "150||PEARL||315|OAKLAND|94611";
 		assertEquals(targetStr, origAddr.getCleanAddress());
 		assertEquals("4321", origAddr.getZip4());
-		
 	}
 
 	@Test
@@ -97,6 +96,15 @@ public class AddressParserTest {
 		origAddr = new AddressParser("4938 Proctor Ave", "OAKLAND", "94618-2545");
 		targetStr = "4938||PROCTOR|||OAKLAND|94618";
 		assertEquals(targetStr, origAddr.getCleanAddress());
+	}
+	
+	@Test 
+	// Test street type Lane 
+	public void testStreetTypeLn() {
+			AddressParser origAddr = new AddressParser("85 NORMAN LN.", "Oakland", "94681");
+			String targetStr = "85||NORMAN|||OAKLAND|94681";
+			assertEquals(targetStr, origAddr.getCleanAddress());
+			assertEquals("LN",origAddr.getStreetType());
 	}
 
 }

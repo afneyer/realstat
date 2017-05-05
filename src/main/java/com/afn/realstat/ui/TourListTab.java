@@ -4,20 +4,32 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
 
 import org.springframework.data.geo.Point;
 
+import com.afn.realstat.Address;
+import com.afn.realstat.Agent;
 import com.afn.realstat.MyTour;
+import com.afn.realstat.QAgent;
 import com.afn.realstat.TourListEntry;
 import com.afn.realstat.TourListRepository;
+import com.afn.realstat.util.GeoLocation;
+import com.afn.realstat.util.MapDirection;
+import com.google.maps.model.EncodedPolyline;
+import com.querydsl.core.types.dsl.StringPath;
 import com.vaadin.data.SelectionModel;
 import com.vaadin.data.provider.DataProvider;
 import com.vaadin.data.provider.DataProviderWrapper;
 import com.vaadin.data.provider.ListDataProvider;
+import com.vaadin.server.Sizeable.Unit;
 import com.vaadin.shared.data.sort.SortDirection;
 import com.vaadin.shared.ui.grid.ColumnState;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.tapio.googlemaps.client.LatLon;
+import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapPolyline;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Grid;
@@ -25,7 +37,9 @@ import com.vaadin.ui.Grid.SelectionMode;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.ListSelect;
 import com.vaadin.ui.Notification;
+import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Window;
 import com.vaadin.ui.components.grid.MultiSelectionModel;
 import com.vaadin.ui.renderers.HtmlRenderer;
 
@@ -37,6 +51,7 @@ public class TourListTab {
 	private AfnGoogleMap map;
 	private Component tourListSelector;
 	private TourListRepository tleRepo;
+	private GoogleMapPolyline tourPolyLine = null;
 
 	public TourListTab(TourListRepository tleRepo) {
 
@@ -57,9 +72,25 @@ public class TourListTab {
 		tourPage.addComponent(tourDisplay);
 		tourPage.setExpandRatio(tourDisplay, 1.0f);
 
+		HorizontalLayout tourDisplayControl = new HorizontalLayout();
 		tourListSelector = getTourSelector();
-		tourDisplay.addComponent(tourListSelector);
-		// TODO possibly add upload button here
+		tourDisplayControl.addComponent(tourListSelector);
+
+		Button routeTour = new Button("Sequence Tour", (ClickListener) event -> {
+			if (tourPolyLine != null) {
+				map.removePolyline(tourPolyLine);
+			}
+			Address start = new Address("4395 Piedmont Ave. #309", "Oakland", "94611");
+			Address end = start;
+			List<Address> routeList = myTour.getSelectedAddresses();
+			MapDirection dir = new MapDirection(start,end,routeList);
+			EncodedPolyline polyline = dir.route(myTour.getTourDate());
+			tourPolyLine = GeoLocation.convert(polyline);
+			map.addPolyline(tourPolyLine);
+		
+		});
+		tourDisplayControl.addComponent(routeTour);		
+		tourDisplay.addComponent(tourDisplayControl);
 
 		// initialize tourList view
 		tourListView = new Grid<TourListEntry>();
@@ -83,7 +114,7 @@ public class TourListTab {
 			
 			Set<TourListEntry> removed = event.getRemovedSelection();
 			for ( TourListEntry tle : removed ) {
-				myTour.selectEntry(tle);
+				myTour.deselectEntry(tle);
 				TourMarker tm = map.getMarker(tle);
 				if ( tm != null) {
 					tm.excludeFromTour();;	

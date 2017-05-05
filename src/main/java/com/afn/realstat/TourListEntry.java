@@ -9,6 +9,7 @@ import javax.persistence.Index;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.apache.commons.lang3.text.WordUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Example;
@@ -120,7 +121,7 @@ public class TourListEntry extends AbstractEntity {
 	}
 
 	public String getCity() {
-		return city;
+		return nullToEmpty(city);
 	}
 
 	public void setCity(String city) {
@@ -128,7 +129,7 @@ public class TourListEntry extends AbstractEntity {
 	}
 
 	public String getZip() {
-		return zip;
+		return nullToEmpty(zip);
 	}
 
 	public void setZip(String zip) {
@@ -136,7 +137,7 @@ public class TourListEntry extends AbstractEntity {
 	}
 
 	public String getStreet() {
-		return street;
+		return nullToEmpty(street);
 	}
 
 	public void setStreet(String street) {
@@ -144,7 +145,7 @@ public class TourListEntry extends AbstractEntity {
 	}
 
 	public String getCrossStreet() {
-		return crossStreet;
+		return nullToEmpty(crossStreet);
 	}
 
 	public void setCrossStreet(String crossStreet) {
@@ -152,7 +153,7 @@ public class TourListEntry extends AbstractEntity {
 	}
 
 	public String getBedBath() {
-		return bedBath;
+		return nullToEmpty(bedBath);
 	}
 
 	public void setBedBath(String bedBath) {
@@ -160,7 +161,7 @@ public class TourListEntry extends AbstractEntity {
 	}
 
 	public String getPrice() {
-		return price;
+		return nullToEmpty(price);
 	}
 
 	public void setPrice(String price) {
@@ -176,7 +177,7 @@ public class TourListEntry extends AbstractEntity {
 	}
 
 	public String getDescription() {
-		return description;
+		return nullToEmpty(description);
 	}
 
 	public void setDescription(String description) {
@@ -184,7 +185,7 @@ public class TourListEntry extends AbstractEntity {
 	}
 
 	public String getAgent() {
-		return agent;
+		return nullToEmpty(agent);
 	}
 
 	public void setAgent(String agent) {
@@ -192,7 +193,7 @@ public class TourListEntry extends AbstractEntity {
 	}
 
 	public String getOffice() {
-		return office;
+		return nullToEmpty(office);
 	}
 
 	public void setOffice(String office) {
@@ -200,7 +201,7 @@ public class TourListEntry extends AbstractEntity {
 	}
 
 	public String getPhone() {
-		return phone;
+		return nullToEmpty(phone);
 	}
 
 	public void setPhone(String phone) {
@@ -208,11 +209,19 @@ public class TourListEntry extends AbstractEntity {
 	}
 
 	public String getMlsNo() {
-		return mlsNo;
+		return nullToEmpty(mlsNo);
 	}
 
 	public void setMlsNo(String mlsNo) {
 		this.mlsNo = mlsNo;
+	}
+	
+	private String nullToEmpty(String s) {
+		if (s == null) {
+			return "";
+		} else {
+			return s;
+		}
 	}
 	
 	@Override
@@ -238,5 +247,23 @@ public class TourListEntry extends AbstractEntity {
 	public void saveOrUpdate() {
 		getRepo().save(this);
 	}
+
+	public String mapMarkerCaption() {
+		
+		int width = 50;
+		
+		String desc = WordUtils.wrap(getDescription(), width, "\n", false);
+		String s = "";
+		String sc = getStreet() + " @ " + getCrossStreet();
+		String cz = getCity() + ", " + getZip() + "\n"; 
+		s += sc + cz;
+		s += getTime() + "\n";
+		s += desc + "\n";
+		s += getAgent() + "  " + getOffice() +"\n";
+		s += "MLS# " + getMlsNo();
+		return s;
+		
+	}
+	
 
 }

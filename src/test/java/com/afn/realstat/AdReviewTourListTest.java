@@ -1,6 +1,7 @@
 package com.afn.realstat;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -187,6 +188,18 @@ public class AdReviewTourListTest {
 			e.printStackTrace();
 		}
 
+	}
+	
+	@Test
+	public void testIsValid() {
+		
+		Address adr01 = new Address("6167 Bernhard Ave.","Berkeley","94805");
+		// Google map finds some address in NY because the city is wrong
+		assertFalse( AdReviewTourList.isValid(adr01));
+		
+		Address adr02 = new Address("6167 Bernhard Ave.", null,"94805");
+		assertTrue( AdReviewTourList.isValid(adr02));
+		
 	}
 
 }

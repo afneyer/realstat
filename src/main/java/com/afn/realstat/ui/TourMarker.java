@@ -32,7 +32,7 @@ public class TourMarker extends GoogleMapMarker {
 		LatLon pos = new LatLon(location.getY(),location.getX());
 		this.setPosition(pos);
 		
-		String cap = tle.getPrice() + "\n" + tle.getDescription();
+		String cap = tle.mapMarkerCaption();
 		this.setCaption(cap);
 		
 		this.setDraggable(true);

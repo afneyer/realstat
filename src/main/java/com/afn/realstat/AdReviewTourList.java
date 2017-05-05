@@ -133,11 +133,13 @@ public class AdReviewTourList {
 		int priceIndex = getPriceIndex(tourElement);
 		int streetIndex = 1;
 		int crossStreetIndex = getCrossStreetIndex(tourElement);
+		int timeIndex = getTimeIndex(tourElement);
 		int descriptionIndex = getDescriptionIndex(tourElement);
 		int zipIndex = getZipIndex(tourElement);
 		int mlsTagIndex = getMlsTagIndex(tourElement);
 		int agentIndex = getZipIndex(tourElement) + 1;
 		int officeIndex = getOfficeIndex(tourElement);
+		
 		String bedBath = getBedBath(tourElement);
 
 		TourListEntry tourListEntry = new TourListEntry();
@@ -147,8 +149,9 @@ public class AdReviewTourList {
 		tourListEntry.setCrossStreet(getFieldForIndex(tourElement, crossStreetIndex));
 		tourListEntry.setBedBath(bedBath);
 		tourListEntry.setPrice(getFieldForIndex(tourElement, priceIndex));
-		tourListEntry.setDescription(tourElement.get(descriptionIndex));
-		tourListEntry.setAgent(tourElement.get(agentIndex));
+		tourListEntry.setDescription(getFieldForIndex(tourElement,descriptionIndex));
+		tourListEntry.setTime(getFieldForIndex(tourElement,timeIndex));
+		tourListEntry.setAgent(getFieldForIndex(tourElement,agentIndex));
 
 		// office
 		String office = tourElement.get(officeIndex);
@@ -183,9 +186,29 @@ public class AdReviewTourList {
 
 		Address propertyAddress = new Address(tourListEntry.getStreet(), tourListEntry.getCity(),
 				tourListEntry.getZip());
+		
+		if (! isValid(propertyAddress) ) {
+			
+			// try without city and let Google maps find the city
+			propertyAddress = new Address(tourListEntry.getStreet(), null,
+					tourListEntry.getZip());
+		}
+		
+		
 		propertyAddress.saveOrUpdate();
 		tourListEntry.setPropertyAdr(propertyAddress);
 		return tourListEntry;
+	}
+
+	public static boolean isValid(Address propertyAddress) {	
+		
+		String zip = propertyAddress.getZip();
+		String zipMatch = "94[5678]..";
+		if ( ! zip.matches(zipMatch) ) {
+			return false;
+		}
+		return true;
+		
 	}
 
 	private String cleanPhone(String phone) {
@@ -238,6 +261,18 @@ public class AdReviewTourList {
 		return 0;
 	}
 
+	private int getTimeIndex(List<String> tourElement) {
+
+		for (int i = getPriceIndex(tourElement); i < getZipIndex(tourElement); i++) {
+			String field = tourElement.get(i);
+			if (field.matches("^[0-9\\-:]{1,12}$")) {
+				return i;
+			}
+		}
+		log.warn("Parsing Tour List Element : " + "Cannot find time element " + printTourElement(tourElement));
+		return 0;
+	
+	}
 	private int getDescriptionIndex(List<String> tourElement) {
 
 		int index = getPriceIndex(tourElement);
@@ -251,8 +286,10 @@ public class AdReviewTourList {
 		}
 		if (index == getPriceIndex(tourElement)) {
 			log.warn("Parsing Tour List Element : " + "Cannot find description for " + printTourElement(tourElement));
+			return 0;
+		} else {
+			return index;
 		}
-		return 0;
 	}
 
 	private int getZipIndex(List<String> tourElement) {

@@ -1,7 +1,5 @@
 package com.afn.realstat;
 
-
-import javax.persistence.Access;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Index;
@@ -9,18 +7,15 @@ import javax.persistence.Table;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.annotation.AccessType;
-import org.springframework.data.annotation.AccessType.Type;
-import org.springframework.data.annotation.Transient;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.geo.Point;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.afn.realstat.framework.SpringApplicationContext;
+import com.afn.realstat.util.GoogleMapApi;
 import com.afn.realstat.util.MapLocation;
 import com.asprise.ocr.util.StringUtils;
+import com.google.maps.model.LatLng;
 
 @Entity
 @Table(name = "address", indexes = { @Index(name = "idx_streetNbr", columnList = "streetNbr"),
@@ -81,14 +76,16 @@ public class Address extends AbstractEntity {
 
 	public boolean setMapLocationFields() {
 		if (location == null) {
-			if (MapLocation.apiLimitReached()) {
-				log.warn("Google Maps daily api-limit reached! Limit = " + MapLocation.apiLimit());
+			if (GoogleMapApi.apiLimitReached()) {
+				log.warn("Google Maps daily api-limit reached! Limit = " + GoogleMapApi.apiLimit());
 			} else {
 				MapLocation mapLoc = new MapLocation(this.toString());
 				setMapLocCalls(getMapLocCalls() + 1);
 
 				location = mapLoc.getLocation();
+				
 				state = mapLoc.getState();
+				zip = mapLoc.getZip();
 				zip4 = mapLoc.getZip4();
 				county = mapLoc.getCounty();
 				if (county != null) {
@@ -127,18 +124,18 @@ public class Address extends AbstractEntity {
 
 	public String getFullStreet() {
 		StringBuffer sb = new StringBuffer();
-		sb.append( nullToEmpty(streetNbr));
+		sb.append(nullToEmpty(streetNbr));
 		sb.append(" ");
-		sb.append( nullToEmpty(streetPreDir));
+		sb.append(nullToEmpty(streetPreDir));
 		sb.append(" ");
-		sb.append( nullToEmpty(streetName));
+		sb.append(nullToEmpty(streetName));
 		sb.append(" ");
-		sb.append( nullToEmpty(streetPostDir));
+		sb.append(nullToEmpty(streetPostDir));
 		sb.append(" ");
-		sb.append( nullToEmpty(streetType));
+		sb.append(nullToEmpty(streetType));
 		sb.append(" ");
-		sb.append( nullToEmpty(unitName));
-		sb.append( nullToEmpty(unitNbr));
+		sb.append(nullToEmpty(unitName));
+		sb.append(nullToEmpty(unitNbr));
 		String fs = sb.toString();
 		fs = fs.trim();
 		fs = fs.replaceAll(" +", " ");
@@ -156,7 +153,6 @@ public class Address extends AbstractEntity {
 
 	@Override
 	public void clean() {
-
 	}
 
 	@Override
@@ -176,8 +172,8 @@ public class Address extends AbstractEntity {
 		return streetPreDir;
 	}
 
-	public void setStreetPreDir(String streetPreDir) {		
-		this.streetPreDir = emptyToNull( streetPreDir );
+	public void setStreetPreDir(String streetPreDir) {
+		this.streetPreDir = emptyToNull(streetPreDir);
 	}
 
 	public String getStreetName() {
@@ -271,7 +267,7 @@ public class Address extends AbstractEntity {
 	public Point getLocation() {
 		return location;
 	}
-	
+
 	public Point getLoc() {
 		if (location == null) {
 			setMapLocationFields();
@@ -358,11 +354,20 @@ public class Address extends AbstractEntity {
 		}
 		return s;
 	}
-	
+
 	String nullToEmpty(String s) {
 		if (s == null) {
 			s = "";
 		}
 		return s;
+	}
+
+	public LatLng getLatLng() {
+		Point loc = getLoc();
+		if (loc != null) {
+			return new LatLng(getLoc().getY(), getLoc().getX());
+		} else {
+			return null;
+		}
 	}
 }

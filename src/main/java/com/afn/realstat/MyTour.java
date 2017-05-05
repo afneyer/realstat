@@ -18,11 +18,19 @@ public class MyTour {
 	}
 
 	public boolean selectEntry(TourListEntry tourListEntry) {
-		return selectedList.add(tourListEntry);
+		boolean changed = false;
+		if (! selectedList.contains(tourListEntry)) {
+			changed = selectedList.add(tourListEntry);
+		}
+		return changed;
 	}
 
 	public boolean deselectEntry(TourListEntry tourListEntry) {
-		return selectedList.remove(tourListEntry);
+		boolean changed = false;
+		if (selectedList.contains(tourListEntry)) {
+			changed = selectedList.remove(tourListEntry);
+		}
+		return changed;
 	}
 
 	public Date getTourDate() {
@@ -40,6 +48,16 @@ public class MyTour {
 	public List<TourListEntry> getTourList() {
 		// TODO Auto-generated method stub
 		return tourList;
+	}
+	
+	public List<Address> getSelectedAddresses() {
+		List<Address> list = new ArrayList<Address>();
+		
+		for (TourListEntry tle : selectedList) {
+			list.add(tle.getPropertyAdr());
+		}
+		return list;
+		
 	}
 	
 	public Collection<TourListEntry> getSelected() {
