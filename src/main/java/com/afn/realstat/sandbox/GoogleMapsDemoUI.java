@@ -39,7 +39,7 @@ import com.vaadin.ui.VerticalLayout;
  * Google Maps UI for testing and demoing.
  */
 @SpringUI(path = "/demo")
-@Theme("valo")
+@Theme("realstatTheme")
 @SuppressWarnings("serial")
 @Widgetset("AppWidgetset")
 

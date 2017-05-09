@@ -10,7 +10,7 @@ import com.vaadin.ui.VerticalLayout;
 
 @SuppressWarnings("serial")
 @SpringUI(path="/test")
-@Theme("valo")
+@Theme("realstatTheme")
 @Widgetset("AppWidgetset")
 public class VaadinUITest extends UI {
 

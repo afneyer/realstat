@@ -17,7 +17,7 @@ import com.vaadin.ui.VerticalLayout;
 
 @SuppressWarnings("serial")
 @SpringUI(path="/sandbox")
-@Theme("valo")
+@Theme("realstatTheme")
 @Widgetset("AppWidgetset")
 public class VaadinUI extends UI {
 

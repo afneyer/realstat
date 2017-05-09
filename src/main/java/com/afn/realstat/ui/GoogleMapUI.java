@@ -57,7 +57,7 @@ import com.vaadin.ui.renderers.HtmlRenderer;
  * Google Maps UI for displaying properties on maps
  */
 @SpringUI(path = "/maps")
-@Theme("valo")
+@Theme("realstatTheme")
 @SuppressWarnings("serial")
 @Widgetset("AppWidgetset")
 @SpringComponent
