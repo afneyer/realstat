@@ -34,5 +34,23 @@
 @mixin realstatTheme {
   @include valo;
 
-  // Insert your own theme rules here
+.h3rows td {
+	height: 50pt !important;
+	border: 2pt !important
+}
+
+.h3rows p {
+	line-height: 120%;
+	// color: darker;
+	margin: 5pt;
+	font-size: 80%;
+}
+	
+	/*
+.v-grid-cell.tourlistcell {
+	color: red;
+	font-size: 70%;
+	line-height: 1.0;
+}
+*/
 }

@@ -4,28 +4,19 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
-import java.util.function.Function;
 
 import org.springframework.data.geo.Point;
 
 import com.afn.realstat.Address;
-import com.afn.realstat.Agent;
 import com.afn.realstat.MyTour;
-import com.afn.realstat.QAgent;
 import com.afn.realstat.TourListEntry;
 import com.afn.realstat.TourListRepository;
 import com.afn.realstat.util.GeoLocation;
 import com.afn.realstat.util.MapDirection;
 import com.google.maps.model.EncodedPolyline;
-import com.querydsl.core.types.dsl.StringPath;
-import com.vaadin.data.SelectionModel;
 import com.vaadin.data.provider.DataProvider;
-import com.vaadin.data.provider.DataProviderWrapper;
 import com.vaadin.data.provider.ListDataProvider;
-import com.vaadin.server.Sizeable.Unit;
 import com.vaadin.shared.data.sort.SortDirection;
-import com.vaadin.shared.ui.grid.ColumnState;
-import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.tapio.googlemaps.client.LatLon;
 import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapPolyline;
 import com.vaadin.ui.Button;
@@ -35,18 +26,15 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.Grid.SelectionMode;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.ListSelect;
 import com.vaadin.ui.Notification;
-import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Window;
 import com.vaadin.ui.components.grid.MultiSelectionModel;
 import com.vaadin.ui.renderers.HtmlRenderer;
 
 public class TourListTab {
 
 	private HorizontalLayout tourPage;
-	private Grid<TourListEntry> tourListView = new Grid<TourListEntry>();
+	private Grid<TourListEntry> tourListView = null;
 	private MyTour myTour;
 	private AfnGoogleMap map;
 	private Component tourListSelector;
@@ -93,9 +81,14 @@ public class TourListTab {
 		tourDisplay.addComponent(tourDisplayControl);
 
 		// initialize tourList view
-		tourListView = new Grid<TourListEntry>();
-		tourListView.setStyleName("3high");
-		tourListView.addColumn(TourListEntry::htmlString, new HtmlRenderer());
+		tourListView = new Grid<TourListEntry>();	
+		tourListView.addStyleName("h3rows");
+		// tourListView.setStyleGenerator(cellRef -> "tourlistcell");
+		Grid.Column<TourListEntry,String> propInfo = tourListView.addColumn(TourListEntry::htmlString, new HtmlRenderer());
+		// propInfo.setStyleGenerator(cellRef -> "tourlistcell");
+		propInfo.setWidth(400.0);
+		// Grid.Column<TourListEntry,String> sequence = tourListView.addColumn(TourListEntry::sequence);
+		
 		tourListView.setSelectionMode(SelectionMode.MULTI);
 		tourListView.setSizeFull();
 		

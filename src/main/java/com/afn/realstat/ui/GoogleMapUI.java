@@ -77,7 +77,7 @@ public class GoogleMapUI extends UI {
 
 	private AfnGoogleMap googleMap;
 	
-	private Grid<TourListEntry> tourListView;
+	// private Grid<TourListEntry> tourListView;
 
 	@Autowired
 	protected TourListRepository tleRepo;
@@ -116,11 +116,12 @@ public class GoogleMapUI extends UI {
 		mapContent.setWidth(100, Unit.PERCENTAGE);
 		page.addComponent(mapContent);
 		
-		tourListView = new Grid<TourListEntry>();
-		tourListView.addColumn(TourListEntry::htmlString, new HtmlRenderer());
-		tourListView.setSelectionMode(SelectionMode.MULTI);
-		tourListView.setCaption("Tour");
-		mapContent.addComponent(tourListView);
+		// tourListView = new Grid<TourListEntry>();
+		// tourListView.addColumn(TourListEntry::htmlString, new HtmlRenderer());
+		// tourListView.setSelectionMode(SelectionMode.MULTI);
+		// tourListView.setCaption("Tour");
+		// tourListView.setStyleGenerator(cellRef -> "heigher");
+		// mapContent.addComponent(tourListView);
 
 		googleMap = new AfnGoogleMap(null, null, null);
 
@@ -284,7 +285,7 @@ public class GoogleMapUI extends UI {
 			Date date = dates.iterator().next();
 			if (date != null) {
 				MyTour myTour = new MyTour(date, tleRepo);
-				tourListView.setItems(myTour.getTourList());
+				// tourListView.setItems(myTour.getTourList());
 				addMarkersForTour(myTour);
 				popUp.close();
 			}
@@ -312,7 +313,7 @@ public class GoogleMapUI extends UI {
 
 				googleMap.addMarker(mrkr);
 
-				googleMap.addMarkerClickListener(new TourListMarkerClickListener(googleMap, mrkr, tourListView));
+				// googleMap.addMarkerClickListener(new TourListMarkerClickListener(googleMap, mrkr, tourListView));
 			}
 		return mrkr;
 	}
