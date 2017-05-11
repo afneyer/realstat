@@ -34,14 +34,13 @@ public class MapDirection {
 	private Address end;
 	private List<Address> route;
 	private GoogleMapApi mapApi = null;
+	private int[] order = null;
 
 	public MapDirection(Address start, Address end, List<Address> routeList) {
-
 		this.mapApi = new GoogleMapApi();
 		this.start = start;
 		this.end = end;
 		this.route = routeList;
-
 	}
 
 	public EncodedPolyline route(Date startTime) {
@@ -79,9 +78,15 @@ public class MapDirection {
 		DirectionsRoute[] directionsRouteList = result.routes;
 		for (int i = 0; i < directionsRouteList.length; i++) {
 			DirectionsRoute directionsRoute = directionsRouteList[i];
-			polyLine = directionsRoute.overviewPolyline;
-		
+			order = directionsRoute.waypointOrder;
+			polyLine = directionsRoute.overviewPolyline;	
 		}
+		
 		return polyLine;
+	}
+
+	public int[] getWaypointSequence() {
+		// TODO Auto-generated method stub
+		return order;
 	}
 }

@@ -10,6 +10,7 @@ public class MyTour {
 	private Date tourDate;
 	private List<TourListEntry> tourList;
 	private ArrayList<TourListEntry> selectedList;
+	private int[] sequence;
 
 	public MyTour(Date tourDate, TourListRepository tlRepo) {
 		this.tourDate = tourDate;
@@ -60,8 +61,26 @@ public class MyTour {
 		
 	}
 	
-	public Collection<TourListEntry> getSelected() {
+	public List<TourListEntry> getSelected() {
 		return selectedList;
+	}
+
+	public int[] getSequence() {
+		return sequence;
+	}
+
+	public void setSequence(int[] order) {
+		this.sequence = order;
+		for (int i=0; i<order.length; i++) {
+			TourListEntry tle = selectedList.get(i);
+			tle.setSequence(i);
+		}
+	}
+
+	public void clearSequence() {
+		for (TourListEntry tle : selectedList) {
+			tle.setSequence(0);
+		}
 	}
 
 }

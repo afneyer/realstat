@@ -12,6 +12,7 @@ import javax.persistence.Table;
 import org.apache.commons.lang3.text.WordUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.domain.Example;
 import org.springframework.data.geo.Point;
 
@@ -48,6 +49,9 @@ public class TourListEntry extends AbstractEntity {
 	private String office;
 	private String phone;
 	private String mlsNo;
+	
+	@Transient
+	private int sequence;
 	
 	public TourListEntry() {
 	}
@@ -93,7 +97,8 @@ public class TourListEntry extends AbstractEntity {
 		html += "<br>";
 		html += agent;
 		html += "<span style=\"float:right;\">";
-		html += "another right";
+		html += "MLS# ";
+		html += mlsNo;
 		html += "</span>";
 		html += "</p>";
 		return html;
@@ -232,6 +237,22 @@ public class TourListEntry extends AbstractEntity {
 		this.mlsNo = mlsNo;
 	}
 	
+	public int getSequence() {
+		return sequence;
+	}
+
+	public void setSequence(int sequence) {
+		this.sequence = sequence;
+	}
+	
+	public String getStringSeq() {
+		if (sequence == 0) {
+			return "";
+		} else {
+			return Integer.toString(sequence);
+		}
+	}
+
 	private String nullToEmpty(String s) {
 		if (s == null) {
 			return "";

@@ -67,12 +67,17 @@ public class TourListTab {
 		Button routeTour = new Button("Sequence Tour", (ClickListener) event -> {
 			if (tourPolyLine != null) {
 				map.removePolyline(tourPolyLine);
+				myTour.clearSequence();
 			}
 			Address start = new Address("4395 Piedmont Ave. #309", "Oakland", "94611");
 			Address end = start;
+			
+			// move this into myTour;
 			List<Address> routeList = myTour.getSelectedAddresses();
 			MapDirection dir = new MapDirection(start,end,routeList);
 			EncodedPolyline polyline = dir.route(myTour.getTourDate());
+			int seq[] = dir.getWaypointSequence();
+			myTour.setSequence(seq);
 			tourPolyLine = GeoLocation.convert(polyline);
 			map.addPolyline(tourPolyLine);
 		
@@ -85,6 +90,7 @@ public class TourListTab {
 		tourListView.addStyleName("h3rows");
 		// tourListView.setStyleGenerator(cellRef -> "tourlistcell");
 		Grid.Column<TourListEntry,String> propInfo = tourListView.addColumn(TourListEntry::htmlString, new HtmlRenderer());
+		tourListView.addColumn(TourListEntry::getStringSeq);
 		// propInfo.setStyleGenerator(cellRef -> "tourlistcell");
 		propInfo.setWidth(400.0);
 		// Grid.Column<TourListEntry,String> sequence = tourListView.addColumn(TourListEntry::sequence);
