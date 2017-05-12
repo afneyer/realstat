@@ -24,6 +24,7 @@ import com.afn.realstat.RealProperty;
 import com.afn.realstat.TourListEntry;
 import com.afn.realstat.TourListRepository;
 import com.querydsl.core.types.dsl.StringPath;
+import com.vaadin.annotations.Push;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Widgetset;
 import com.vaadin.server.VaadinRequest;
@@ -61,6 +62,7 @@ import com.vaadin.ui.renderers.HtmlRenderer;
 @SuppressWarnings("serial")
 @Widgetset("AppWidgetset")
 @SpringComponent
+@Push
 public class GoogleMapUI extends UI {
 
 	@Autowired

@@ -27,6 +27,7 @@ import com.vaadin.ui.Grid;
 import com.vaadin.ui.Grid.SelectionMode;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Notification;
+import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.components.grid.MultiSelectionModel;
 import com.vaadin.ui.renderers.HtmlRenderer;
@@ -78,6 +79,7 @@ public class TourListTab {
 			EncodedPolyline polyline = dir.route(myTour.getTourDate());
 			int seq[] = dir.getWaypointSequence();
 			myTour.setSequence(seq);
+			tourListView.getDataProvider().refreshAll();
 			tourPolyLine = GeoLocation.convert(polyline);
 			map.addPolyline(tourPolyLine);
 		
@@ -107,7 +109,7 @@ public class TourListTab {
 				myTour.selectEntry(tle);
 				TourMarker tm = map.getMarker(tle);
 				if ( tm != null) {
-					tm.includeInTour();	
+					tm.includeInTour();
 				}
 			}
 			
@@ -116,7 +118,7 @@ public class TourListTab {
 				myTour.deselectEntry(tle);
 				TourMarker tm = map.getMarker(tle);
 				if ( tm != null) {
-					tm.excludeFromTour();;	
+					tm.excludeFromTour();
 				}
 			}
 		});

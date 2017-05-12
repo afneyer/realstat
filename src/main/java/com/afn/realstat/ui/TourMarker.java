@@ -41,30 +41,42 @@ public class TourMarker extends GoogleMapMarker {
 		
 	}
 	
-	public void toggleTour() {
-		if (myTour.isSelected(tourListEntry)) {
+	public boolean isInTour() {
+		if (getIconUrl().equals(inIconUrl)) {
+			return true;
+		} 
+		return false;
+	}
+	
+	public boolean toggleTour() {
+		if (isInTour()) {
 			excludeFromTour();
+			return false;
 		} else {
 			includeInTour();
+			return true;
 		}
 	}
 	
 	public void includeInTour() {
 		// change icon
-		setIconUrl(inIconUrl);
-		// add/remove from tour
-		myTour.selectEntry(tourListEntry);
-		googleMap.refresh();
+		if (!isInTour()) {
+			setIconUrl(inIconUrl);
+			googleMap.refresh();
+		}
 	}
 	
 	public void excludeFromTour() {
+		
+		if (isInTour()) {
 		// change icon
-		setIconUrl(outIconUrl);
-		// add/remove from tour
-		myTour.deselectEntry(tourListEntry);
-		googleMap.refresh();
+			setIconUrl(outIconUrl);
+			googleMap.refresh();
+		}
 	}
 	
+	
+	// todo remove
 	public void refresh() {
 		TourMarker newMarker = this.getCopy();
 		googleMap.removeMarkerClickListener(clickListener);
@@ -73,6 +85,7 @@ public class TourMarker extends GoogleMapMarker {
 		googleMap.addMarkerClickListener(new TourListMarkerClickListener(googleMap, newMarker, clickListener.getTourListView()));
 	}
 	
+	// todo remove
 	private TourMarker getCopy() {
 		TourMarker tlm = new TourMarker();
 		tlm.googleMap = googleMap;

@@ -104,6 +104,7 @@ public class TourListEntry extends AbstractEntity {
 		return html;
 	}
 	
+	// todo remove
 	public String htmlString02() {
 		String html = "";
 		html += "<p>";

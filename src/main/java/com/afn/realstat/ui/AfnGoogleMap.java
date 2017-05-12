@@ -15,6 +15,7 @@ import com.vaadin.tapio.googlemaps.client.events.MapClickListener;
 import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapMarker;
 import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapPolyline;
 import com.vaadin.ui.TextField;
+import com.vaadin.ui.UI;
 
 @SuppressWarnings("serial")
 public class AfnGoogleMap extends GoogleMap {
@@ -79,6 +80,9 @@ public class AfnGoogleMap extends GoogleMap {
 		} else {
 			addMarker(dummyMarker);
 		}
+		UI ui = this.getUI();
+		ui.getPushConfiguration();
+		// ui.accessSynchronously(runnable);
 
 	}
 
