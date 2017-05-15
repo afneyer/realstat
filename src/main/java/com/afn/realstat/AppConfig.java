@@ -45,7 +45,7 @@ class AppConfig {
 	 * 
 	 * @return dataSource based on one of two profiles: "dev" or "prod"
 	 */
-	@Bean
+	@Bean(name = "dataSource")
 	public DataSource dataSource() {
 
 		// get the active profile

@@ -330,7 +330,7 @@ public class Address extends AbstractEntity {
 		return str;
 	}
 
-	public AddressRepository getRepo() {
+	public static AddressRepository getRepo() {
 		if (repo == null) {
 			repo = (AddressRepository) SpringApplicationContext.getBean("addressRepository");
 		}

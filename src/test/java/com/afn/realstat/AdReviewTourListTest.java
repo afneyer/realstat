@@ -42,19 +42,21 @@ public class AdReviewTourListTest {
 
 	@Before
 	public void initialize() {
-		File file = new File(testDataDir, "17-03-25_Tour.pdf");
-		adReviewList = new AdReviewTourList(file);
+		
 		tlRepo.deleteAll();
 	}
 
 	@Test
 	// TODO: further testing needed, still some wrong fields
-	public void testConstructor() {
-		adReviewList.createTourList();
+	public void testCreateTourList01() {
+		
+		String tourFile = "17-03-25_Tour";
+		verifyCreateTour( tourFile );
 
 		Date tourDate = AfnDateUtil.of(2017, 3, 27);
 		List<TourListEntry> tourList = tlRepo.findByTourDate(tourDate);
 		assertEquals(23, tourList.size());
+		
 		for (TourListEntry tle : tourList) {
 			if (tle.getStreet() == "5728 MORAGA AVE.") {
 				assertEquals("Oakland", tle.getCity());
@@ -74,6 +76,26 @@ public class AdReviewTourListTest {
 		assertEquals(15, tourList.size());
 
 	}
+	
+	@Test
+	public void verifyTestCreateTourList02() {
+		String baseName =  "17-03-25_Tour";
+		verifyCreateTour(baseName);
+	}
+	
+	public void verifyCreateTour( String fileBaseName ) {
+
+		File file = new File(testDataDir, fileBaseName + ".pdf");
+		AdReviewTourList atl = new AdReviewTourList(file);
+
+		// write out the text file for debugging
+		writeText(atl.getText(), file);
+
+		// create the tour list entries
+		atl.createTourList();
+
+	}
+
 
 	@Test
 	public void testGetDates() {
@@ -124,26 +146,10 @@ public class AdReviewTourListTest {
 
 	@Test
 	public void testFindAllDistinctDates() {
-		Date date = AfnDateUtil.of(2017, 3, 27);
 		List<Date> dateList = tlRepo.findAllDisctintDatesNewestFirst();
 		for (Date d : dateList) {
 			System.out.println(d);
 		}
-	}
-
-	@Test
-	public void testRemoveExtraFields() {
-
-		/* TODO rewrite the tests
-		 * Show that: a) extra field before the city code is removed b) second
-		 * part of the city code ("HILL") is removed
-		 */
-		String[] example1 = { "*", "PLEAS", "HILL",
-				"Stunning Modern Rancher in xxx. Dwell Magazine lvl detail & finish Park-like backyard",
-				"107Roberta.com", "Patterson", "(510) 919-3333 40774448MLS#", "$1,100,000", "10-1", "❋ @ /3 2", "@",
-				",", "Mc Guire R. E.Scott Leverette", "107 Roberta Ave.", "94523" };
-
-	
 	}
 
 	@Test
@@ -163,16 +169,7 @@ public class AdReviewTourListTest {
 		}
 	}
 
-	@Test
-	public void verifyParser01() {
-
-		File file = new File(testDataDir, "17-04-27_Update-.pdf");
-		AdReviewTourList atl = new AdReviewTourList(file);
-		atl.createTourList();
-
-		// write out the text file for debugging
-		writeText(atl.getText(), file);
-	}
+	
 
 	public void writeText(String text, File file) {
 		String fileName = FilenameUtils.getBaseName(file.getName());

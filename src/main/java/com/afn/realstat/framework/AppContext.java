@@ -1,5 +1,7 @@
 package com.afn.realstat.framework;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Set;
 
@@ -7,6 +9,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.metamodel.Attribute;
 import javax.persistence.metamodel.Metamodel;
 import javax.persistence.metamodel.SingularAttribute;
+import javax.sql.DataSource;
 
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
@@ -21,6 +24,8 @@ import com.afn.realstat.AbstractEntityRepository;
 	 * we do not need a reference to the Servlet context for this. All we need is
 	 * for this bean to be initialized during application startup.
 	 */
+	// TODO delete
+	@Deprecated
 	public class AppContext implements ApplicationContextAware {
 
 	  private static ApplicationContext CONTEXT;
@@ -30,6 +35,7 @@ import com.afn.realstat.AbstractEntityRepository;
 	   * done starting up, it will stick a reference to itself into this bean.
 	   * @param context a reference to the ApplicationContext.
 	   */
+	  @Override
 	  public void setApplicationContext(ApplicationContext context) throws BeansException {
 	    CONTEXT = context;
 	  }
@@ -47,8 +53,25 @@ import com.afn.realstat.AbstractEntityRepository;
 	  public static Object getRepo(String repoName) {
 	    return CONTEXT.getBean(repoName);
 	  }
+	  
+	  public static Connection getConnection() {
+		  Connection connect = null;
+		  DataSource ds = getDataSource();
+		  try {
+			connect = ds.getConnection();
+		} catch (SQLException e) {
+			throw new RuntimeException("AppContext: Cannot get connection from datasource 'dataSource'", e);
+		}
+		  return connect;
+		  
+	  }
 
-	  public static EntityManager getEntityManager() {
+	  public static DataSource getDataSource() {
+		DataSource ds = (DataSource) CONTEXT.getBean("dataSource");
+		return ds;
+	}
+
+	public static EntityManager getEntityManager() {
 		  EntityManager em = (EntityManager) CONTEXT.getBean("entityManager");
 		  return em;
 	  }

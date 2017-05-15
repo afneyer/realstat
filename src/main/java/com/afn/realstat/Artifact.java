@@ -32,6 +32,7 @@ public class Artifact extends AbstractEntity {
 
 	public static final Logger log = LoggerFactory.getLogger("app");
 	public static final Class<Artifact> classType = Artifact.class;
+	private static final int blobSize = 25000000;
 	public static ArtifactRepository repo;
 
 	private String identifier;
@@ -40,7 +41,7 @@ public class Artifact extends AbstractEntity {
 	private String fileName;
 	
 	@Lob
-	@Column(length = 5000000) // for now set to 5Mb
+	@Column(length = blobSize) // for now set to 25Mb
 	private Blob content;
 
 	private String mimeType;
@@ -130,14 +131,13 @@ public class Artifact extends AbstractEntity {
 		this.fileName = fileName;
 	}
 
-	/*
 	public Blob getContent() {
 		return content;
 	}
 
 	public void setContent(Blob content) {
 		this.content = content;
-	}*/
+	}
 
 	public String getMimeType() {
 		return mimeType;
@@ -170,8 +170,12 @@ public class Artifact extends AbstractEntity {
 	public void setDeleteAfter(Date deleteAfter) {
 		this.deleteAfter = deleteAfter;
 	}
+	
+	public int getBlobSize() {
+		return blobSize;
+	}
 
-	public ArtifactRepository getRepo() {
+	public static ArtifactRepository getRepo() {
 		if (repo == null) {
 			repo =  (ArtifactRepository) SpringApplicationContext.getBean("artifactRepository");
 		}

@@ -117,13 +117,7 @@ public class GoogleMapUI extends UI {
 		mapContent.setHeight(100, Unit.PERCENTAGE);
 		mapContent.setWidth(100, Unit.PERCENTAGE);
 		page.addComponent(mapContent);
-		
-		// tourListView = new Grid<TourListEntry>();
-		// tourListView.addColumn(TourListEntry::htmlString, new HtmlRenderer());
-		// tourListView.setSelectionMode(SelectionMode.MULTI);
-		// tourListView.setCaption("Tour");
-		// tourListView.setStyleGenerator(cellRef -> "heigher");
-		// mapContent.addComponent(tourListView);
+
 
 		googleMap = new AfnGoogleMap(null, null, null);
 
@@ -198,23 +192,6 @@ public class GoogleMapUI extends UI {
 		buttonLayoutRow1.addComponent(showAgentDeals);
 		showAgentDeals.setWidth(100, Unit.PERCENTAGE);
 
-		Button tourFile = new Button("Import tour pdf-file", new Button.ClickListener() {
-			@Override
-			public void buttonClick(ClickEvent event) {
-				selectAndShowPropertiesForTour();
-			}
-		});
-		buttonLayoutRow1.addComponent(tourFile);
-		tourFile.setWidth(100, Unit.PERCENTAGE);
-
-		Button tour = new Button("Show properties on tour", new Button.ClickListener() {
-			@Override
-			public void buttonClick(ClickEvent event) {
-				tourDateSelector();
-			}
-		});
-		buttonLayoutRow1.addComponent(tour);
-		tour.setWidth(100, Unit.PERCENTAGE);
 
 		Button clearMarkersButton = new Button("Remove all markers", new Button.ClickListener() {
 			@Override
@@ -226,27 +203,9 @@ public class GoogleMapUI extends UI {
 		clearMarkersButton.setWidth(100, Unit.PERCENTAGE);
 	}
 
-	protected void selectAndShowPropertiesForTour() {
-		// create a window to upload a pdf-file and select a tour date
-		Window popUp = new Window("Sub-window");
-		VerticalLayout subContent = new VerticalLayout();
-		popUp.setContent(subContent);
 
-		// Put some components in it
-		subContent.addComponent(new Label("Tour Upload and Date Selection"));
-		FileUpLoader receiver = new FileUpLoader(adrRepo, tleRepo);
 
-		Upload upload = new Upload("Select AdReview Tour Pdf-File", receiver);
-		subContent.addComponent(upload);
-
-		// Center it in the browser window
-		popUp.center();
-
-		// Open it in the UI
-		addWindow(popUp);
-
-	}
-
+	// TODO delete
 	protected void tourDateSelector() {
 		// create a window to upload a pdf-file and select a tour date
 		Window popUp = new Window("Sub-window");

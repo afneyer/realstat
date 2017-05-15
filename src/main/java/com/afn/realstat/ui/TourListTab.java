@@ -7,28 +7,36 @@ import java.util.Set;
 
 import org.springframework.data.geo.Point;
 
+import com.afn.realstat.AdReviewTourList;
 import com.afn.realstat.Address;
+import com.afn.realstat.AddressRepository;
 import com.afn.realstat.MyTour;
 import com.afn.realstat.TourListEntry;
 import com.afn.realstat.TourListRepository;
+import com.afn.realstat.framework.AppContext;
 import com.afn.realstat.util.GeoLocation;
 import com.afn.realstat.util.MapDirection;
 import com.google.maps.model.EncodedPolyline;
 import com.vaadin.data.provider.DataProvider;
 import com.vaadin.data.provider.ListDataProvider;
+import com.vaadin.server.Sizeable.Unit;
 import com.vaadin.shared.data.sort.SortDirection;
 import com.vaadin.tapio.googlemaps.client.LatLon;
 import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapPolyline;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.Grid.SelectionMode;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.UI;
+import com.vaadin.ui.Upload;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Window;
 import com.vaadin.ui.components.grid.MultiSelectionModel;
 import com.vaadin.ui.renderers.HtmlRenderer;
 
@@ -40,11 +48,13 @@ public class TourListTab {
 	private AfnGoogleMap map;
 	private Component tourListSelector;
 	private TourListRepository tleRepo;
+	private AddressRepository adrRepo;
 	private GoogleMapPolyline tourPolyLine = null;
 
 	public TourListTab(TourListRepository tleRepo) {
 
 		this.tleRepo = tleRepo;
+		this.adrRepo = Address.getRepo();
 
 		// initialize tourPage
 		tourPage = new HorizontalLayout();
@@ -53,7 +63,7 @@ public class TourListTab {
 
 		// HorizontalLayout tourControls = new HorizontalLayout();
 		// tourControls.setMargin(false);
-		
+
 		VerticalLayout tourDisplay = new VerticalLayout();
 		tourDisplay.setSizeFull();
 		tourDisplay.setMargin(false);
@@ -62,6 +72,8 @@ public class TourListTab {
 		tourPage.setExpandRatio(tourDisplay, 1.0f);
 
 		HorizontalLayout tourDisplayControl = new HorizontalLayout();
+		tourDisplay.addComponent(tourDisplayControl);
+
 		tourListSelector = getTourSelector();
 		tourDisplayControl.addComponent(tourListSelector);
 
@@ -72,60 +84,75 @@ public class TourListTab {
 			}
 			Address start = new Address("4395 Piedmont Ave. #309", "Oakland", "94611");
 			Address end = start;
-			
+
 			// move this into myTour;
 			List<Address> routeList = myTour.getSelectedAddresses();
-			MapDirection dir = new MapDirection(start,end,routeList);
+			MapDirection dir = new MapDirection(start, end, routeList);
 			EncodedPolyline polyline = dir.route(myTour.getTourDate());
 			int seq[] = dir.getWaypointSequence();
 			myTour.setSequence(seq);
 			tourListView.getDataProvider().refreshAll();
 			tourPolyLine = GeoLocation.convert(polyline);
 			map.addPolyline(tourPolyLine);
-		
+
 		});
-		tourDisplayControl.addComponent(routeTour);		
-		tourDisplay.addComponent(tourDisplayControl);
+		tourDisplayControl.addComponent(routeTour);
+
+		@SuppressWarnings("serial")
+		Button tourFile = new Button("Import tour pdf-file", new Button.ClickListener() {
+			@Override
+			public void buttonClick(ClickEvent event) {
+				selectAndShowPropertiesForTour();
+			}
+		});
+		tourDisplayControl.addComponent(tourFile);
+		tourFile.setWidth(100, Unit.PERCENTAGE);
+		
+		Button printTour = new ShowPdfButton(myTour.getPdf() );
+		tourDisplayControl.addComponent(printTour);
+		printTour.setWidth(100, Unit.PERCENTAGE);
 
 		// initialize tourList view
-		tourListView = new Grid<TourListEntry>();	
+		tourListView = new Grid<TourListEntry>();
 		tourListView.addStyleName("h3rows");
 		// tourListView.setStyleGenerator(cellRef -> "tourlistcell");
-		Grid.Column<TourListEntry,String> propInfo = tourListView.addColumn(TourListEntry::htmlString, new HtmlRenderer());
+		Grid.Column<TourListEntry, String> propInfo = tourListView.addColumn(TourListEntry::htmlString,
+				new HtmlRenderer());
 		tourListView.addColumn(TourListEntry::getStringSeq);
 		// propInfo.setStyleGenerator(cellRef -> "tourlistcell");
 		propInfo.setWidth(400.0);
-		// Grid.Column<TourListEntry,String> sequence = tourListView.addColumn(TourListEntry::sequence);
-		
+		// Grid.Column<TourListEntry,String> sequence =
+		// tourListView.addColumn(TourListEntry::sequence);
+
 		tourListView.setSelectionMode(SelectionMode.MULTI);
 		tourListView.setSizeFull();
-		
+
 		// tourListView.setCaption("Tour");
-		
-		MultiSelectionModel<TourListEntry> selectionModel = (MultiSelectionModel<TourListEntry>) tourListView.getSelectionModel();
-		selectionModel.addMultiSelectionListener( event -> {
+
+		MultiSelectionModel<TourListEntry> selectionModel = (MultiSelectionModel<TourListEntry>) tourListView
+				.getSelectionModel();
+		selectionModel.addMultiSelectionListener(event -> {
 			Set<TourListEntry> added = event.getAddedSelection();
-			for ( TourListEntry tle : added ) {
+			for (TourListEntry tle : added) {
 				myTour.selectEntry(tle);
 				TourMarker tm = map.getMarker(tle);
-				if ( tm != null) {
+				if (tm != null) {
 					tm.includeInTour();
 				}
 			}
-			
+
 			Set<TourListEntry> removed = event.getRemovedSelection();
-			for ( TourListEntry tle : removed ) {
+			for (TourListEntry tle : removed) {
 				myTour.deselectEntry(tle);
 				TourMarker tm = map.getMarker(tle);
-				if ( tm != null) {
+				if (tm != null) {
 					tm.excludeFromTour();
 				}
 			}
 		});
 
-		tourListView.addItemClickListener(event ->
-	    Notification.show("Value: " + event.getItem()));
-		
+		tourListView.addItemClickListener(event -> Notification.show("Value: " + event.getItem()));
+
 		tourDisplay.addComponent(tourListView);
 		tourDisplay.setExpandRatio(tourListView, 1.0f);
 
@@ -136,7 +163,7 @@ public class TourListTab {
 		map.setSizeFull();
 
 		tourPage.addComponent(map);
-		
+
 		tourPage.setExpandRatio(map, 1.0f);
 		tourPage.setExpandRatio(tourDisplay, 1.0f);
 		// initialize tourList view
@@ -168,12 +195,10 @@ public class TourListTab {
 			Date date = event.getValue();
 			if (date != null) {
 				myTour = new MyTour(date, tleRepo);
-				
-				ListDataProvider<TourListEntry> dataProvider =
-						  DataProvider.ofCollection(myTour.getTourList());
 
-				dataProvider.setSortOrder(TourListEntry::getPrice,
-				  SortDirection.ASCENDING);
+				ListDataProvider<TourListEntry> dataProvider = DataProvider.ofCollection(myTour.getTourList());
+
+				dataProvider.setSortOrder(TourListEntry::getPrice, SortDirection.ASCENDING);
 
 				tourListView.setDataProvider(dataProvider);
 				// TODO tourListView.setItems(myTour.getTourList());
@@ -205,6 +230,38 @@ public class TourListTab {
 			map.addMarkerClickListener(new TourListMarkerClickListener(map, mrkr, tourListView));
 		}
 		return mrkr;
+	}
+
+	protected void selectAndShowPropertiesForTour() {
+
+		// create a window to upload a pdf-file
+		Window popUp = new Window("Sub-window");
+		VerticalLayout subContent = new VerticalLayout();
+		popUp.setContent(subContent);
+
+		// Put some components in it
+		subContent.addComponent(new Label("Tour Upload and Date Selection"));
+
+		FileUploader receiver = new FileUploader();
+		receiver.setAfterUploadSucceeded(new AfterUploadSucceeded() {
+			@Override
+			public void afterUploadSucceeded(FileUploader fileUploader) {
+				AdReviewTourList adReview = new AdReviewTourList(fileUploader.getFile());
+				adReview.createTourList();
+				System.out.println("TourList Done");
+			}
+		}
+
+		);
+		Upload upload = new Upload("Select AdReview Tour Pdf-File", receiver);
+		upload.addSucceededListener(receiver);
+		subContent.addComponent(upload);
+
+		// Center it in the browser window
+		popUp.center();
+
+		tourPage.getUI().addWindow(popUp);
+
 	}
 
 	public Component getTourListPage() {

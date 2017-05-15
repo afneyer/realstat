@@ -60,12 +60,14 @@ public class AdReviewTourList {
 
 		// Remove all new line markers. They seem to be less reliable than the
 		// field markers "|"
-		text = text.replaceAll("\\n", " ");
+		text = text.replaceAll("\\n", "|");
+		text = text.replaceAll("\\r", "|");
 
 		// Ensure that the @-sign is in a separate field
 		text = text.replaceAll(" @", "|@");
 		text = text.replaceAll("@ ", "@|");
 
+		System.out.println(text);
 		// Split Ad Review into fields
 		List<String> allFields = Arrays.asList(text.split("\\|"));
 
@@ -73,11 +75,12 @@ public class AdReviewTourList {
 		// String[] lines = text.split(System.lineSeparator());
 		HashMap<Date, List<String>> tourDays = splitByDates(allFields);
 
-		List<List<String>> tourElements = new ArrayList<List<String>>();
+		
 		for (Date tourDate : tourDays.keySet()) {
 
 			List<String> tourDayFields = tourDays.get(tourDate);
-
+			
+			List<List<String>> tourElements = new ArrayList<List<String>>();
 			tourElements.addAll(splitIntoTourStops(tourDayFields));
 			int numStops = tourElements.size();
 
@@ -111,7 +114,7 @@ public class AdReviewTourList {
 			date = getTourDate(field);
 			if (date != null) {
 				// found a new date
-				if (date != previousDate) {
+				if (! date.equals(previousDate)) {
 					previousDate = date;
 					tourDay = new ArrayList<String>();
 					tourDays.put(date, tourDay);
@@ -159,7 +162,8 @@ public class AdReviewTourList {
 		tourListEntry.setOffice(office);
 
 		// phone number
-		String phone = tourElement.get(getMlsTagIndex(tourElement) - 1);
+		int phoneIndex = getPhoneIndex(tourElement);
+		String phone = tourElement.get(phoneIndex);
 		phone = cleanPhone(phone);
 		tourListEntry.setPhone(phone);
 
@@ -204,6 +208,9 @@ public class AdReviewTourList {
 		
 		String zip = propertyAddress.getZip();
 		String zipMatch = "94[5678]..";
+		if (zip == null) {
+			return false;
+		}
 		if ( ! zip.matches(zipMatch) ) {
 			return false;
 		}
@@ -325,12 +332,23 @@ public class AdReviewTourList {
 
 	private int getOfficeIndex(List<String> tourElement) {
 		int index = getMlsTagIndex(tourElement) - 2;
-		if (index > 0) {
+		if ( index > 0 && index < tourElement.size() ) {
 			return index;
 		} else {
 			log.warn("Parsing Tour List Element : " + "Cannot find Office " + printTourElement(tourElement));
 			return 0;
 		}
+	}
+
+	private int getPhoneIndex(List<String> tourElement) {
+		int index = getMlsTagIndex(tourElement) - 1;
+		if ( index > 0 && index < tourElement.size() ) {
+			return index;
+		} else {
+			log.warn("Parsing Tour List Element : " + "Cannot find Phone " + printTourElement(tourElement));
+			return 0;
+		}
+		
 	}
 
 	private String getBedBath(List<String> tourElement) {
@@ -429,10 +447,10 @@ public class AdReviewTourList {
 		try {
 			PDDocument doc = PDDocument.load(pdfFile);
 			PDFTextStripper pdfStrip = new PDFTextStripper();
-			pdfStrip.setArticleStart("");
-			pdfStrip.setArticleEnd("^");
-			pdfStrip.setParagraphStart("");
-			pdfStrip.setParagraphEnd("\n");
+			pdfStrip.setArticleStart("|");
+			pdfStrip.setArticleEnd("|");
+			pdfStrip.setParagraphStart("|");
+			pdfStrip.setParagraphEnd("|");
 			pdfStrip.setWordSeparator("|");
 			pdfStrip.setLineSeparator("|");
 			pdfStrip.setSortByPosition(true);

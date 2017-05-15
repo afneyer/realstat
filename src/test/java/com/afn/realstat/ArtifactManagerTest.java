@@ -10,7 +10,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = Application.class, webEnvironment = SpringBootTest.WebEnvironment.NONE)
-@ActiveProfiles("prod")
+@ActiveProfiles("dev")
 public class ArtifactManagerTest {
 
 	@Autowired
@@ -25,7 +25,7 @@ public class ArtifactManagerTest {
 	}
 
 	@Test
-	public void testUploadArtifacts() {
+	public void testUploadIcons() {
 		artfctMgr.uploadIcons();
 	}
 }
