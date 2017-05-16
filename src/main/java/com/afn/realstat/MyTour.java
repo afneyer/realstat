@@ -1,6 +1,8 @@
 package com.afn.realstat;
 
+import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -11,6 +13,8 @@ import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
+
+import com.afn.realstat.ui.ShowPdfButton.PdfDocumentGetter;
 
 public class MyTour {
 
@@ -90,7 +94,7 @@ public class MyTour {
 		}
 	}
 	
-	public PDDocument getPdf() {
+	public File getPdfFile() {
 		
 		PDDocument printDoc = new PDDocument();
 		PDPage page = new PDPage();
@@ -100,6 +104,8 @@ public class MyTour {
 		PDFont font = PDType1Font.HELVETICA_BOLD;
 
 		// Start a new content stream which will "hold" the to be created content
+		
+		File file = null;
 		PDPageContentStream contentStream;
 		try {
 			contentStream = new PDPageContentStream(printDoc, page);
@@ -114,7 +120,12 @@ public class MyTour {
 			contentStream.close();
 			
 			// Save the results and ensure that the document is properly closed:
-			// printDoc.save( "Hello World.pdf");
+			String filePath = System.getProperty("user.dir") + "\\temp\\";
+			SimpleDateFormat format = new SimpleDateFormat("yyyy-mm-dd-hh-mm-ss.sss");
+			format.format(new Date());
+			String fileName =format.format(new Date()) + ".pdf";
+			file = new File(filePath + fileName);
+			printDoc.save(file);
 			printDoc.close();
 			
 		} catch (IOException e) {
@@ -122,7 +133,8 @@ public class MyTour {
 			e.printStackTrace();
 		}
 
-		return printDoc;
+		return file;
 	}
+
 
 }

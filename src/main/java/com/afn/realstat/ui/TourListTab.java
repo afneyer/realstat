@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.pdfbox.pdmodel.PDDocument;
 import org.springframework.data.geo.Point;
 
 import com.afn.realstat.AdReviewTourList;
@@ -47,6 +48,7 @@ public class TourListTab {
 	private MyTour myTour;
 	private AfnGoogleMap map;
 	private Component tourListSelector;
+	private HorizontalLayout tourDisplayControl;
 	private TourListRepository tleRepo;
 	private AddressRepository adrRepo;
 	private GoogleMapPolyline tourPolyLine = null;
@@ -71,7 +73,7 @@ public class TourListTab {
 		tourPage.addComponent(tourDisplay);
 		tourPage.setExpandRatio(tourDisplay, 1.0f);
 
-		HorizontalLayout tourDisplayControl = new HorizontalLayout();
+		tourDisplayControl = new HorizontalLayout();
 		tourDisplay.addComponent(tourDisplayControl);
 
 		tourListSelector = getTourSelector();
@@ -108,9 +110,7 @@ public class TourListTab {
 		tourDisplayControl.addComponent(tourFile);
 		tourFile.setWidth(100, Unit.PERCENTAGE);
 		
-		Button printTour = new ShowPdfButton(myTour.getPdf() );
-		tourDisplayControl.addComponent(printTour);
-		printTour.setWidth(100, Unit.PERCENTAGE);
+	
 
 		// initialize tourList view
 		tourListView = new Grid<TourListEntry>();
@@ -203,6 +203,10 @@ public class TourListTab {
 				tourListView.setDataProvider(dataProvider);
 				// TODO tourListView.setItems(myTour.getTourList());
 				addMarkersForTour(myTour);
+				
+				Button printTour = new ShowPdfButton( myTour.getPdfFile() );
+				tourDisplayControl.addComponent(printTour);
+				printTour.setWidth(100, Unit.PERCENTAGE);
 			}
 		});
 		return select;

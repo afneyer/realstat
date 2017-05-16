@@ -1,34 +1,31 @@
 package com.afn.realstat.ui;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
-
-import org.apache.pdfbox.pdmodel.PDDocument;
 
 import com.vaadin.server.StreamResource.StreamSource;
 
 @SuppressWarnings("serial")
 public class PdfSource implements StreamSource {
 
-	private PDDocument pdfDoc;
+	private File pdfFile;
 
-	public PdfSource(PDDocument pdfDoc) {
-		this.pdfDoc = pdfDoc;
+	public PdfSource(File pdfFile) {
+		this.pdfFile = pdfFile;
 	}
 
 	@Override
 	public InputStream getStream() {
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		
+		InputStream in = null;
 		try {
-			pdfDoc.save(out);
-		} catch (IOException e) {
+			in = new FileInputStream(pdfFile);
+		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		byte[] temp = out.toByteArray();
-		ByteArrayInputStream in = new ByteArrayInputStream(temp);
 		return in;
 	}
 }
