@@ -12,13 +12,19 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfNull;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.Document;
+import com.itextpdf.layout.border.Border;
+import com.itextpdf.layout.border.SolidBorder;
+import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.element.Cell;
+import com.itextpdf.layout.element.LineSeparator;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.io.font.FontConstants;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.layout.property.AreaBreakType;
+import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.TextAlignment;
 import com.itextpdf.layout.property.UnitValue;
 
@@ -91,6 +97,7 @@ public class MyTour {
 		for (int i = 0; i < order.length; i++) {
 			TourListEntry tle = selectedList.get(i);
 			tle.setSequence(order[i] + 1);
+			tle.saveOrUpdate();
 		}
 	}
 
@@ -200,35 +207,34 @@ public class MyTour {
 		String dateStr = format.format(getTourDate());
 		String userName = "Kathleen Callahan";
 		String title = "Tour for " + userName + " on " + dateStr;
-		doc.add(new Paragraph(title).setBold().setFontSize(20));
+		doc.add(new Paragraph(title).setBold().setFontSize(16));
+		addHorizontalLine(doc);
 
 	}
 
 	private void addTourList(Document doc) {
-
+		
 		// review this code for breaks
-		int pageSize = 5;
+		int pageSize = 12;
 		for (int i = 0; i < tourList.size(); i++) {
 
 			TourListEntry tle = tourList.get(i);
+			addTourListEntry(tle, doc);
 
 			// if necessary create new page
 			if ((i + 1) % pageSize == 0) {
 
-				doc.add(new Paragraph("here would be a break TODO"));
-			}
-
-			addTourListEntry(tle, doc);
-			addTourListSpacer(doc);
+				doc.add(new AreaBreak(AreaBreakType.NEXT_PAGE));
+				addHorizontalLine(doc);
+			}	
 
 		}
 
 	}
 	
-	private Document addTourListSpacer(Document doc) {
-		doc.add(new Paragraph("This is a horizontal line plus space afterwards"));
-		doc.add(new Paragraph("space"));
-		return doc;
+	private void addHorizontalLine(Document doc) {
+		Paragraph p = new Paragraph("").setBorderTop(new SolidBorder(1)).setFontSize(10);
+		doc.add(p);
 	}
 	
 	private PdfFont getFont(String str) {
@@ -256,37 +262,39 @@ public class MyTour {
 	private void addTourListEntry(TourListEntry tle, Document doc) {
 
 		// add table for holding a tour list entry
-		UnitValue[] unitArray = { new UnitValue(UnitValue.PERCENT, 5f), new UnitValue(UnitValue.PERCENT, 10f), new UnitValue(UnitValue.PERCENT, 23f),
-				new UnitValue(UnitValue.PERCENT, 22f), new UnitValue(UnitValue.PERCENT, 18f),
-				new UnitValue(UnitValue.PERCENT, 22f) };
+		UnitValue[] unitArray = { new UnitValue(UnitValue.PERCENT, 12f), new UnitValue(UnitValue.PERCENT, 25f),
+				new UnitValue(UnitValue.PERCENT, 25f), new UnitValue(UnitValue.PERCENT, 18f),
+				new UnitValue(UnitValue.PERCENT, 20f) };
 
 	
 		Table table = new Table(unitArray);
+		table.setMargin(0);
+		table.setPadding(-10);
+		table.setProperty(Property.BORDER, Border.NO_BORDER);
+		
 		Cell cell = null;
 		// add the first row of cells
-		// Cell 0
-		cell = new Cell().setBold().setFontSize(12);
+		
+		// Cell 1
+		cell = new Cell().setBold().setFontSize(11).setBorder(Border.NO_BORDER).setHeight(15);
 		cell.add(new Integer(tle.getSequence()).toString());
 		table.addCell(cell);
 		
-		// Cell 1
-		cell = new Cell().setFont(getFont("normal")).setFontSize(12);
-		cell.add(tle.getCity());
-		table.addCell(cell);
+		
 		
 		// Cell 2-3
-		cell = new Cell(1,2).setFont(getFont("bold")).setFontSize(12);
-		cell.add(tle.getStreet() + "@" + tle.getCrossStreet());
+		cell = new Cell(1,2).setFont(getFont("bold")).setFontSize(11).setBorder(Border.NO_BORDER);
+		cell.add(tle.getStreet() + " @ " + tle.getCrossStreet());
 		table.addCell(cell);
 		
 		
 		// Cell 4
-		cell = new Cell().setFont(getFont("bold")).setFontSize(12).setTextAlignment(TextAlignment.RIGHT);
+		cell = new Cell().setFont(getFont("bold")).setFontSize(11).setTextAlignment(TextAlignment.CENTER).setBorder(Border.NO_BORDER).setHeight(15);
 		cell.add(tle.getBedBath());
 		table.addCell(cell);
 		
 		// Cell 5
-		cell = new Cell().setFont(getFont("bold")).setFontSize(12).setTextAlignment(TextAlignment.RIGHT);
+		cell = new Cell().setFont(getFont("bold")).setFontSize(11).setTextAlignment(TextAlignment.RIGHT).setBorder(Border.NO_BORDER).setHeight(15);
 		cell.add(tle.getPrice());
 		table.addCell(cell);
 		
@@ -294,20 +302,37 @@ public class MyTour {
 		
 		// add second row of cells
 		table.startNewRow();
-		table.addCell("");
-		table.addCell("");
-		cell = new Cell(1,4).setFontSize(10);
+		
+		cell = new Cell().setBold().setFontSize(9).setBorder(Border.NO_BORDER).setHeight(13);
+		cell.add(tle.getCity());
+		table.addCell(cell);
+		
+		cell = new Cell(1,4).setFontSize(9).setBorder(Border.NO_BORDER).setHeight(13);
 		cell.add(tle.getDescription());
 		table.addCell(cell);
 		
 		// add third row of cells
 		table.startNewRow();
-		table.addCell("");
-		table.addCell(tle.getZip());
-		table.addCell(tle.getAgent());
-		table.addCell(tle.getOffice());
-		table.addCell(tle.getPhone());
-		table.addCell("MLS# " + tle.getMlsNo());
+		
+		cell = new Cell().setFontSize(10).setBorder(Border.NO_BORDER).setBorderBottom(new SolidBorder(1)).setHeight(14);
+		cell.add(tle.getZip());
+		table.addCell(cell);
+		
+		cell = new Cell().setFontSize(10).setBorder(Border.NO_BORDER).setBorderBottom(new SolidBorder(1)).setHeight(14);
+		cell.add(tle.getAgent());
+		table.addCell(cell);
+		
+		cell = new Cell().setFontSize(10).setBorder(Border.NO_BORDER).setBorderBottom(new SolidBorder(1)).setHeight(14);
+		cell.add(tle.getOffice());
+		table.addCell(cell);
+		
+		cell= new Cell().setFontSize(10).setBorder(Border.NO_BORDER).setBorderBottom(new SolidBorder(1)).setHeight(14);
+		cell.add(tle.getPhone());
+		table.addCell(cell);
+		
+		cell = new Cell().setFontSize(10).setBorder(Border.NO_BORDER).setBorderBottom(new SolidBorder(1)).setTextAlignment(TextAlignment.RIGHT).setHeight(14);
+		cell.add("MLS# " + tle.getMlsNo());
+		table.addCell(cell);
 
 		doc.add(table);
 	}

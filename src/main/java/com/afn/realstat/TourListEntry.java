@@ -50,7 +50,6 @@ public class TourListEntry extends AbstractEntity {
 	private String phone;
 	private String mlsNo;
 	
-	@Transient
 	private int sequence;
 	
 	public TourListEntry() {
