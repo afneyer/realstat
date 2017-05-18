@@ -29,7 +29,7 @@ public class TourListEntry extends AbstractEntity {
 	
 	public static final Logger log = LoggerFactory.getLogger("app");
 	public static final Class<TourListEntry> classType = TourListEntry.class;
-	public static TourListRepository repo;
+	private static TourListRepository repo;
 
 	@Basic(optional = false)
 	private Date tourDate;
@@ -267,7 +267,7 @@ public class TourListEntry extends AbstractEntity {
 		return str;
 	}
 	
-	public TourListRepository getRepo() {
+	public static TourListRepository getRepo() {
 		if (repo == null) {
 			repo =  (TourListRepository) SpringApplicationContext.getBean("tourListRepository");
 		}

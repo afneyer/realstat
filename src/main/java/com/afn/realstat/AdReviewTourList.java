@@ -19,7 +19,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-@Component
 public class AdReviewTourList {
 
 	public static final Logger log = LoggerFactory.getLogger("app");
@@ -28,17 +27,13 @@ public class AdReviewTourList {
 	private TourListRepository tlRepo;
 	private File pdfFile;
 
-	public AdReviewTourList() {
-		this.tlRepo = TourListEntry.repo;
-	};
-
 	public AdReviewTourList(File file) {
+		this.tlRepo = TourListEntry.getRepo();
 		this.pdfFile = file;
 	}
 
 	public void createTourList() {
 		String text = getText();
-		// createTourList(text);
 		createTourListBasedOnFields(text);
 	}
 
@@ -93,7 +88,7 @@ public class AdReviewTourList {
 				te.save();
 
 			}
-			int tourListEntryCount = TourListEntry.repo.findByTourDate(tourDate).size();
+			int tourListEntryCount = TourListEntry.getRepo().findByTourDate(tourDate).size();
 			if (tourListEntryCount != numStops) {
 				log.error("AdReviewParsing for date " + tourDate + " is missing " + (numStops - tourListEntryCount)
 						+ "properties. New city codes?");

@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import com.afn.realstat.MyTourStop;
 import com.afn.realstat.TourListEntry;
 import com.google.maps.model.EncodedPolyline;
 import com.google.maps.model.LatLng;
@@ -22,12 +23,12 @@ public class AfnGoogleMap extends GoogleMap {
 
 	private GoogleMapMarker dummyMarker;
 	private final String emptyIcon = "VAADIN/emptyIcon.jpg";
+	private GoogleMap thisMap = null;
 
 	public AfnGoogleMap(String apiKey, String clientId, String language) {
+		
 		super(apiKey, clientId, language);
-
-		dummyMarker = new GoogleMapMarker("Dummy Marker", new LatLon(0, 0), false, null);
-		dummyMarker.setIconUrl(emptyIcon);
+		thisMap = this;
 	}
 
 	public AfnGoogleMap() {
@@ -50,11 +51,11 @@ public class AfnGoogleMap extends GoogleMap {
 		return markerList;
 	}
 
-	public TourMarker getMarker(TourListEntry tle) {
+	public TourMarker getMarker(MyTourStop mts) {
 		Iterator<TourMarker> markerIter = getTourMarkers().iterator();
 		while (markerIter.hasNext()) {
 			TourMarker tm = markerIter.next();
-			if (tle.getId().equals(tm.getTourListEntry().getId())) {
+			if (mts.equals(tm.getMyTourStop())) {
 				return tm;
 			}
 		}
@@ -74,16 +75,23 @@ public class AfnGoogleMap extends GoogleMap {
 	 */
 	protected void refresh() {
 
+		// if there is a dummy Marker, remove it
+		if (dummyMarker!=null) {
+			removeMarker(dummyMarker);
+		}
+		
+		// create a new dummy Marker
+		// this marker has a new id and hence the set of marker changes
+		dummyMarker = new GoogleMapMarker("Dummy Marker", new LatLon(0, 0), false, null);
+		dummyMarker.setIconUrl(emptyIcon);
+		
 		// refresh function
 		if (hasMarker(dummyMarker)) {
 			removeMarker(dummyMarker);
 		} else {
 			addMarker(dummyMarker);
 		}
-		UI ui = this.getUI();
-		ui.getPushConfiguration();
-		// ui.accessSynchronously(runnable);
-
+		
 	}
 
 	/**

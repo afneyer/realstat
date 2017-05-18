@@ -5,16 +5,14 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.pdfbox.pdmodel.PDDocument;
 import org.springframework.data.geo.Point;
 
 import com.afn.realstat.AdReviewTourList;
 import com.afn.realstat.Address;
-import com.afn.realstat.AddressRepository;
 import com.afn.realstat.MyTour;
+import com.afn.realstat.MyTourStop;
 import com.afn.realstat.TourListEntry;
 import com.afn.realstat.TourListRepository;
-import com.afn.realstat.framework.AppContext;
 import com.afn.realstat.util.GeoLocation;
 import com.afn.realstat.util.MapDirection;
 import com.google.maps.model.EncodedPolyline;
@@ -34,7 +32,6 @@ import com.vaadin.ui.Grid.SelectionMode;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
-import com.vaadin.ui.UI;
 import com.vaadin.ui.Upload;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
@@ -44,19 +41,17 @@ import com.vaadin.ui.renderers.HtmlRenderer;
 public class TourListTab {
 
 	private HorizontalLayout tourPage;
-	private Grid<TourListEntry> tourListView = null;
+	private Grid<MyTourStop> tourListView = null;
 	private MyTour myTour;
 	private AfnGoogleMap map;
 	private Component tourListSelector;
 	private HorizontalLayout tourDisplayControl;
-	private TourListRepository tleRepo;
-	private AddressRepository adrRepo;
+	// private AddressRepository adrRepo;
 	private GoogleMapPolyline tourPolyLine = null;
 
-	public TourListTab(TourListRepository tleRepo) {
+	public TourListTab() {
 
-		this.tleRepo = tleRepo;
-		this.adrRepo = Address.getRepo();
+		// this.adrRepo = Address.getRepo();
 
 		// initialize tourPage
 		tourPage = new HorizontalLayout();
@@ -109,42 +104,33 @@ public class TourListTab {
 		});
 		tourDisplayControl.addComponent(tourFile);
 		tourFile.setWidth(100, Unit.PERCENTAGE);
-		
-	
 
 		// initialize tourList view
-		tourListView = new Grid<TourListEntry>();
+		tourListView = new Grid<MyTourStop>();
 		tourListView.addStyleName("h3rows");
-		// tourListView.setStyleGenerator(cellRef -> "tourlistcell");
-		Grid.Column<TourListEntry, String> propInfo = tourListView.addColumn(TourListEntry::htmlString,
-				new HtmlRenderer());
-		tourListView.addColumn(TourListEntry::getStringSeq);
-		// propInfo.setStyleGenerator(cellRef -> "tourlistcell");
+		Grid.Column<MyTourStop, String> propInfo = tourListView.addColumn(MyTourStop::htmlString, new HtmlRenderer());
+		tourListView.addColumn(MyTourStop::getStringSeq);
 		propInfo.setWidth(400.0);
-		// Grid.Column<TourListEntry,String> sequence =
-		// tourListView.addColumn(TourListEntry::sequence);
 
 		tourListView.setSelectionMode(SelectionMode.MULTI);
 		tourListView.setSizeFull();
 
-		// tourListView.setCaption("Tour");
-
-		MultiSelectionModel<TourListEntry> selectionModel = (MultiSelectionModel<TourListEntry>) tourListView
+		MultiSelectionModel<MyTourStop> selectionModel = (MultiSelectionModel<MyTourStop>) tourListView
 				.getSelectionModel();
 		selectionModel.addMultiSelectionListener(event -> {
-			Set<TourListEntry> added = event.getAddedSelection();
-			for (TourListEntry tle : added) {
-				myTour.selectEntry(tle);
-				TourMarker tm = map.getMarker(tle);
+			Set<MyTourStop> added = event.getAddedSelection();
+			for (MyTourStop mts : added) {
+				myTour.selectEntry(mts);
+				TourMarker tm = map.getMarker(mts);
 				if (tm != null) {
 					tm.includeInTour();
 				}
 			}
 
-			Set<TourListEntry> removed = event.getRemovedSelection();
-			for (TourListEntry tle : removed) {
-				myTour.deselectEntry(tle);
-				TourMarker tm = map.getMarker(tle);
+			Set<MyTourStop> removed = event.getRemovedSelection();
+			for (MyTourStop mts : removed) {
+				myTour.deselectEntry(mts);
+				TourMarker tm = map.getMarker(mts);
 				if (tm != null) {
 					tm.excludeFromTour();
 				}
@@ -172,6 +158,7 @@ public class TourListTab {
 	private Component getTourSelector() {
 
 		// Create the selection component for tour dates
+		TourListRepository tleRepo = TourListEntry.getRepo();
 		List<Date> tlDates = tleRepo.findAllDisctintDatesNewestFirst();
 
 		ComboBox<Date> select = new ComboBox<>("Select Date");
@@ -194,17 +181,17 @@ public class TourListTab {
 		select.addSelectionListener(event -> {
 			Date date = event.getValue();
 			if (date != null) {
-				myTour = new MyTour(date, tleRepo);
+				myTour = new MyTour(date);
 
-				ListDataProvider<TourListEntry> dataProvider = DataProvider.ofCollection(myTour.getTourList());
+				ListDataProvider<MyTourStop> dataProvider = DataProvider.ofCollection(myTour.getTourList());
 
-				dataProvider.setSortOrder(TourListEntry::getPrice, SortDirection.ASCENDING);
+				dataProvider.setSortOrder(MyTourStop::getPrice, SortDirection.ASCENDING);
 
 				tourListView.setDataProvider(dataProvider);
 				// TODO tourListView.setItems(myTour.getTourList());
 				addMarkersForTour(myTour);
-				
-				Button printTour = new ShowPdfButton( myTour.getPdfFile() );
+
+				Button printTour = new ShowPdfButton(myTour.getPdfFile());
 				tourDisplayControl.addComponent(printTour);
 				printTour.setWidth(100, Unit.PERCENTAGE);
 			}
@@ -214,24 +201,24 @@ public class TourListTab {
 
 	private void addMarkersForTour(MyTour myTour) {
 
-		List<TourListEntry> tleList = tleRepo.findByTourDate(myTour.getTourDate());
-		for (TourListEntry tle : tleList) {
-			addMarkerForTourListEntry(tle, myTour);
+		List<MyTourStop> mtsList = myTour.getTourList();
+		for (MyTourStop mts : mtsList) {
+			addMarkerForTourListEntry(mts);
 		}
 		map.centerOnTourMarkers();
 		System.out.println("Done with Marking");
 	}
 
-	private TourMarker addMarkerForTourListEntry(TourListEntry tle, MyTour myTour) {
+	private TourMarker addMarkerForTourListEntry(MyTourStop mts) {
 		TourMarker mrkr = null;
-		Point loc = tle.getLocation();
+		Point loc = mts.getLocation();
 		if (loc != null) {
 
-			mrkr = new TourMarker(tle, myTour, map);
+			mrkr = new TourMarker(mts, map);
 
 			map.addMarker(mrkr);
 
-			map.addMarkerClickListener(new TourListMarkerClickListener(map, mrkr, tourListView));
+			map.addMarkerClickListener(new TourListMarkerClickListener(mrkr, tourListView));
 		}
 		return mrkr;
 	}

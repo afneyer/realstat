@@ -1,18 +1,9 @@
 package com.afn.realstat.ui;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-
-import com.afn.realstat.MyTour;
-import com.afn.realstat.TourListEntry;
-import com.vaadin.tapio.googlemaps.GoogleMap;
+import com.afn.realstat.MyTourStop;
 import com.vaadin.tapio.googlemaps.client.events.MarkerClickListener;
-import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapInfoWindow;
 import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapMarker;
 import com.vaadin.ui.Grid;
-import com.vaadin.ui.UI;
 
 /**
  * Listener that opens info window when a marker is clicked.
@@ -21,12 +12,14 @@ public class TourListMarkerClickListener implements MarkerClickListener {
 
 	private static final long serialVersionUID = 646386541641L;
 
-	private final AfnGoogleMap map;
+	// TODO remove
+	// private final AfnGoogleMap map;
 	private final TourMarker marker;
-	private final Grid<TourListEntry> tourListView;
+	private final Grid<MyTourStop> tourListView;
 
-	public TourListMarkerClickListener(AfnGoogleMap map, TourMarker marker, Grid<TourListEntry> tourListView) {
-		this.map = map;
+	public TourListMarkerClickListener(TourMarker marker, Grid<MyTourStop> tourListView) {
+		// TODO remove
+		// this.map = map;
 		this.marker = marker;
 		this.tourListView = tourListView;
 		marker.setListener(this);
@@ -40,11 +33,11 @@ public class TourListMarkerClickListener implements MarkerClickListener {
 			boolean added = marker.toggleTour();
 
 			// select or de-select it from the tourListView
-			TourListEntry tle = marker.getTourListEntry();
+			MyTourStop mts = marker.getMyTourStop();
 			if (added) {
-				tourListView.select(tle);
+				tourListView.select(mts);
 			} else {
-				tourListView.deselect(tle);
+				tourListView.deselect(mts);
 			}
 			// tourListView.markAsDirtyRecursive();
 			tourListView.getDataProvider().refreshAll();
@@ -68,7 +61,7 @@ public class TourListMarkerClickListener implements MarkerClickListener {
 		}
 	}
 
-	public Grid<TourListEntry> getTourListView() {
+	public Grid<MyTourStop> getTourListView() {
 		return tourListView;
 	}
 }

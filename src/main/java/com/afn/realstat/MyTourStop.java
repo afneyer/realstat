@@ -83,11 +83,6 @@ public class MyTourStop {
 		return tle.getPropertyAdr();
 	}
 
-	@Deprecated
-	public void setPropertyAdr(Address propertyAdr) {
-		// this.propertyAdr = propertyAdr;
-	}
-
 	public Point getLocation() {
 		return getPropertyAdr().getLoc();
 	}
@@ -96,108 +91,48 @@ public class MyTourStop {
 		return tle.getCity();
 	}
 
-	@Deprecated
-	public void setCity(String city) {
-		// this.city = city;
-	}
-
 	public String getZip() {
 		return tle.getZip();
-	}
-
-	@Deprecated
-	public void setZip(String zip) {
-		// this.zip = zip;
 	}
 
 	public String getStreet() {
 		return tle.getStreet();
 	}
 
-	@Deprecated
-	public void setStreet(String street) {
-		// this.street = street;
-	}
-
 	public String getCrossStreet() {
 		return tle.getCrossStreet();
-	}
-
-	@Deprecated
-	public void setCrossStreet(String crossStreet) {
-		// this.crossStreet = crossStreet;
 	}
 
 	public String getBedBath() {
 		return tle.getBedBath();
 	}
 
-	@Deprecated
-	public void setBedBath(String bedBath) {
-		// this.bedBath = bedBath;
-	}
-
 	public String getPrice() {
 		return tle.getPrice();
-	}
-
-	@Deprecated
-	public void setPrice(String price) {
-		// this.price = price;
 	}
 
 	public String getTime() {
 		return tle.getTime();
 	}
 
-	@Deprecated
-	public void setTime(String time) {
-		// this.time = time;
-	}
-
 	public String getDescription() {
 		return tle.getDescription();
-	}
-
-	@Deprecated
-	public void setDescription(String description) {
-		// this.description = description;
 	}
 
 	public String getAgent() {
 		return tle.getAgent();
 	}
 
-	@Deprecated
-	public void setAgent(String agent) {
-		// this.agent = agent;
-	}
-
 	public String getOffice() {
 		return tle.getOffice();
-	}
-
-	@Deprecated
-	public void setOffice(String office) {
-		// this.office = office;
 	}
 
 	public String getPhone() {
 		return tle.getPhone();
 	}
 
-	@Deprecated
-	public void setPhone(String phone) {
-		// this.phone = phone;
-	}
-
 	public String getMlsNo() {
 		return tle.getMlsNo();
-	}
-
-	@Deprecated
-	public void setMlsNo(String mlsNo) {
-		// this.mlsNo = mlsNo;
 	}
 
 	public int getSequence() {
@@ -244,6 +179,33 @@ public class MyTourStop {
 		s += "MLS# " + getMlsNo();
 		return s;
 
+	}
+
+	/*
+	 * Tour stops are equal if the belong to the same tour and have the same sequence
+	 */
+	@Override
+	public boolean equals(Object o) {
+
+		// If the object is compared with itself then return true
+		if (o == this) {
+			return true;
+		}
+
+		/*
+		 * Check if o is an instance of MyTourStop or not "null instanceof [type]"
+		 * also returns false
+		 */
+		if (!(o instanceof MyTourStop)) {
+			return false;
+		}
+
+		// Cast o to MyTour so that we can compare data members
+		MyTourStop c = (MyTourStop) o;
+
+		// Compare the data members and return accordingly
+		boolean equals = this.tour.equals(c.tour) && this.tle.equals(c.tle);
+		return equals;
 	}
 
 }

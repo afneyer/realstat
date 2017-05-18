@@ -28,7 +28,7 @@ public class MyTour {
 	private int[] sequence;
 
 	public MyTour(Date tourDate) {
-		TourListRepository tlRepo = TourListEntry.repo;
+		TourListRepository tlRepo = TourListEntry.getRepo();
 		this.tourDate = tourDate;
 		List<TourListEntry> tleList = tlRepo.findByTourDate(tourDate);
 		tourList = new ArrayList<MyTourStop>();
@@ -161,9 +161,9 @@ public class MyTour {
 
 		// review this code for breaks
 		int pageSize = 12;
-		for (int i = 0; i < tourList.size(); i++) {
+		for (int i = 0; i < selectedList.size(); i++) {
 
-			MyTourStop mts = tourList.get(i);
+			MyTourStop mts = selectedList.get(i);
 			addMyTourStop(mts, doc);
 
 			// if necessary create new page

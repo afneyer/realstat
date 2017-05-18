@@ -1,6 +1,5 @@
 package com.afn.realstat.ui;
 
-import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -11,13 +10,13 @@ import java.util.function.Function;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.geo.Point;
 
-import com.afn.realstat.AdReviewTourList;
 import com.afn.realstat.Address;
 import com.afn.realstat.AddressManager;
 import com.afn.realstat.AddressRepository;
 import com.afn.realstat.Agent;
 import com.afn.realstat.AgentRepository;
 import com.afn.realstat.MyTour;
+import com.afn.realstat.MyTourStop;
 import com.afn.realstat.PropertyTransactionService;
 import com.afn.realstat.QAgent;
 import com.afn.realstat.RealProperty;
@@ -39,20 +38,14 @@ import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapMarker;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.CssLayout;
-import com.vaadin.ui.Grid;
-import com.vaadin.ui.Grid.SelectionMode;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.ListSelect;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.UI;
-import com.vaadin.ui.Upload;
-import com.vaadin.ui.Upload.SucceededEvent;
-import com.vaadin.ui.Upload.SucceededListener;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
-import com.vaadin.ui.renderers.HtmlRenderer;
 
 /**
  * Google Maps UI for displaying properties on maps
@@ -74,15 +67,7 @@ public class GoogleMapUI extends UI {
 	@Autowired
 	private AddressManager adrMgr;
 
-	@Autowired
-	private AddressRepository adrRepo;
-
 	private AfnGoogleMap googleMap;
-	
-	// private Grid<TourListEntry> tourListView;
-
-	@Autowired
-	protected TourListRepository tleRepo;
 
 	protected CssLayout consoleLayout;
 	protected MapClickListener dummyListener;
@@ -109,7 +94,7 @@ public class GoogleMapUI extends UI {
 		page.setSizeFull();
 		tabs.addTab(page, "Map");
 		
-		TourListTab tourListTab = new TourListTab(tleRepo);
+		TourListTab tourListTab = new TourListTab();
 		com.vaadin.ui.Component tourListComp = tourListTab.getTourListPage();
 		tabs.addTab(tourListComp, "Tour");
 
@@ -223,6 +208,8 @@ public class GoogleMapUI extends UI {
 		// subContent.addComponent(new Label("Select Tour Date"));
 
 		// Create the selection component for tour dates
+		// TODO hide this function in MyTour?
+		TourListRepository tleRepo = TourListEntry.getRepo();
 		List<Date> tlDates = tleRepo.findAllDisctintDatesNewestFirst();
 
 		ListSelect<Date> select = new ListSelect<Date>("Select tour date");
@@ -245,7 +232,7 @@ public class GoogleMapUI extends UI {
 			Set<Date> dates = event.getValue();
 			Date date = dates.iterator().next();
 			if (date != null) {
-				MyTour myTour = new MyTour(date, tleRepo);
+				MyTour myTour = new MyTour(date);
 				// tourListView.setItems(myTour.getTourList());
 				addMarkersForTour(myTour);
 				popUp.close();
@@ -257,24 +244,20 @@ public class GoogleMapUI extends UI {
 
 	private void addMarkersForTour(MyTour myTour) {
 
-		List<TourListEntry> tleList = tleRepo.findByTourDate(myTour.getTourDate());
-		for (TourListEntry tle : tleList) {
-			addMarkerForTourListEntry(tle, myTour);
+		List<MyTourStop> mtsList = myTour.getSelected();
+		for (MyTourStop mts : mtsList) {
+			addMarkerForTourStop(mts);
 		}
 		googleMap.centerOnTourMarkers();
 		System.out.println("Done with Marking");
 	}
 
-	private TourMarker addMarkerForTourListEntry(TourListEntry tle, MyTour myTour) {
+	private TourMarker addMarkerForTourStop(MyTourStop mts) {
 			TourMarker mrkr = null;
-			Point loc = tle.getLocation();
+			Point loc = mts.getLocation();
 			if (loc != null) {
-				 
-				mrkr = new TourMarker(tle, myTour, googleMap);
-
+				mrkr = new TourMarker(mts, googleMap);
 				googleMap.addMarker(mrkr);
-
-				// googleMap.addMarkerClickListener(new TourListMarkerClickListener(googleMap, mrkr, tourListView));
 			}
 		return mrkr;
 	}
@@ -313,12 +296,12 @@ public class GoogleMapUI extends UI {
 
 	}
 
-	protected void addMarkersForTourList(List<TourListEntry> list) {
+	protected void addMarkersForTourList(List<MyTourStop> list) {
 
 		// TODO change to the following
 		// List<RealProperty> rpList = ptService.getRealPropertiesForAgent(agt);
-		for (TourListEntry te : list) {
-			Address adr = te.getPropertyAdr();
+		for (MyTourStop mts : list) {
+			Address adr = mts.getPropertyAdr();
 			addMarkerForAddress(adr);
 		}
 		// }
