@@ -1,15 +1,11 @@
 package com.afn.realstat;
 
 import java.io.File;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import com.itextpdf.io.font.FontConstants;
-import com.itextpdf.kernel.font.PdfFont;
-import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.Document;
@@ -27,17 +23,24 @@ import com.itextpdf.layout.property.UnitValue;
 public class MyTour {
 
 	private Date tourDate;
-	private List<TourListEntry> tourList;
-	private ArrayList<TourListEntry> selectedList;
+	private ArrayList<MyTourStop> tourList;
+	private ArrayList<MyTourStop> selectedList;
 	private int[] sequence;
 
-	public MyTour(Date tourDate, TourListRepository tlRepo) {
+	public MyTour(Date tourDate) {
+		TourListRepository tlRepo = TourListEntry.repo;
 		this.tourDate = tourDate;
-		tourList = tlRepo.findByTourDate(tourDate);
-		selectedList = new ArrayList<TourListEntry>();
+		List<TourListEntry> tleList = tlRepo.findByTourDate(tourDate);
+		tourList = new ArrayList<MyTourStop>();
+		for (TourListEntry tle : tleList) {
+			MyTourStop myStop = new MyTourStop(this, tle);
+			tourList.add(myStop);
+		}
+
+		selectedList = new ArrayList<MyTourStop>();
 	}
 
-	public boolean selectEntry(TourListEntry tourListEntry) {
+	public boolean selectEntry(MyTourStop tourListEntry) {
 		boolean changed = false;
 		if (!selectedList.contains(tourListEntry)) {
 			changed = selectedList.add(tourListEntry);
@@ -45,7 +48,7 @@ public class MyTour {
 		return changed;
 	}
 
-	public boolean deselectEntry(TourListEntry tourListEntry) {
+	public boolean deselectEntry(MyTourStop tourListEntry) {
 		boolean changed = false;
 		if (selectedList.contains(tourListEntry)) {
 			changed = selectedList.remove(tourListEntry);
@@ -57,30 +60,29 @@ public class MyTour {
 		return tourDate;
 	}
 
-	public boolean contains(TourListEntry tourListEntry) {
+	public boolean contains(MyTourStop tourListEntry) {
 		return tourList.contains(tourListEntry);
 	}
 
-	public boolean isSelected(TourListEntry tourListEntry) {
+	public boolean isSelected(MyTourStop tourListEntry) {
 		return selectedList.contains(tourListEntry);
 	}
 
-	public List<TourListEntry> getTourList() {
-		// TODO Auto-generated method stub
+	public List<MyTourStop> getTourList() {
 		return tourList;
 	}
 
 	public List<Address> getSelectedAddresses() {
 		List<Address> list = new ArrayList<Address>();
 
-		for (TourListEntry tle : selectedList) {
-			list.add(tle.getPropertyAdr());
+		for (MyTourStop mts : selectedList) {
+			list.add(mts.getPropertyAdr());
 		}
 		return list;
 
 	}
 
-	public List<TourListEntry> getSelected() {
+	public List<MyTourStop> getSelected() {
 		return selectedList;
 	}
 
@@ -91,15 +93,14 @@ public class MyTour {
 	public void setSequence(int[] order) {
 		this.sequence = order;
 		for (int i = 0; i < order.length; i++) {
-			TourListEntry tle = selectedList.get(i);
-			tle.setSequence(order[i] + 1);
-			tle.saveOrUpdate();
+			MyTourStop mts = selectedList.get(i);
+			mts.setSequence(order[i] + 1);
 		}
 	}
 
 	public void clearSequence() {
-		for (TourListEntry tle : selectedList) {
-			tle.setSequence(0);
+		for (MyTourStop mts : selectedList) {
+			mts.setSequence(0);
 		}
 	}
 
@@ -139,58 +140,6 @@ public class MyTour {
 		return file;
 	}
 
-	/*
-	 * TODO remove
-	 * 
-	 * public File getPdfFileUsingPDocument() {
-	 * 
-	 * PDDocument printDoc = new PDDocument(); PDPage page = new PDPage();
-	 * printDoc.addPage(page);
-	 * 
-	 * // Create a new font object selecting one of the PDF base fonts PDFont
-	 * font = PDType1Font.HELVETICA_BOLD;
-	 * 
-	 * // Start a new content stream which will "hold" the to be created //
-	 * content
-	 * 
-	 * File file = null; PDPageContentStream contentStream; try { contentStream
-	 * = new PDPageContentStream(printDoc, page); // Define a text content
-	 * stream using the selected font, moving the // cursor and drawing the text
-	 * "Hello World" contentStream.beginText(); contentStream.setFont(font, 16);
-	 * 
-	 * // Write the date String date = this.getTourDate().toString(); date +=
-	 * "\n"; contentStream.showText(date); contentStream.endText();
-	 * 
-	 * List<TourListEntry> tourList = this.getSelected();
-	 * 
-	 * int pageSize = 5; for (int i = 0; i < tourList.size(); i++) {
-	 * 
-	 * TourListEntry tle = tourList.get(i);
-	 * 
-	 * // if necessary create new page if ((i + 1) % pageSize == 0) {
-	 * 
-	 * page = new PDPage(); printDoc.addPage(page); contentStream = new
-	 * PDPageContentStream(printDoc, page); }
-	 * 
-	 * this.pdfTourListEntry(tle, contentStream);
-	 * 
-	 * }
-	 * 
-	 * // Make sure that the content stream is closed: contentStream.close();
-	 * 
-	 * // Save the results and ensure that the document is properly closed:
-	 * String filePath = System.getProperty("user.dir") + "\\temp\\";
-	 * SimpleDateFormat format = new
-	 * SimpleDateFormat("yyyy-mm-dd-hh-mm-ss.sss"); format.format(new Date());
-	 * String fileName = format.format(new Date()) + ".pdf"; file = new
-	 * File(filePath + fileName); printDoc.save(file); printDoc.close();
-	 * 
-	 * } catch (IOException e) { // TODO Auto-generated catch block
-	 * e.printStackTrace(); }
-	 * 
-	 * return file; }
-	 */
-
 	private void addPdfTourList(Document doc) {
 		addPageHeader(doc);
 		addTourList(doc);
@@ -214,8 +163,8 @@ public class MyTour {
 		int pageSize = 12;
 		for (int i = 0; i < tourList.size(); i++) {
 
-			TourListEntry tle = tourList.get(i);
-			addTourListEntry(tle, doc);
+			MyTourStop mts = tourList.get(i);
+			addMyTourStop(mts, doc);
 
 			// if necessary create new page
 			if ((i + 1) % pageSize == 0) {
@@ -233,29 +182,7 @@ public class MyTour {
 		doc.add(p);
 	}
 
-	private PdfFont getFont(String str) {
-
-		try {
-			switch (str) {
-			case "normal":
-				return PdfFontFactory.createFont(FontConstants.HELVETICA);
-			case "bold":
-				return PdfFontFactory.createFont(FontConstants.HELVETICA_BOLD);
-			case "oblique":
-				return PdfFontFactory.createFont(FontConstants.HELVETICA_OBLIQUE);
-			case "obliqueBold":
-				return PdfFontFactory.createFont(FontConstants.HELVETICA_BOLDOBLIQUE);
-			default:
-				return PdfFontFactory.createFont(FontConstants.HELVETICA);
-			}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return null;
-	}
-
-	private void addTourListEntry(TourListEntry tle, Document doc) {
+	private void addMyTourStop(MyTourStop mts, Document doc) {
 
 		// add table for holding a tour list entry
 		UnitValue[] unitArray = { new UnitValue(UnitValue.PERCENT, 12f), new UnitValue(UnitValue.PERCENT, 25f),
@@ -272,24 +199,24 @@ public class MyTour {
 
 		// Cell 1
 		cell = new Cell().setBold().setFontSize(11).setBorder(Border.NO_BORDER).setHeight(15);
-		cell.add(new Integer(tle.getSequence()).toString());
+		cell.add(new Integer(mts.getSequence()).toString());
 		table.addCell(cell);
 
 		// Cell 2-3
-		cell = new Cell(1, 2).setFont(getFont("bold")).setFontSize(11).setBorder(Border.NO_BORDER);
-		cell.add(tle.getStreet() + " @ " + tle.getCrossStreet());
+		cell = new Cell(1, 2).setBold().setFontSize(11).setBorder(Border.NO_BORDER);
+		cell.add(mts.getStreet() + " @ " + mts.getCrossStreet());
 		table.addCell(cell);
 
 		// Cell 4
-		cell = new Cell().setFont(getFont("bold")).setFontSize(11).setTextAlignment(TextAlignment.CENTER)
-				.setBorder(Border.NO_BORDER).setHeight(15);
-		cell.add(tle.getBedBath());
+		cell = new Cell().setBold().setFontSize(11).setTextAlignment(TextAlignment.CENTER).setBorder(Border.NO_BORDER)
+				.setHeight(15);
+		cell.add(mts.getBedBath());
 		table.addCell(cell);
 
 		// Cell 5
-		cell = new Cell().setFont(getFont("bold")).setFontSize(11).setTextAlignment(TextAlignment.RIGHT)
-				.setBorder(Border.NO_BORDER).setHeight(15);
-		cell.add(tle.getPrice());
+		cell = new Cell().setBold().setFontSize(11).setTextAlignment(TextAlignment.RIGHT).setBorder(Border.NO_BORDER)
+				.setHeight(15);
+		cell.add(mts.getPrice());
 		table.addCell(cell);
 
 		table.startNewRow();
@@ -298,35 +225,35 @@ public class MyTour {
 		table.startNewRow();
 
 		cell = new Cell().setBold().setFontSize(9).setBorder(Border.NO_BORDER).setHeight(13);
-		cell.add(tle.getCity());
+		cell.add(mts.getCity());
 		table.addCell(cell);
 
 		cell = new Cell(1, 4).setFontSize(9).setBorder(Border.NO_BORDER).setHeight(13);
-		cell.add(tle.getDescription());
+		cell.add(mts.getDescription());
 		table.addCell(cell);
 
 		// add third row of cells
 		table.startNewRow();
 
 		cell = new Cell().setFontSize(10).setBorder(Border.NO_BORDER).setBorderBottom(new SolidBorder(1)).setHeight(14);
-		cell.add(tle.getZip());
+		cell.add(mts.getZip());
 		table.addCell(cell);
 
 		cell = new Cell().setFontSize(10).setBorder(Border.NO_BORDER).setBorderBottom(new SolidBorder(1)).setHeight(14);
-		cell.add(tle.getAgent());
+		cell.add(mts.getAgent());
 		table.addCell(cell);
 
 		cell = new Cell().setFontSize(10).setBorder(Border.NO_BORDER).setBorderBottom(new SolidBorder(1)).setHeight(14);
-		cell.add(tle.getOffice());
+		cell.add(mts.getOffice());
 		table.addCell(cell);
 
 		cell = new Cell().setFontSize(10).setBorder(Border.NO_BORDER).setBorderBottom(new SolidBorder(1)).setHeight(14);
-		cell.add(tle.getPhone());
+		cell.add(mts.getPhone());
 		table.addCell(cell);
 
 		cell = new Cell().setFontSize(10).setBorder(Border.NO_BORDER).setBorderBottom(new SolidBorder(1))
 				.setTextAlignment(TextAlignment.RIGHT).setHeight(14);
-		cell.add("MLS# " + tle.getMlsNo());
+		cell.add("MLS# " + mts.getMlsNo());
 		table.addCell(cell);
 
 		doc.add(table);
