@@ -191,7 +191,7 @@ public class TourListTab {
 				// TODO tourListView.setItems(myTour.getTourList());
 				addMarkersForTour(myTour);
 
-				Button printTour = new ShowPdfButton(myTour.getPdfFile());
+				Button printTour = new ShowPdfButton(myTour);
 				tourDisplayControl.addComponent(printTour);
 				printTour.setWidth(100, Unit.PERCENTAGE);
 			}

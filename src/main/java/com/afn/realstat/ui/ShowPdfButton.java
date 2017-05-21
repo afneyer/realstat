@@ -14,7 +14,7 @@ public class ShowPdfButton extends Button {
 
 	private PDDocument pdfDoc;
 
-	ShowPdfButton(File file) {
+	ShowPdfButton(PdfFileGetter pdfFileGetter) {
 		
 		Button printButton = this;
 
@@ -24,7 +24,9 @@ public class ShowPdfButton extends Button {
 			@Override
 			public void buttonClick(ClickEvent event) {
 
-				StreamSource source = new PdfSource(file);
+				File file = pdfFileGetter.getPdfFile();
+				
+				PdfSource source = new PdfSource(file);
 
 				// Create the stream resource and give it a file name
 				String filePath = file.getAbsolutePath();
@@ -49,7 +51,7 @@ public class ShowPdfButton extends Button {
 
 	}
 
-	public interface PdfDocumentGetter {
-		public PDDocument getPdf();
+	public interface PdfFileGetter {
+		public File getPdfFile();
 	}
 };

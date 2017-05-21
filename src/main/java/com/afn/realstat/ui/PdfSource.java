@@ -16,6 +16,7 @@ public class PdfSource implements StreamSource {
 		this.pdfFile = pdfFile;
 	}
 
+	// TODO factor out
 	@Override
 	public InputStream getStream() {
 		

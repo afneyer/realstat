@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.afn.realstat.ui.ShowPdfButton.PdfFileGetter;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.Document;
@@ -20,7 +21,7 @@ import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.TextAlignment;
 import com.itextpdf.layout.property.UnitValue;
 
-public class MyTour {
+public class MyTour implements PdfFileGetter {
 
 	private Date tourDate;
 	private ArrayList<MyTourStop> tourList;
