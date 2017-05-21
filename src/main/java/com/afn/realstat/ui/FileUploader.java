@@ -64,7 +64,7 @@ public class FileUploader implements Receiver, SucceededListener {
 		}
 		afterUploadSucceeded.afterUploadSucceeded(this);
 	}
-	
+
 	public File getFile() {
 		return file;
 	}

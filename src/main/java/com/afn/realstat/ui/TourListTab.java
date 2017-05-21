@@ -94,16 +94,18 @@ public class TourListTab {
 
 		});
 		tourDisplayControl.addComponent(routeTour);
-
+		
 		@SuppressWarnings("serial")
-		Button tourFile = new Button("Import tour pdf-file", new Button.ClickListener() {
+		Button tourFile = new Button("Import", new Button.ClickListener() {
 			@Override
 			public void buttonClick(ClickEvent event) {
 				selectAndShowPropertiesForTour();
 			}
 		});
 		tourDisplayControl.addComponent(tourFile);
-		tourFile.setWidth(100, Unit.PERCENTAGE);
+		// tourFile.setWidth(100, Unit.PERCENTAGE);
+		tourFile.setDescription("testDescription");
+		
 
 		// initialize tourList view
 		tourListView = new Grid<MyTourStop>();
@@ -111,6 +113,7 @@ public class TourListTab {
 		Grid.Column<MyTourStop, String> propInfo = tourListView.addColumn(MyTourStop::htmlString, new HtmlRenderer());
 		tourListView.addColumn(MyTourStop::getStringSeq);
 		propInfo.setWidth(400.0);
+		
 
 		tourListView.setSelectionMode(SelectionMode.MULTI);
 		tourListView.setSizeFull();

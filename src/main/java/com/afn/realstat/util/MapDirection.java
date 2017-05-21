@@ -53,26 +53,30 @@ public class MapDirection {
 		LatLng endPoint = end.getLatLng();
 
 		int wpSize = route.size();
-		LatLng[] wayPoints = new LatLng[wpSize];
+		ArrayList<LatLng> wayPoints = new ArrayList<LatLng>();
+		LatLng wayPoint;
 		for (int i = 0; i < wpSize; i++) {
-			wayPoints[i] = route.get(i).getLatLng();
+			wayPoint = route.get(i).getLatLng();
+			if (wayPoint != null) {
+				wayPoints.add(wayPoint);
+			} 
 		}
 
+		LatLng[] wayPnts = wayPoints.toArray(new LatLng[wayPoints.size()]);
 		DirectionsApiRequest request = null;
-		if (routeStart.isAfter(new Instant())) {
+		if (routeStart.isAfter(new Instant())) { 
 			request = DirectionsApi.newRequest(mapApi.getContext()).origin(startPoint).destination(endPoint)
-					.departureTime(routeStart).optimizeWaypoints(true).waypoints(wayPoints);
+					.departureTime(routeStart).optimizeWaypoints(true).waypoints(wayPnts);
 		} else {
+			// verify that directions API exists otherwise throw exception
 			request = DirectionsApi.newRequest(mapApi.getContext()).origin(startPoint).destination(endPoint)
-					.optimizeWaypoints(true).waypoints(wayPoints);
+					.optimizeWaypoints(true).waypoints(wayPnts);
 		}
 		DirectionsResult result = null;
 		try {
 			result = request.await();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			throw new RuntimeException(e);
+		} catch (Exception e) {		
+			throw new RuntimeException("Error in Google Directions API-Request",e);
 		}
 
 		DirectionsRoute[] directionsRouteList = result.routes;

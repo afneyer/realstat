@@ -115,6 +115,19 @@ public class MyTour implements PdfFileGetter {
 
 			// Save the results and ensure that the document is properly closed:
 			String filePath = System.getProperty("user.dir") + "\\temp\\";
+			
+			// Create new temp directory
+			// TODO move into AppFiles
+			File dir = new File(filePath);
+			if ( !dir.exists() ) {
+				dir.mkdir();
+			} else {
+				if ( ! dir.isDirectory() ) {
+					dir.mkdir();
+				}
+			}
+			
+			
 			SimpleDateFormat format = new SimpleDateFormat("yyyy-mm-dd-hh-mm-ss.sss");
 			format.format(new Date());
 			String fileName = format.format(new Date()) + ".pdf";
