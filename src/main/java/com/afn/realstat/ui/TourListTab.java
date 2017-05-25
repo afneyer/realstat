@@ -47,7 +47,7 @@ public class TourListTab {
 	private HorizontalLayout tourDisplayControl;
 
 	private Button routeTourButton = null;
-	private ShowPdfButton printTour = null;
+	private ShowPdfButton printTourButton = null;
 
 	private GoogleMapPolyline tourPolyLine = null;
 
@@ -74,8 +74,8 @@ public class TourListTab {
 		routeTourButton = getRouteTourButton();
 		tourDisplayControl.addComponent(routeTourButton);
 
-		printTour = getPrintPdfButton();
-		tourDisplayControl.addComponent(printTour);
+		printTourButton = getPrintPdfButton();
+		tourDisplayControl.addComponent(printTourButton);
 
 		@SuppressWarnings("serial")
 		Button tourFile = new Button("Import", new Button.ClickListener() {
@@ -171,8 +171,9 @@ public class TourListTab {
 				tourListView.setDataProvider(dataProvider);
 				addMarkersForTour(myTour);
 
-				printTour.setPdfFileGetter(myTour::getPdfFile);
-				printTour.setEnabled(true);
+				printTourButton.setPdfFileGetter(myTour::getPdfFile);
+				printTourButton.setEnabled(true);
+				routeTourButton.setEnabled(true);
 
 			}
 		});
@@ -180,7 +181,7 @@ public class TourListTab {
 	}
 
 	private Button getRouteTourButton() {
-		Button routeTour = new Button("Sequence Tour", (ClickListener) event -> {
+		Button routeTour = new Button("Route", (ClickListener) event -> {
 			if (tourPolyLine != null) {
 				map.removePolyline(tourPolyLine);
 				myTour.clearSequence();
@@ -197,9 +198,10 @@ public class TourListTab {
 			tourListView.getDataProvider().refreshAll();
 			tourPolyLine = GeoLocation.convert(polyline);
 			map.addPolyline(tourPolyLine);
-
 		});
 
+		routeTour.setDescription("Click to route tour");
+		routeTour.setEnabled(false);
 		return routeTour;
 	}
 
