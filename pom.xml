@@ -201,6 +201,13 @@
 			<artifactId>layout</artifactId>
 			<version>7.0.2</version>
 		</dependency>
+		
+		<dependency>
+			<groupId>org.vaadin.addon</groupId>
+			<artifactId>enhanced-window-opener</artifactId>
+			<version>0.2</version>
+		</dependency>
+
 
 	</dependencies>
 

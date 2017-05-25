@@ -1,8 +1,12 @@
 package com.afn.realstat.ui;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
+import org.vaadin.addon.ewopener.EnhancedBrowserWindowOpener;
 
 import com.vaadin.server.BrowserWindowOpener;
 import com.vaadin.server.StreamResource;
@@ -10,26 +14,26 @@ import com.vaadin.server.StreamResource.StreamSource;
 import com.vaadin.ui.Button;
 
 @SuppressWarnings("serial")
-public class ShowPdfButton extends Button {
-
-	private PDDocument pdfDoc;
-
-	ShowPdfButton(PdfFileGetter pdfFileGetter) {
+public class ShowPdfButton extends Button  {
+	
+	private Button printButton;
+	private PdfFileGetter pdfFileGetter;
+/*
+	ShowPdfButton(String caption) {
+		setCaption(caption);
+		printButton = this;
 		
-		Button printButton = this;
-
-		setCaption("Show File");
-
 		this.addClickListener(new ClickListener() {
 			@Override
 			public void buttonClick(ClickEvent event) {
 
 				File file = pdfFileGetter.getPdfFile();
 				
-				PdfSource source = new PdfSource(file);
-
 				// Create the stream resource and give it a file name
-				String filePath = file.getAbsolutePath();
+				// set the path to write the temporary pdf to
+				String filePath = System.getProperty("user.dir") + "\\Downloads\\";
+				
+				PdfSource source = new PdfSource(file);
 				StreamResource resource = new StreamResource(source, filePath);
 
 				// These settings are not usually necessary. MIME type
@@ -43,12 +47,40 @@ public class ShowPdfButton extends Button {
 				// for the PDF resource
 				BrowserWindowOpener opener = new BrowserWindowOpener(resource);
 				opener.extend(printButton);
+				// printButton.markAsDirty();
 
 				// Save the results and ensure that the document is properly
 				// closed:
 			}
 		});
 
+	}
+	*/
+	
+	ShowPdfButton() {
+		printButton = this;
+		new EnhancedBrowserWindowOpener()
+	    .clientSide(true)
+	    .withGeneratedContent("myFileName.pdf", this::getStreamSource)
+	    .doExtend(this);
+	}
+
+	public InputStream getStreamSource() {
+		File file = pdfFileGetter.getPdfFile();
+		
+		// Create the stream resource and give it a file name
+		// set the path to write the temporary pdf to
+		String filePath = System.getProperty("user.dir") + "\\Downloads\\";
+		
+		PdfSource src = new PdfSource(file);
+		
+		return src.getStream();
+	}
+	
+	
+	
+	public void setPdfFileGetter( PdfFileGetter pdfFileGetter ) {
+		this.pdfFileGetter = pdfFileGetter;
 	}
 
 	public interface PdfFileGetter {

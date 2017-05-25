@@ -26,4 +26,6 @@
     <inherits name="com.vaadin.tapio.googlemaps.Widgetset" />
 
     <inherits name="com.vaadin.DefaultWidgetSet" />
+
+    <inherits name="org.vaadin.addon.ewopener.WidgetSet" />
 </module>

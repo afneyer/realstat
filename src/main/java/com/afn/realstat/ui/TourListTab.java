@@ -13,12 +13,12 @@ import com.afn.realstat.MyTour;
 import com.afn.realstat.MyTourStop;
 import com.afn.realstat.TourListEntry;
 import com.afn.realstat.TourListRepository;
+import com.afn.realstat.ui.FileUploader.AfterUploadSucceeded;
 import com.afn.realstat.util.GeoLocation;
 import com.afn.realstat.util.MapDirection;
 import com.google.maps.model.EncodedPolyline;
 import com.vaadin.data.provider.DataProvider;
 import com.vaadin.data.provider.ListDataProvider;
-import com.vaadin.server.Sizeable.Unit;
 import com.vaadin.shared.data.sort.SortDirection;
 import com.vaadin.tapio.googlemaps.client.LatLon;
 import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapPolyline;
@@ -30,7 +30,6 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.Grid.SelectionMode;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Upload;
 import com.vaadin.ui.VerticalLayout;
@@ -46,20 +45,18 @@ public class TourListTab {
 	private AfnGoogleMap map;
 	private Component tourListSelector;
 	private HorizontalLayout tourDisplayControl;
-	// private AddressRepository adrRepo;
+
+	private Button routeTourButton = null;
+	private ShowPdfButton printTour = null;
+
 	private GoogleMapPolyline tourPolyLine = null;
 
 	public TourListTab() {
-
-		// this.adrRepo = Address.getRepo();
 
 		// initialize tourPage
 		tourPage = new HorizontalLayout();
 		tourPage.setMargin(false);
 		tourPage.setSizeFull();
-
-		// HorizontalLayout tourControls = new HorizontalLayout();
-		// tourControls.setMargin(false);
 
 		VerticalLayout tourDisplay = new VerticalLayout();
 		tourDisplay.setSizeFull();
@@ -74,27 +71,12 @@ public class TourListTab {
 		tourListSelector = getTourSelector();
 		tourDisplayControl.addComponent(tourListSelector);
 
-		Button routeTour = new Button("Sequence Tour", (ClickListener) event -> {
-			if (tourPolyLine != null) {
-				map.removePolyline(tourPolyLine);
-				myTour.clearSequence();
-			}
-			Address start = new Address("4395 Piedmont Ave. #309", "Oakland", "94611");
-			Address end = start;
+		routeTourButton = getRouteTourButton();
+		tourDisplayControl.addComponent(routeTourButton);
 
-			// move this into myTour;
-			List<Address> routeList = myTour.getSelectedAddresses();
-			MapDirection dir = new MapDirection(start, end, routeList);
-			EncodedPolyline polyline = dir.route(myTour.getTourDate());
-			int seq[] = dir.getWaypointSequence();
-			myTour.setSequence(seq);
-			tourListView.getDataProvider().refreshAll();
-			tourPolyLine = GeoLocation.convert(polyline);
-			map.addPolyline(tourPolyLine);
+		printTour = getPrintPdfButton();
+		tourDisplayControl.addComponent(printTour);
 
-		});
-		tourDisplayControl.addComponent(routeTour);
-		
 		@SuppressWarnings("serial")
 		Button tourFile = new Button("Import", new Button.ClickListener() {
 			@Override
@@ -105,7 +87,6 @@ public class TourListTab {
 		tourDisplayControl.addComponent(tourFile);
 		// tourFile.setWidth(100, Unit.PERCENTAGE);
 		tourFile.setDescription("testDescription");
-		
 
 		// initialize tourList view
 		tourListView = new Grid<MyTourStop>();
@@ -113,7 +94,6 @@ public class TourListTab {
 		Grid.Column<MyTourStop, String> propInfo = tourListView.addColumn(MyTourStop::htmlString, new HtmlRenderer());
 		tourListView.addColumn(MyTourStop::getStringSeq);
 		propInfo.setWidth(400.0);
-		
 
 		tourListView.setSelectionMode(SelectionMode.MULTI);
 		tourListView.setSizeFull();
@@ -167,15 +147,13 @@ public class TourListTab {
 		ComboBox<Date> select = new ComboBox<>("Select Date");
 		select.setItems(tlDates);
 
-		// ListSelect<Date> select = new ListSelect<Date>("Select tour date");
-
 		select.setItemCaptionGenerator(d -> {
 			SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
 			String ds = df.format(d);
 			return ds;
 		});
 
-		// Add some items
+		// Add the dates
 		select.setItems(tlDates);
 
 		// Show 6 items and a scroll-bar if there are more
@@ -191,16 +169,47 @@ public class TourListTab {
 				dataProvider.setSortOrder(MyTourStop::getPrice, SortDirection.ASCENDING);
 
 				tourListView.setDataProvider(dataProvider);
-				// TODO tourListView.setItems(myTour.getTourList());
 				addMarkersForTour(myTour);
 
-				Button printTour = new ShowPdfButton(myTour);
-				tourDisplayControl.addComponent(printTour);
-				printTour.setWidth(100, Unit.PERCENTAGE);
+				printTour.setPdfFileGetter(myTour::getPdfFile);
+				printTour.setEnabled(true);
+
 			}
 		});
 		return select;
 	}
+
+	private Button getRouteTourButton() {
+		Button routeTour = new Button("Sequence Tour", (ClickListener) event -> {
+			if (tourPolyLine != null) {
+				map.removePolyline(tourPolyLine);
+				myTour.clearSequence();
+			}
+			Address start = new Address("4395 Piedmont Ave. #309", "Oakland", "94611");
+			Address end = start;
+
+			// move this into myTour;
+			List<Address> routeList = myTour.getSelectedAddresses();
+			MapDirection dir = new MapDirection(start, end, routeList);
+			EncodedPolyline polyline = dir.route(myTour.getTourDate());
+			int seq[] = dir.getWaypointSequence();
+			myTour.setSequence(seq);
+			tourListView.getDataProvider().refreshAll();
+			tourPolyLine = GeoLocation.convert(polyline);
+			map.addPolyline(tourPolyLine);
+
+		});
+
+		return routeTour;
+	}
+
+	private ShowPdfButton getPrintPdfButton() {
+		ShowPdfButton showPdf = new ShowPdfButton();
+		showPdf.setCaption("Print");
+		showPdf.setDescription("Click to print the selected tour");
+		showPdf.setEnabled(false);
+		return showPdf;
+	};
 
 	private void addMarkersForTour(MyTour myTour) {
 
@@ -229,12 +238,12 @@ public class TourListTab {
 	protected void selectAndShowPropertiesForTour() {
 
 		// create a window to upload a pdf-file
-		Window popUp = new Window("Sub-window");
+		Window popUp = new Window("Import AdReview");
 		VerticalLayout subContent = new VerticalLayout();
 		popUp.setContent(subContent);
 
 		// Put some components in it
-		subContent.addComponent(new Label("Tour Upload and Date Selection"));
+		// subContent.addComponent(new Label("Tour Upload and Date Selection"));
 
 		FileUploader receiver = new FileUploader();
 		receiver.setAfterUploadSucceeded(new AfterUploadSucceeded() {
@@ -242,7 +251,10 @@ public class TourListTab {
 			public void afterUploadSucceeded(FileUploader fileUploader) {
 				AdReviewTourList adReview = new AdReviewTourList(fileUploader.getFile());
 				adReview.createTourList();
-				System.out.println("TourList Done");
+				Notification.show("Upload Complete",
+						"AdReview has been uploaded, please select the date for your tour.",
+						Notification.Type.HUMANIZED_MESSAGE);
+				popUp.close();
 			}
 		}
 

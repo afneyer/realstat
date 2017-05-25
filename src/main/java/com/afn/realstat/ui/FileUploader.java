@@ -46,7 +46,7 @@ public class FileUploader implements Receiver, SucceededListener {
 			file = new File(filePath + filename);
 			fos = new FileOutputStream(file);		
 		} catch (final java.io.FileNotFoundException e) {
-			new Notification("Could not open file<br/>", e.getMessage(), Notification.Type.ERROR_MESSAGE)
+			new Notification("Could not open file" + file.getName(), e.getMessage(), Notification.Type.ERROR_MESSAGE)
 					.show(Page.getCurrent());
 			return null;
 		}
@@ -67,5 +67,11 @@ public class FileUploader implements Receiver, SucceededListener {
 
 	public File getFile() {
 		return file;
+	}
+	
+	public interface AfterUploadSucceeded {
+		
+		public void afterUploadSucceeded(FileUploader fileUploader);
+
 	}
 };
