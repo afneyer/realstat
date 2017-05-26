@@ -3,6 +3,9 @@ package com.afn.realstat;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -85,6 +88,12 @@ public class MyTour implements PdfFileGetter {
 
 	public List<MyTourStop> getSelected() {
 		return selectedList;
+	}
+	
+	public List<MyTourStop> getRouted() {
+		ArrayList<MyTourStop> routedList = new ArrayList<MyTourStop>(selectedList);
+ 		Collections.sort(routedList);
+		return routedList;
 	}
 
 	public int[] getSequence() {
@@ -175,9 +184,10 @@ public class MyTour implements PdfFileGetter {
 
 		// review this code for breaks
 		int pageSize = 12;
-		for (int i = 0; i < selectedList.size(); i++) {
+		List<MyTourStop> routedList = getRouted();
+		for (int i = 0; i < routedList.size(); i++) {
 
-			MyTourStop mts = selectedList.get(i);
+			MyTourStop mts = routedList.get(i);
 			addMyTourStop(mts, doc);
 
 			// if necessary create new page

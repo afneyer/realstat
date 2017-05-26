@@ -9,7 +9,7 @@ import org.springframework.data.geo.Point;
 
 import com.afn.realstat.framework.SpringApplicationContext;
 
-public class MyTourStop {
+public class MyTourStop implements Comparable<MyTourStop> {
 
 	public static final Logger log = LoggerFactory.getLogger("app");
 	public static final Class<MyTourStop> classType = MyTourStop.class;
@@ -206,6 +206,11 @@ public class MyTourStop {
 		// Compare the data members and return accordingly
 		boolean equals = this.tour.equals(c.tour) && this.tle.equals(c.tle);
 		return equals;
+	}
+
+	@Override
+	public int compareTo(MyTourStop mts) {
+		return (this.sequence - mts.sequence);
 	}
 
 }

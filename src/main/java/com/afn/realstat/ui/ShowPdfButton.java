@@ -16,49 +16,10 @@ import com.vaadin.ui.Button;
 @SuppressWarnings("serial")
 public class ShowPdfButton extends Button  {
 	
-	private Button printButton;
 	private PdfFileGetter pdfFileGetter;
-/*
-	ShowPdfButton(String caption) {
-		setCaption(caption);
-		printButton = this;
-		
-		this.addClickListener(new ClickListener() {
-			@Override
-			public void buttonClick(ClickEvent event) {
 
-				File file = pdfFileGetter.getPdfFile();
-				
-				// Create the stream resource and give it a file name
-				// set the path to write the temporary pdf to
-				String filePath = System.getProperty("user.dir") + "\\Downloads\\";
-				
-				PdfSource source = new PdfSource(file);
-				StreamResource resource = new StreamResource(source, filePath);
-
-				// These settings are not usually necessary. MIME type
-				// is detected automatically from the file name, but
-				// setting it explicitly may be necessary if the file
-				// suffix is not ".pdf".
-				resource.setMIMEType("application/pdf");
-				resource.getStream().setParameter("Content-Disposition", "attachment; filename=" + filePath);
-
-				// Extend the print button with an opener
-				// for the PDF resource
-				BrowserWindowOpener opener = new BrowserWindowOpener(resource);
-				opener.extend(printButton);
-				// printButton.markAsDirty();
-
-				// Save the results and ensure that the document is properly
-				// closed:
-			}
-		});
-
-	}
-	*/
 	
 	ShowPdfButton() {
-		printButton = this;
 		new EnhancedBrowserWindowOpener()
 	    .clientSide(true)
 	    .withGeneratedContent("myFileName.pdf", this::getStreamSource)
@@ -70,7 +31,7 @@ public class ShowPdfButton extends Button  {
 		
 		// Create the stream resource and give it a file name
 		// set the path to write the temporary pdf to
-		String filePath = System.getProperty("user.dir") + "\\Downloads\\";
+		// String filePath = System.getProperty("user.dir") + "\\Downloads\\";
 		
 		PdfSource src = new PdfSource(file);
 		
