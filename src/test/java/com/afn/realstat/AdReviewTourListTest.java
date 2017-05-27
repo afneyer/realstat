@@ -38,7 +38,7 @@ public class AdReviewTourListTest {
 	TourListRepository tlRepo;
 
 	private AdReviewTourList adReviewList = null;
-	private final String testDataDir = "C:\\afndev\\apps\\realstat\\testdata";
+	private final String testDataDir = AppFiles.getTestDataDir();
 
 	@Before
 	public void initialize() {
@@ -155,7 +155,7 @@ public class AdReviewTourListTest {
 	@Test
 	public void importTourPdfs() {
 
-		File dir = new File("C:\\afndev\\apps\\realstat\\logs\\uploads");
+		File dir = new File(AppFiles.getUploadDir());
 		File[] directoryListing = dir.listFiles();
 		if (directoryListing != null) {
 			for (File file : directoryListing) {

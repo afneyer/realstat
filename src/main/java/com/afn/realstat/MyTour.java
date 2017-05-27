@@ -3,9 +3,7 @@ package com.afn.realstat;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -123,18 +121,11 @@ public class MyTour implements PdfFileGetter {
 		try {
 
 			// Save the results and ensure that the document is properly closed:
-			String filePath = System.getProperty("user.dir") + "\\temp\\";
+			String filePath = AppFiles.getTempDir();
 			
 			// Create new temp directory
 			// TODO move into AppFiles
-			File dir = new File(filePath);
-			if ( !dir.exists() ) {
-				dir.mkdir();
-			} else {
-				if ( ! dir.isDirectory() ) {
-					dir.mkdir();
-				}
-			}
+			
 			
 			
 			SimpleDateFormat format = new SimpleDateFormat("yyyy-mm-dd-hh-mm-ss.sss");

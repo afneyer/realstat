@@ -12,7 +12,6 @@ import org.springframework.data.geo.Point;
 
 import com.afn.realstat.Address;
 import com.afn.realstat.AddressManager;
-import com.afn.realstat.AddressRepository;
 import com.afn.realstat.Agent;
 import com.afn.realstat.AgentRepository;
 import com.afn.realstat.MyTour;

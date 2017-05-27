@@ -11,6 +11,7 @@ import com.afn.realstat.TourListEntry;
 import com.google.maps.model.EncodedPolyline;
 import com.google.maps.model.LatLng;
 import com.vaadin.tapio.googlemaps.GoogleMap;
+import com.vaadin.tapio.googlemaps.client.GoogleMapState;
 import com.vaadin.tapio.googlemaps.client.LatLon;
 import com.vaadin.tapio.googlemaps.client.events.MapClickListener;
 import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapMarker;
@@ -35,6 +36,11 @@ public class AfnGoogleMap extends GoogleMap {
 		this(null, null, null);
 	}
 
+	@Override
+	public AfnGoogleMapState getState() {
+		return (AfnGoogleMapState) super.getState();
+	}
+	
 	public List<TourMarker> getTourMarkers() {
 		List<TourMarker> markerList = new ArrayList<TourMarker>();
 
@@ -73,7 +79,7 @@ public class AfnGoogleMap extends GoogleMap {
 	 * automatically or has a function to force a refresh.
 	 * 
 	 */
-	protected void refresh() {
+	protected void refreshOld() {
 
 		// if there is a dummy Marker, remove it
 		if (dummyMarker!=null) {
@@ -92,6 +98,14 @@ public class AfnGoogleMap extends GoogleMap {
 			addMarker(dummyMarker);
 		}
 		
+	}
+
+	protected void refresh() {
+		long rfrCnt = getState().refreshCount;
+		if (rfrCnt >= Long.MAX_VALUE) {
+			rfrCnt = 0;
+		}
+		this.getState().refreshCount++;
 	}
 
 	/**

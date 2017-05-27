@@ -21,7 +21,7 @@ public class AgentImporterTest {
 
 	@Test
 	public void testImportFile() {
-		File file = new File("C:\\afndev\\apps\\realstat\\testdata","MLSAllAgentList20.txt");
+		File file = new File(AppFiles.getTestDataDir(),"MLSAllAgentList20.txt");
 		importer.importFile(file);
 	}
 }

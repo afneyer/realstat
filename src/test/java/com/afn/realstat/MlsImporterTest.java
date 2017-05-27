@@ -20,7 +20,7 @@ public class MlsImporterTest {
 
 	@Test
 	public void testImportFile() {
-		File file = new File("C:\\afndev\\apps\\realstat\\testdata","MLSTransactionExportTest20.csv");
+		File file = new File(AppFiles.getTestDataDir(),"MLSTransactionExportTest20.csv");
 
 		importer.importFile(file);
 	}

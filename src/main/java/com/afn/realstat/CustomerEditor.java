@@ -23,7 +23,7 @@ import com.vaadin.ui.themes.ValoTheme;
  */
 @SpringComponent
 @UIScope
-@SuppressWarnings("serial")
+@SuppressWarnings({ "serial", "deprecation" })
 public class CustomerEditor extends VerticalLayout {
 
 	private final CustomerRepository repository;

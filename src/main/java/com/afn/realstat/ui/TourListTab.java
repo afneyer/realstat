@@ -148,16 +148,13 @@ public class TourListTab {
 		select.setItems(tlDates);
 
 		select.setItemCaptionGenerator(d -> {
-			SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
+			SimpleDateFormat df = new SimpleDateFormat("MMM dd, yyyy");
 			String ds = df.format(d);
 			return ds;
 		});
 
 		// Add the dates
 		select.setItems(tlDates);
-
-		// Show 6 items and a scroll-bar if there are more
-		// select.setRows(6);
 
 		select.addSelectionListener(event -> {
 			Date date = event.getValue();

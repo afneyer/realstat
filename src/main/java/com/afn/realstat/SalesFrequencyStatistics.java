@@ -33,7 +33,7 @@ public class SalesFrequencyStatistics {
 	@Autowired
 	DataSource afnDataSource;
 
-	private static String filePath = System.getProperty("user.dir") + "\\logs\\analytics";
+	private static String filePath = AppFiles.getReportsDir();
 
 	public SalesFrequencyStatistics() {
 	}

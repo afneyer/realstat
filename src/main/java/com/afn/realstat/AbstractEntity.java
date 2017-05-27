@@ -4,12 +4,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 
-import org.aspectj.weaver.patterns.ThisOrTargetAnnotationPointcut;
-import org.springframework.data.annotation.AccessType;
-import org.springframework.data.annotation.AccessType.Type;
 import org.springframework.data.domain.Example;
-
-import com.afn.realstat.framework.SpringApplicationContext;
 
 @MappedSuperclass
 public abstract class AbstractEntity {
@@ -51,7 +46,6 @@ public abstract class AbstractEntity {
         return ae.getId().equals(this.getId());
 	}
 
-	// TODO fix
 	@SuppressWarnings("rawtypes")
 	public abstract Example getRefExample();
 

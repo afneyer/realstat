@@ -26,7 +26,7 @@ public class PdfBoxTests {
 	@Test
 	public void testPDFTestStripper() {
 
-		File file = new File("C:\\afndev\\apps\\realstat\\testdata", "17-03-25_Tour.pdf");
+		File file = new File(AppFiles.getTestDataDir(), "17-03-25_Tour.pdf");
 
 		String text = getText(file);
 		System.out.print(text);

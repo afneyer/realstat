@@ -30,9 +30,9 @@ public class CsvFileWriterTest {
 	@Autowired
 	DataSource dataSource;
 	
-	private static String filePath = System.getProperty("user.dir") + "\\logs\\testoutput";
+	private static String testOutputDir = AppFiles.getTestOutputDir();
 
-	/**
+	/*
 	 * Sets up the test fixture. (Called before every test case method.)
 	 */
 	@Before
@@ -45,7 +45,7 @@ public class CsvFileWriterTest {
 	public void testFileWriter() {
 
 		String fileName = "testFileWriter.txt";
-		File file = new File(filePath,fileName);
+		File file = new File(testOutputDir,fileName);
 		System.out.println(file.getAbsolutePath() + file.getName());
 		String[] header = {"FirstName", "LastName", "City", "Zip"};
 		String targetHead = "FirstName,LastName,City,Zip";
@@ -92,7 +92,7 @@ public class CsvFileWriterTest {
 	@Test
 	public void testFileWriterQueryResult() {
 		
-		String fileName = "C:\\afndev\\apps\\realstat\\logs\\testoutput\\testFileWriterQueryResult.txt";
+		String fileName = testOutputDir + "\\testFileWriterQueryResult.txt";
 		File file = new File(fileName);
 		
 		cRepo.save(new Customer("Andreas", "Neyer"));

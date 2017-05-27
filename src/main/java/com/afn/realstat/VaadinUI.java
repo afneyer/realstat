@@ -21,8 +21,6 @@ import com.vaadin.ui.VerticalLayout;
 @Widgetset("AppWidgetset")
 public class VaadinUI extends UI {
 
-	private final CustomerRepository repo;
-
 	private final CustomerEditor editor;
 
 	final Grid grid;
@@ -33,7 +31,6 @@ public class VaadinUI extends UI {
 
 	@Autowired
 	public VaadinUI(CustomerRepository repo, CustomerEditor editor) {
-		this.repo = repo;
 		this.editor = editor;
 		this.grid = new Grid();
 		this.filter = new TextField();

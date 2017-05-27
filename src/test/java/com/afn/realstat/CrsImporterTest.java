@@ -34,7 +34,7 @@ public class CrsImporterTest {
 
 	@Test
 	public void testImportFile() {
-		File file = new File("C:\\afndev\\apps\\realstat\\testdata","CRSPropertyExportTest20.csv");
+		File file = new File(AppFiles.getDataDir(),"CRSPropertyExportTest20.csv");
 
 		importer.importFile(file);
 	}

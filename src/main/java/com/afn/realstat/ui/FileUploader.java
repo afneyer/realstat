@@ -13,6 +13,7 @@ import java.sql.SQLException;
 import org.atmosphere.interceptor.AtmosphereResourceStateRecovery.B;
 
 import com.afn.realstat.AddressRepository;
+import com.afn.realstat.AppFiles;
 import com.afn.realstat.Artifact;
 import com.afn.realstat.ArtifactRepository;
 import com.afn.realstat.TourListRepository;
@@ -31,7 +32,7 @@ public class FileUploader implements Receiver, SucceededListener {
 	private FileOutputStream fos;
 	private AfterUploadSucceeded afterUploadSucceeded;
 	
-	private static String filePath = System.getProperty("user.dir") + "\\logs\\uploads\\";
+	private static String filePath = AppFiles.getUploadDir();
 
 	public FileUploader() {
 	}

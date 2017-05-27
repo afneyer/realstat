@@ -24,8 +24,6 @@ public class DataConsistencyTests {
 
 	private static final Logger log = LoggerFactory.getLogger("app");
 
-	// private static final String defaultFilePath = "C:\\afndev\\apps\\realstat\\logs\\testoutput\\";
-
 	@Autowired
 	private RealPropertyRepository rpRepo;
 
@@ -61,7 +59,7 @@ public class DataConsistencyTests {
 	public void checkMlsImportCompleteness() {
 
 		int records = 0;
-		File dir = new File("C:\\afndev\\apps\\realstat\\data");
+		File dir = new File(AppFiles.getDataDir());
 		File[] directoryListing = dir.listFiles();
 		if (directoryListing != null) {
 			for (File file : directoryListing) {

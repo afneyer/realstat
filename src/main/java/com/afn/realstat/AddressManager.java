@@ -67,22 +67,10 @@ public class AddressManager extends AbstractEntityManager<Address> {
 
 	public void removeAllDuplicates() {
 
-		/*
-		 * Function<Address, Boolean> removeDups = adr -> { return
-		 * this.removeDuplicates(adr); };
-		 * 
-		 */
-		// QAddress qAdr = QAddress.address;
-		// BooleanExpression predicate =
-		// qAdr.zip.eq("94610").and(qAdr.city.eq("PIEDMONT"))
-		// .and(qAdr.streetName.startsWith("INDIAN"));
-
 		Iterable<Address> adrList = adrRepo.findAll();
 		for (Address adr : adrList) {
 			removeDuplicates(adr);
 		}
-
-		// performActionOnEntities(removeDups, predicate);
 	}
 
 	@Transactional

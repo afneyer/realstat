@@ -34,7 +34,7 @@ public class RealStatUtilTest {
 	@Test
 	public void testCountLines() {
 		
-		String fileName = new String("C:\\afndev\\apps\\realstat\\data\\MLSExport - 94610_0-1000.csv");
+		String fileName = AppFiles.getDataDir() + "\\MLSExport - 94610_0-1000.csv";
 		int lines = RealStatUtil.countLines(fileName);
 		assertEquals(3087, lines);
 	}

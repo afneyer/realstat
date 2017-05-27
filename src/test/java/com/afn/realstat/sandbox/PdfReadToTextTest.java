@@ -24,6 +24,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.afn.realstat.Address;
+import com.afn.realstat.AppFiles;
 import com.afn.realstat.Application;
 
 @RunWith(SpringRunner.class)
@@ -34,7 +35,7 @@ public class PdfReadToTextTest {
 	@Test
 	public void samplePdfExtractTest() {
 		try {
-			File file = new File("C:\\afndev\\apps\\realstat\\testdata", "17-03-25_Tour.pdf");
+			File file = new File(AppFiles.getTestDataDir(), "17-03-25_Tour.pdf");
 			String text = getText(file);
 			// System.out.println("Text in PDF: " + text);
 			String[] lines = text.split(System.lineSeparator());
