@@ -178,7 +178,7 @@ public class AdReviewTourListTest {
 	public void writeText(String text, File file) {
 		String fileName = FilenameUtils.getBaseName(file.getName());
 		fileName += ".txt";
-		File txtFile = new File(testDataDir, fileName);
+		File txtFile = new File(AppFiles.getTestOutputDir(), fileName);
 		PrintWriter printWriter;
 		try {
 			printWriter = new PrintWriter(txtFile);
