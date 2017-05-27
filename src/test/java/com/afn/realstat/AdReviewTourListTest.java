@@ -37,7 +37,6 @@ public class AdReviewTourListTest {
 	@Autowired
 	TourListRepository tlRepo;
 
-	private AdReviewTourList adReviewList = null;
 	private final String testDataDir = AppFiles.getTestDataDir();
 
 	@Before
@@ -51,7 +50,7 @@ public class AdReviewTourListTest {
 	public void testCreateTourList01() {
 		
 		String tourFile = "17-03-25_Tour";
-		verifyCreateTour( tourFile );
+		createTour( tourFile );
 
 		Date tourDate = AfnDateUtil.of(2017, 3, 27);
 		List<TourListEntry> tourList = tlRepo.findByTourDate(tourDate);
@@ -80,10 +79,10 @@ public class AdReviewTourListTest {
 	@Test
 	public void verifyTestCreateTourList02() {
 		String baseName =  "17-03-25_Tour";
-		verifyCreateTour(baseName);
+		createTour(baseName);
 	}
 	
-	public void verifyCreateTour( String fileBaseName ) {
+	public AdReviewTourList createTour( String fileBaseName ) {
 
 		File file = new File(testDataDir, fileBaseName + ".pdf");
 		AdReviewTourList atl = new AdReviewTourList(file);
@@ -93,13 +92,17 @@ public class AdReviewTourListTest {
 
 		// create the tour list entries
 		atl.createTourList();
+		return atl;
 
 	}
 
 
 	@Test
 	public void testGetDates() {
-		List<Date> dates = adReviewList.getDates();
+		String baseName =  "17-03-25_Tour";
+		
+		AdReviewTourList atl = createTour(baseName);
+		List<Date> dates = atl.getDates();
 		assertEquals(4, dates.size());
 		for (Date d : dates) {
 			System.out.println(d);
@@ -108,6 +111,7 @@ public class AdReviewTourListTest {
 
 	@Test
 	public void testGetAddressesForDate() {
+		AdReviewTourList adReviewList = createTour("17-03-25_Tour");
 		List<Date> dates = adReviewList.getDates();
 		List<Address> adr = null;
 		adr = adReviewList.getAdresses(dates.get(0));
