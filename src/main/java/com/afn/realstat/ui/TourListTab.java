@@ -159,6 +159,8 @@ public class TourListTab {
 		select.addSelectionListener(event -> {
 			Date date = event.getValue();
 			if (date != null) {
+				
+				map.removeAllMarkers();
 				myTour = new MyTour(date);
 
 				ListDataProvider<MyTourStop> dataProvider = DataProvider.ofCollection(myTour.getTourList());

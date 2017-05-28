@@ -72,24 +72,6 @@ public class TourMarker extends GoogleMapMarker {
 		}
 	}
 
-	// todo remove
-	/*
-	 * public void refresh() { TourMarker newMarker = this.getCopy();
-	 * googleMap.removeMarkerClickListener(clickListener);
-	 * googleMap.removeMarker(this); googleMap.addMarker(newMarker);
-	 * googleMap.addMarkerClickListener(new
-	 * TourListMarkerClickListener(googleMap, newMarker,
-	 * clickListener.getTourListView())); }
-	 * 
-	 * // todo remove private TourMarker getCopy() { TourMarker tlm = new
-	 * TourMarker(MyTourStop mts, AfnGoogleMap map); tlm.googleMap = googleMap;
-	 * tlm.myTour = myTour; tlm.myTourStop = myTourStop;
-	 * tlm.setAnimationEnabled(this.isAnimationEnabled());
-	 * tlm.setCaption(this.getCaption()); tlm.setDraggable(this.isDraggable());
-	 * tlm.setIconUrl(this.getIconUrl()); tlm.setOptimized(this.isOptimized());
-	 * tlm.setPosition(this.getPosition()); return tlm; }
-	 */
-
 	public MyTour getTour() {
 		return myTour;
 	}

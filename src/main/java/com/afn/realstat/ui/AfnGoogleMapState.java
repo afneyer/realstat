@@ -1,5 +1,6 @@
 package com.afn.realstat.ui;
 
+import com.vaadin.shared.annotations.DelegateToWidget;
 import com.vaadin.tapio.googlemaps.client.GoogleMapState;
 
 /*
@@ -11,6 +12,7 @@ public class AfnGoogleMapState extends GoogleMapState {
 	
 	private static final long serialVersionUID = -5172382510907831673L;
 	
+	@DelegateToWidget
 	public long refreshCount = 0;
 	
 }

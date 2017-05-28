@@ -7,29 +7,21 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.afn.realstat.MyTourStop;
-import com.afn.realstat.TourListEntry;
 import com.google.maps.model.EncodedPolyline;
 import com.google.maps.model.LatLng;
 import com.vaadin.tapio.googlemaps.GoogleMap;
-import com.vaadin.tapio.googlemaps.client.GoogleMapState;
 import com.vaadin.tapio.googlemaps.client.LatLon;
-import com.vaadin.tapio.googlemaps.client.events.MapClickListener;
 import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapMarker;
 import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapPolyline;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.UI;
 
 @SuppressWarnings("serial")
 public class AfnGoogleMap extends GoogleMap {
 
 	private GoogleMapMarker dummyMarker;
 	private final String emptyIcon = "VAADIN/emptyIcon.jpg";
-	private GoogleMap thisMap = null;
 
 	public AfnGoogleMap(String apiKey, String clientId, String language) {
-		
 		super(apiKey, clientId, language);
-		thisMap = this;
 	}
 
 	public AfnGoogleMap() {
@@ -40,7 +32,7 @@ public class AfnGoogleMap extends GoogleMap {
 	public AfnGoogleMapState getState() {
 		return (AfnGoogleMapState) super.getState();
 	}
-	
+
 	public List<TourMarker> getTourMarkers() {
 		List<TourMarker> markerList = new ArrayList<TourMarker>();
 
@@ -69,43 +61,31 @@ public class AfnGoogleMap extends GoogleMap {
 	}
 
 	/**
-	 * Refreshes the Map
+	 * Refreshes the markers on a GoogleMap
 	 * 
 	 * For lack of better option adds or removes a dummy marker which forces a
-	 * refresh. Used the refresh the client after performing actions on a map
-	 * marker (e.g. change icon) that does not push to the client.
-	 * 
-	 * Probably not the best solutions. Would expect that VAADIN refreshes
-	 * automatically or has a function to force a refresh.
-	 * 
+	 * refresh. Used to refresh the client after performing actions on a marker
+	 * that don't refresh the client (e.g. change icon).
+	 *
 	 */
-	protected void refreshOld() {
+	protected void refresh() {
 
 		// if there is a dummy Marker, remove it
-		if (dummyMarker!=null) {
+		if (dummyMarker != null) {
 			removeMarker(dummyMarker);
 		}
-		
-		// create a new dummy Marker
-		// this marker has a new id and hence the set of marker changes
+		/*
+		 * Create a new dummy Marker and add it to the map. The dummy marker is
+		 * a marker without icon and is excluded from function affecting markers
+		 * of AfnGoogleMap.
+		 * 
+		 * The dummy marker has a new id and hence the set of marker changes the
+		 * state and forces a refresh.
+		 */
 		dummyMarker = new GoogleMapMarker("Dummy Marker", new LatLon(0, 0), false, null);
 		dummyMarker.setIconUrl(emptyIcon);
-		
-		// refresh function
-		if (hasMarker(dummyMarker)) {
-			removeMarker(dummyMarker);
-		} else {
-			addMarker(dummyMarker);
-		}
-		
-	}
+		addMarker(dummyMarker);
 
-	protected void refresh() {
-		long rfrCnt = getState().refreshCount;
-		if (rfrCnt >= Long.MAX_VALUE) {
-			rfrCnt = 0;
-		}
-		this.getState().refreshCount++;
 	}
 
 	/**
@@ -132,7 +112,7 @@ public class AfnGoogleMap extends GoogleMap {
 	}
 
 	/**
-	 * Centers map on a collection of markers Excludes dummy marker
+	 * Centers map on a collection of markers, excludes dummy marker
 	 */
 	private void centerOnMarkers(Collection<GoogleMapMarker> markers) {
 
@@ -169,6 +149,9 @@ public class AfnGoogleMap extends GoogleMap {
 
 	}
 
+	/**
+	 * Adds a polyline to a map
+	 */
 	public void addPolyline(EncodedPolyline polyline) {
 		List<LatLng> latLngPoly = polyline.decodePath();
 		List<LatLon> latLonPoly = new ArrayList<LatLon>();
@@ -178,7 +161,17 @@ public class AfnGoogleMap extends GoogleMap {
 		}
 		GoogleMapPolyline gmPoly = new GoogleMapPolyline(latLonPoly);
 		this.addPolyline(gmPoly);
+	}
 
+	/**
+	 * Removes all markers from the map
+	 */
+	public void removeAllMarkers() {
+		// create a separate list to avoid concurrent access
+		Collection<GoogleMapMarker> markers = new ArrayList<GoogleMapMarker>(this.getMarkers());
+		for (GoogleMapMarker marker : markers) {
+			removeMarker(marker);
+		}
 	}
 
 }
