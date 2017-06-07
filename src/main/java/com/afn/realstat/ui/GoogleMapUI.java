@@ -1,14 +1,26 @@
 package com.afn.realstat.ui;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.eclipse.jetty.servlet.DefaultServlet;
 // import org.hsqldb.lib.Iterator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.geo.Point;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.afn.realstat.Address;
 import com.afn.realstat.AddressManager;
@@ -21,11 +33,14 @@ import com.afn.realstat.QAgent;
 import com.afn.realstat.RealProperty;
 import com.afn.realstat.TourListEntry;
 import com.afn.realstat.TourListRepository;
+import com.afn.realstat.sandbox.GoogleMapsDemoUI;
 import com.querydsl.core.types.dsl.StringPath;
 import com.vaadin.annotations.Push;
 import com.vaadin.annotations.Theme;
+import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.annotations.Widgetset;
 import com.vaadin.server.VaadinRequest;
+import com.vaadin.server.VaadinServlet;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.tapio.googlemaps.client.LatLon;
@@ -71,6 +86,42 @@ public class GoogleMapUI extends UI {
 	protected CssLayout consoleLayout;
 	protected MapClickListener dummyListener;
 
+	@WebServlet(value = { "/*", "/temp/" }, asyncSupported = true)
+	// @VaadinServletConfiguration(productionMode = false, ui =
+	// GoogleMapsDemoUI.class, widgetset =
+	// "com.vaadin.tapio.googlemaps.demo.DemoWidgetset")
+	@VaadinServletConfiguration(productionMode = false, ui = GoogleMapUI.class)
+	public static class Servlet extends VaadinServlet {
+
+	}
+
+	/*
+	@Component
+	public static class FileServlet extends DefaultServlet {
+	
+		@Override
+		protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+			String url = req.getRequestURI();
+			System.out.println(url);
+			resp.getWriter().println("Hello, world");
+		}
+		
+	}
+	*/
+	 
+	/*
+	@Controller
+    @RequestMapping("/temp")
+    public class TempFileController {
+		 @RequestMapping(method = RequestMethod.GET)
+		   public String printHello(ModelMap model) {
+		      model.addAttribute("message", "Hello Spring MVC Framework!");
+		      return "hello";
+		   }
+	}
+	*/
+	
+	
 	@Autowired
 	public GoogleMapUI(PropertyTransactionService ptService) {
 		this.ptService = ptService;
@@ -92,7 +143,7 @@ public class GoogleMapUI extends UI {
 		VerticalLayout page = new VerticalLayout();
 		page.setSizeFull();
 		tabs.addTab(page, "Map");
-		
+
 		TourListTab tourListTab = new TourListTab();
 		com.vaadin.ui.Component tourListComp = tourListTab.getTourListPage();
 		tabs.addTab(tourListComp, "Tour");
@@ -101,7 +152,6 @@ public class GoogleMapUI extends UI {
 		mapContent.setHeight(100, Unit.PERCENTAGE);
 		mapContent.setWidth(100, Unit.PERCENTAGE);
 		page.addComponent(mapContent);
-
 
 		googleMap = new AfnGoogleMap(null, null, null);
 
@@ -112,8 +162,6 @@ public class GoogleMapUI extends UI {
 		mapContent.addComponent(googleMap);
 		mapContent.setExpandRatio(googleMap, 3.0f);
 		page.setExpandRatio(mapContent, 4.0f);
-		
-		
 
 		Panel console = new Panel();
 		final CssLayout cnlt = new CssLayout();
@@ -176,7 +224,6 @@ public class GoogleMapUI extends UI {
 		buttonLayoutRow1.addComponent(showAgentDeals);
 		showAgentDeals.setWidth(100, Unit.PERCENTAGE);
 
-
 		Button clearMarkersButton = new Button("Remove all markers", new Button.ClickListener() {
 			@Override
 			public void buttonClick(ClickEvent clickEvent) {
@@ -187,16 +234,12 @@ public class GoogleMapUI extends UI {
 		clearMarkersButton.setWidth(100, Unit.PERCENTAGE);
 	}
 
-
-
 	// TODO delete
 	protected void tourDateSelector() {
 		// create a window to upload a pdf-file and select a tour date
 		Window popUp = new Window("Sub-window");
 		VerticalLayout subContent = new VerticalLayout();
 		popUp.setContent(subContent);
-
-		
 
 		// Center it in the browser window
 		popUp.center();
@@ -212,14 +255,14 @@ public class GoogleMapUI extends UI {
 		List<Date> tlDates = tleRepo.findAllDisctintDatesNewestFirst();
 
 		ListSelect<Date> select = new ListSelect<Date>("Select tour date");
-		
+
 		subContent.addComponent(select);
 
 		select.setItemCaptionGenerator(d -> {
 			SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
-	        String ds = df.format(d);
-	        return ds;
-		} );
+			String ds = df.format(d);
+			return ds;
+		});
 
 		// Add some items
 		select.setItems(tlDates);
@@ -252,12 +295,12 @@ public class GoogleMapUI extends UI {
 	}
 
 	private TourMarker addMarkerForTourStop(MyTourStop mts) {
-			TourMarker mrkr = null;
-			Point loc = mts.getLocation();
-			if (loc != null) {
-				mrkr = new TourMarker(mts, googleMap);
-				googleMap.addMarker(mrkr);
-			}
+		TourMarker mrkr = null;
+		Point loc = mts.getLocation();
+		if (loc != null) {
+			mrkr = new TourMarker(mts, googleMap);
+			googleMap.addMarker(mrkr);
+		}
 		return mrkr;
 	}
 
@@ -322,8 +365,5 @@ public class GoogleMapUI extends UI {
 		}
 		return null;
 	}
-
-	
-	
 
 }

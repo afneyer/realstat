@@ -11,7 +11,7 @@ public class AppFiles {
 	}
 
 	public static String getIconDir() {
-		return validateDir(userDir + "\\resources\\VAADIN");
+		return validateDir(userDir + "\\src\\main\\resources\\VAADIN");
 	}
 
 	public static String getUploadDir() {

@@ -4,18 +4,20 @@ import org.springframework.data.geo.Point;
 
 import com.afn.realstat.MyTour;
 import com.afn.realstat.MyTourStop;
+import com.afn.realstat.util.Icon;
 import com.vaadin.tapio.googlemaps.client.LatLon;
 import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapMarker;
 
 @SuppressWarnings("serial")
 public class TourMarker extends GoogleMapMarker {
 
-	private final String inIconUrl = "VAADIN/house-32Red.ico";
-	private final String outIconUrl = "VAADIN/star32.png";
 	private MyTour myTour;
 	private MyTourStop myTourStop;
 	private AfnGoogleMap googleMap;
 	private TourListMarkerClickListener clickListener;
+	private boolean isInTour = false;
+	private String blankInUrl;
+	private String blankOutUrl;
 
 	public TourMarker(MyTourStop mts, AfnGoogleMap map) {
 		super();
@@ -34,19 +36,32 @@ public class TourMarker extends GoogleMapMarker {
 
 		this.setDraggable(true);
 		this.setAnimationEnabled(false);
-		this.setIconUrl(outIconUrl);
+		this.blankOutUrl = new Icon( Icon.MarkerButtonGreen).getIconUrl();
+		this.blankInUrl = new Icon( Icon.MarkerButtonRed).getIconUrl();
+		this.setIconUrl(blankOutUrl);
 
+	}
+	
+	public String getOutIconUrl() {
+		return blankOutUrl;
+	}
+	
+	public String getInIconUrl() {
+		String inIconUrl = blankInUrl;
+		int seq = myTourStop.getSequence();
+		String text = Integer.toString(seq);
+		if ( seq != 0) {
+			inIconUrl = new Icon( Icon.MarkerButtonGreen, text ).getIconUrl();
+		}
+		return inIconUrl;
 	}
 
 	public boolean isInTour() {
-		if (getIconUrl().equals(inIconUrl)) {
-			return true;
-		}
-		return false;
+		return isInTour;
 	}
 
 	public boolean toggleTour() {
-		if (isInTour()) {
+		if (isInTour) {
 			excludeFromTour();
 			return false;
 		} else {
@@ -57,8 +72,9 @@ public class TourMarker extends GoogleMapMarker {
 
 	public void includeInTour() {
 		// change icon
-		if (!isInTour()) {
-			setIconUrl(inIconUrl);
+		if (!isInTour) {
+			setIconUrl(getInIconUrl());
+			isInTour = true;
 			googleMap.refresh();
 		}
 	}
@@ -67,7 +83,8 @@ public class TourMarker extends GoogleMapMarker {
 
 		if (isInTour()) {
 			// change icon
-			setIconUrl(outIconUrl);
+			setIconUrl(getOutIconUrl());
+			isInTour = false;
 			googleMap.refresh();
 		}
 	}
