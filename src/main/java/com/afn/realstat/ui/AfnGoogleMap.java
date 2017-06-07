@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.afn.realstat.MyTourStop;
+import com.afn.realstat.util.Icon;
 import com.google.maps.model.EncodedPolyline;
 import com.google.maps.model.LatLng;
 import com.vaadin.tapio.googlemaps.GoogleMap;
@@ -18,7 +19,6 @@ import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapPolyline;
 public class AfnGoogleMap extends GoogleMap {
 
 	private GoogleMapMarker dummyMarker;
-	private final String emptyIcon = "VAADIN/emptyIcon.jpg";
 
 	public AfnGoogleMap(String apiKey, String clientId, String language) {
 		super(apiKey, clientId, language);
@@ -83,7 +83,7 @@ public class AfnGoogleMap extends GoogleMap {
 		 * state and forces a refresh.
 		 */
 		dummyMarker = new GoogleMapMarker("Dummy Marker", new LatLon(0, 0), false, null);
-		dummyMarker.setIconUrl(emptyIcon);
+		dummyMarker.setIconUrl(new Icon(Icon.emptyIcon).getIconUrl());
 		addMarker(dummyMarker);
 
 	}

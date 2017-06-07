@@ -9,7 +9,7 @@ public class IconTest {
 	@Test
 	public void testIconBasic() {
 		
-		Icon icon = new Icon(Icon.MarkerButtonBlue);
+		Icon icon = new Icon(Icon.markerButtonBlue);
 		String iconLocation = icon.getIconUrl();		
 		// TODO verify URL
 		
@@ -17,14 +17,14 @@ public class IconTest {
 	
 	@Test
 	public void testIconText() {
-		Icon icon = new Icon(Icon.MarkerButtonGreen);
+		Icon icon = new Icon(Icon.markerButtonGreen);
 		icon.addText("33");
 		String iconLocation = icon.getIconUrl();
 	}
 	
 	@Test
 	public void textIconScale() {
-		Icon icon = new Icon(Icon.MarkerButtonRed, "44");
+		Icon icon = new Icon(Icon.markerButtonRed, "44");
 		icon.scale(0.8);
 		String iconLocation = icon.getIconUrl();
 	}

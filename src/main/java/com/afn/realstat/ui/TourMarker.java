@@ -36,8 +36,8 @@ public class TourMarker extends GoogleMapMarker {
 
 		this.setDraggable(true);
 		this.setAnimationEnabled(false);
-		this.blankOutUrl = new Icon( Icon.MarkerButtonGreen).getIconUrl();
-		this.blankInUrl = new Icon( Icon.MarkerButtonRed).getIconUrl();
+		this.blankOutUrl = new Icon( Icon.markerButtonGreen).getIconUrl();
+		this.blankInUrl = new Icon( Icon.markerButtonRed).getIconUrl();
 		this.setIconUrl(blankOutUrl);
 
 	}
@@ -51,7 +51,7 @@ public class TourMarker extends GoogleMapMarker {
 		int seq = myTourStop.getSequence();
 		String text = Integer.toString(seq);
 		if ( seq != 0) {
-			inIconUrl = new Icon( Icon.MarkerButtonGreen, text ).getIconUrl();
+			inIconUrl = new Icon( Icon.markerButtonGreen, text ).getIconUrl();
 		}
 		return inIconUrl;
 	}

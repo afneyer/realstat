@@ -22,11 +22,12 @@ import com.vaadin.server.Resource;
 
 public class Icon {
 
-	public static Integer MarkerButtonBlue = 1;
-	public static Integer MarkerButtonGreen = 2;
-	public static Integer MarkerButtonRed = 3;
+	public static Integer markerButtonBlue = 1;
+	public static Integer markerButtonGreen = 2;
+	public static Integer markerButtonRed = 3;
+	public static Integer emptyIcon = 4;
 
-	private File inIconFile = null;
+	private File iconFile = null;
 
 	BufferedImage image = null;
 
@@ -34,9 +35,10 @@ public class Icon {
 
 	static {
 		Map<Integer, String> aMap = new HashMap<Integer, String>();
-		aMap.put(MarkerButtonBlue, "MarkerButtonBlue.png");
-		aMap.put(MarkerButtonGreen, "MarkerButtonGreen.png");
-		aMap.put(MarkerButtonRed, "MarkerButtonRed.png");
+		aMap.put(markerButtonBlue, "markerButtonBlue.png");
+		aMap.put(markerButtonGreen, "markerButtonGreen.png");
+		aMap.put(markerButtonRed, "markerButtonRed.png");
+		aMap.put(emptyIcon, "emptyIcon.jpg");
 		iconMap = Collections.unmodifiableMap(aMap);
 	}
 
@@ -73,10 +75,10 @@ public class Icon {
 
 		String iconDirName = AppFiles.getIconDir();
 		String iconFullFileName = iconDirName + "\\" + iconFileName;
-		inIconFile = new File(iconFullFileName);
+		iconFile = new File(iconFullFileName);
 		image = null;
 		try {
-			image = ImageIO.read(inIconFile);
+			image = ImageIO.read(iconFile);
 		} catch (IOException e) {
 			throw new RuntimeException("Error in Icon.loadIcon: invalid File Name" + iconFullFileName, e);
 		}
@@ -112,8 +114,8 @@ public class Icon {
 
 		// TODO String tmpDir = AppFiles.getIconDir();
 		String tmpDir = "/VAADIN/";
-		String suffix = "." + FilenameUtils.getExtension(inIconFile.getName());
-		String prefix = FilenameUtils.getBaseName(inIconFile.getName());
+		String suffix = "." + FilenameUtils.getExtension(iconFile.getName());
+		String prefix = FilenameUtils.getBaseName(iconFile.getName());
 
 		File file = null;
 
