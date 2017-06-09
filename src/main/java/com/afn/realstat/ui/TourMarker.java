@@ -24,6 +24,7 @@ public class TourMarker extends GoogleMapMarker {
 
 		this.myTour = mts.getTour();
 		this.myTourStop = mts;
+		mts.setMarker(this);
 		this.googleMap = map;
 
 		Point location = mts.getLocation();
@@ -41,7 +42,7 @@ public class TourMarker extends GoogleMapMarker {
 		this.setIconUrl(blankOutUrl);
 
 	}
-	
+	/* TOTO remove
 	public String getOutIconUrl() {
 		return blankOutUrl;
 	}
@@ -54,6 +55,24 @@ public class TourMarker extends GoogleMapMarker {
 			inIconUrl = new Icon( Icon.markerButtonGreen, text ).getIconUrl();
 		}
 		return inIconUrl;
+	}
+	*/
+	
+	@Override
+	public String getIconUrl() {
+		String iconUrl = null;
+	
+		if (isInTour) {
+			iconUrl = blankInUrl;
+			int seq = myTourStop.getSequence();
+			String text = Integer.toString(seq);
+			if ( seq != 0) {
+				iconUrl = new Icon( Icon.markerButtonRed, text ).getIconUrl();
+			}
+		} else {
+			iconUrl = blankOutUrl;
+		}
+		return iconUrl;
 	}
 
 	public boolean isInTour() {
@@ -73,7 +92,6 @@ public class TourMarker extends GoogleMapMarker {
 	public void includeInTour() {
 		// change icon
 		if (!isInTour) {
-			setIconUrl(getInIconUrl());
 			isInTour = true;
 			googleMap.refresh();
 		}
@@ -82,8 +100,6 @@ public class TourMarker extends GoogleMapMarker {
 	public void excludeFromTour() {
 
 		if (isInTour()) {
-			// change icon
-			setIconUrl(getOutIconUrl());
 			isInTour = false;
 			googleMap.refresh();
 		}

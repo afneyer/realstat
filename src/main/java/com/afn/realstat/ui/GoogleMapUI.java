@@ -86,12 +86,20 @@ public class GoogleMapUI extends UI {
 	protected CssLayout consoleLayout;
 	protected MapClickListener dummyListener;
 
-	@WebServlet(value = { "/*", "/temp/" }, asyncSupported = true)
+	@WebServlet(value = { "/*" }, asyncSupported = true)
 	// @VaadinServletConfiguration(productionMode = false, ui =
 	// GoogleMapsDemoUI.class, widgetset =
 	// "com.vaadin.tapio.googlemaps.demo.DemoWidgetset")
 	@VaadinServletConfiguration(productionMode = false, ui = GoogleMapUI.class)
 	public static class Servlet extends VaadinServlet {
+		/*
+		@Override
+		protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+			String url = req.getRequestURI();
+			System.out.println(url);
+			resp.getWriter().println("Hello, world");
+		}
+		*/
 
 	}
 

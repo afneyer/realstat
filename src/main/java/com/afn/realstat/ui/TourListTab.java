@@ -1,5 +1,6 @@
 package com.afn.realstat.ui;
 
+import java.awt.Color;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -194,8 +195,12 @@ public class TourListTab {
 			EncodedPolyline polyline = dir.route(myTour.getTourDate());
 			int seq[] = dir.getWaypointSequence();
 			myTour.setSequence(seq);
-			tourListView.getDataProvider().refreshAll();
+	        map.refresh();
+			// todo not needed?
+			// tourListView.getDataProvider().refreshAll();
 			tourPolyLine = GeoLocation.convert(polyline);
+			tourPolyLine.setStrokeColor("#C7320D");
+			tourPolyLine.setStrokeWeight(5);
 			map.addPolyline(tourPolyLine);
 		});
 

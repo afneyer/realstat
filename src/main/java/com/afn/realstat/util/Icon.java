@@ -2,9 +2,13 @@ package com.afn.realstat.util;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.font.FontRenderContext;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -28,6 +32,9 @@ public class Icon {
 	public static Integer emptyIcon = 4;
 
 	private File iconFile = null;
+	private Integer iconId = null;
+	private String text = null;
+	private Double scaleFactor = null;
 
 	BufferedImage image = null;
 
@@ -42,37 +49,72 @@ public class Icon {
 		iconMap = Collections.unmodifiableMap(aMap);
 	}
 
-	public Icon(Integer icon) {
-		String iconFileName = iconMap.get(icon);
-		loadIcon(iconFileName);
+	public Icon(Integer iconId) {
+		this.iconId = iconId;
+		loadIcon();
 	}
 
 	public Icon(Integer icon, String text) {
 		this(icon);
-		addText(text);
+		this.text = text;
 	}
-	
+
 	public Icon(Integer icon, String text, Double scaleFactor) {
-		this(icon,text);
-		scale(scaleFactor);
+		this(icon, text);
+		this.scaleFactor = scaleFactor;
 	}
 
-	public void addText(String text) {
+	public void addText() {
+		drawCenteredText(image, text, Color.WHITE);
+	}
 
-		Graphics2D grph = image.createGraphics();
-		grph.setColor(Color.white);
-		Font font = new Font(null, Font.BOLD, 20);
+	/*
+	 * Draws text centered on an image
+	 *
+	 * Text is scaled to use a font size of 5/8 of the image height
+	 * and the text is centered overall on the image.
+	 * 
+	 * Text color is white for now. 
+	 * 
+	 */
+	private void drawCenteredText(BufferedImage im, String str, Color color) {
+		
+		int iconHeight = im.getHeight();
+		int iconWidth = im.getWidth();
+
+		Graphics2D grph = im.createGraphics();
+		grph.setColor(color);
+
+		
+		int fontSize = (iconHeight * 5) / 8;
+		Font font = new Font(null, Font.BOLD, fontSize);
 		grph.setFont(font);
-		int x = 5;
-		int y = 23;
-		grph.drawString(text, x, y);
-		grph.drawImage(image, 0, 0, null);
-		grph.dispose();
+		
+		FontMetrics fm = grph.getFontMetrics();
+		Rectangle2D bounds = fm.getStringBounds(str, grph);
+		int rlength = (int)bounds.getWidth();
+		int rheight = (int)bounds.getHeight();
+		
+		FontRenderContext frc = 
+	            new FontRenderContext(null, true, true);
 
+	    Rectangle2D r2D = font.getStringBounds(text, frc);
+		
+		int stringWidth = rlength;
+		int x = (iconWidth - stringWidth) / 2;
+		
+		int stringHeight = rheight;
+		int y = (iconHeight - stringHeight) / 2 + fontSize;
+		grph.drawString(str, x, y);
+		
+		grph.drawImage(im, 0, 0, null);
+		grph.dispose();	
+		
 	}
 
-	private void loadIcon(String iconFileName) {
+	private void loadIcon() {
 
+		String iconFileName = iconMap.get(iconId);
 		String iconDirName = AppFiles.getIconDir();
 		String iconFullFileName = iconDirName + "\\" + iconFileName;
 		iconFile = new File(iconFullFileName);
@@ -84,7 +126,7 @@ public class Icon {
 		}
 	}
 
-	public void scale(double scaleFactor) {
+	public void scale() {
 
 		int origWidth = image.getWidth();
 		int origHeight = image.getHeight();
@@ -110,41 +152,87 @@ public class Icon {
 	 * writes the image to a text file and returns the link URL in string format
 	 * as needed by VAADIN's GoogleMapMarker *
 	 */
+	/*
+	 * TODO remove public String getIconUrl() {
+	 * 
+	 * // TODO String tmpDir = AppFiles.getIconDir(); String tmpDir =
+	 * "/VAADIN/"; String suffix = "." +
+	 * FilenameUtils.getExtension(iconFile.getName()); String prefix =
+	 * FilenameUtils.getBaseName(iconFile.getName());
+	 * 
+	 * File file = null;
+	 * 
+	 * try {
+	 * 
+	 * file = File.createTempFile(prefix, suffix, new
+	 * File(AppFiles.getTempDir())); FileOutputStream fos = new
+	 * FileOutputStream(file); ImageIO.write(image, "png", fos); } catch
+	 * (IOException e) { throw new RuntimeException(
+	 * "Error in Icon.getIconUrl: Cannot write tempory file" + tmpDir +
+	 * AppFiles.getTempDir(), e); } String path = file.getPath();
+	 * 
+	 * // TODO temporary solution to be fixed path = "/VAADIN/" + prefix +
+	 * suffix;
+	 * 
+	 * return path;
+	 * 
+	 * }
+	 * 
+	 */
 	public String getIconUrl() {
-
-		// TODO String tmpDir = AppFiles.getIconDir();
-		String tmpDir = "/VAADIN/";
-		String suffix = "." + FilenameUtils.getExtension(iconFile.getName());
-		String prefix = FilenameUtils.getBaseName(iconFile.getName());
-
-		File file = null;
-
-		try {
-
-			file = File.createTempFile(prefix, suffix, new File(AppFiles.getTempDir()));
-			FileOutputStream fos = new FileOutputStream(file);
-			ImageIO.write(image, "png", fos);
-		} catch (IOException e) {
-			throw new RuntimeException(
-					"Error in Icon.getIconUrl: Cannot write tempory file" + tmpDir + AppFiles.getTempDir(), e);
+		String iconUrl = "/icon/" + iconId;
+		if (text != null) {
+			iconUrl += "?text=" + text;
 		}
-		String path = file.getPath();
-		
-		// TODO temporary solution to be fixed
-		path = "/VAADIN/" + prefix + suffix;
-		
-		return path;
+		return iconUrl;
+	}
+
+	// TODO unfinished, remove
+
+	public byte[] getIcon() {
+
+		if (text != null) {
+			addText();
+		}
+
+		if (scaleFactor != null) {
+			scale();
+		}
+
+		byte[] imageInByte = null;
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		try {
+			ImageIO.write(image, "png", baos);
+			baos.flush();
+			imageInByte = baos.toByteArray();
+			baos.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return imageInByte;
 
 	}
+
+	public String getText() {
+		return text;
+	}
+
+	public void setText(String text) {
+		this.text = text;
+	}
+
+	public Double getScaleFactor() {
+		return scaleFactor;
+	}
+
+	public void setScaleFactor(Double scaleFactor) {
+		this.scaleFactor = scaleFactor;
+	}
 	
-	// TODO unfinished, remove
-	
-	public String getIconUrl01() {
-		String url = null;
-		Resource resource = null;
-		FileDownloader downloader = new FileDownloader(resource);
-		// downloader.
-		return url;
+	public String getBaseFileName() {
+		return iconMap.get(iconId);
 	}
 
 }

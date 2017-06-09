@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.geo.Point;
 
 import com.afn.realstat.framework.SpringApplicationContext;
+import com.afn.realstat.ui.TourMarker;
 
 public class MyTourStop implements Comparable<MyTourStop> {
 
@@ -18,6 +19,7 @@ public class MyTourStop implements Comparable<MyTourStop> {
 	private TourListEntry tle;
 	private MyTour tour;
 	private int sequence;
+	private TourMarker tourMarker;
 
 	public MyTourStop() {
 	}
@@ -141,7 +143,9 @@ public class MyTourStop implements Comparable<MyTourStop> {
 
 	public void setSequence(int sequence) {
 		this.sequence = sequence;
+		// update the marker to include the sequence number
 	}
+	
 
 	public String getStringSeq() {
 		if (sequence == 0) {
@@ -211,6 +215,18 @@ public class MyTourStop implements Comparable<MyTourStop> {
 	@Override
 	public int compareTo(MyTourStop mts) {
 		return (this.sequence - mts.sequence);
+	}
+
+	public void setMarker(TourMarker tourMarker) {
+		this.setTourMarker(tourMarker);
+	}
+
+	public TourMarker getTourMarker() {
+		return tourMarker;
+	}
+
+	public void setTourMarker(TourMarker tourMarker) {
+		this.tourMarker = tourMarker;
 	}
 
 }
