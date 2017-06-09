@@ -5,12 +5,10 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
-import java.awt.font.FontRenderContext;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
@@ -18,28 +16,36 @@ import java.util.Map;
 
 import javax.imageio.ImageIO;
 
-import org.apache.commons.io.FilenameUtils;
-
 import com.afn.realstat.AppFiles;
-import com.vaadin.server.FileDownloader;
-import com.vaadin.server.Resource;
 
+/**
+ * Icon generates dynamic icon. The icon can be retrieved as a byte-array
+ * based on the state of the icon.
+ * 
+ * Can be used to add text to an icon and to scale icons.
+ * 
+ * @author Andreas
+ *
+ */
 public class Icon {
 
+	// Default scale for all icons
+	Double defaultScaleFactor = 0.75;
+	
+	// List of all icons
 	public static Integer markerButtonBlue = 1;
 	public static Integer markerButtonGreen = 2;
 	public static Integer markerButtonRed = 3;
 	public static Integer emptyIcon = 4;
 
-	private File iconFile = null;
+	// State of the Icon
 	private Integer iconId = null;
 	private String text = null;
 	private Double scaleFactor = null;
-
 	BufferedImage image = null;
 
+	// Icon map maps the icon identifier (Integer) to the filename of the base icon
 	private final static Map<Integer, String> iconMap;
-
 	static {
 		Map<Integer, String> aMap = new HashMap<Integer, String>();
 		aMap.put(markerButtonBlue, "markerButtonBlue.png");
@@ -62,6 +68,13 @@ public class Icon {
 	public Icon(Integer icon, String text, Double scaleFactor) {
 		this(icon, text);
 		this.scaleFactor = scaleFactor;
+	}
+
+	public Icon(Icon blankIcon) {
+		this.iconId = blankIcon.iconId;
+		this.text = blankIcon.text;
+		this.scaleFactor = blankIcon.scaleFactor;
+		loadIcon();
 	}
 
 	public void addText() {
@@ -95,11 +108,6 @@ public class Icon {
 		int rlength = (int)bounds.getWidth();
 		int rheight = (int)bounds.getHeight();
 		
-		FontRenderContext frc = 
-	            new FontRenderContext(null, true, true);
-
-	    Rectangle2D r2D = font.getStringBounds(text, frc);
-		
 		int stringWidth = rlength;
 		int x = (iconWidth - stringWidth) / 2;
 		
@@ -117,7 +125,7 @@ public class Icon {
 		String iconFileName = iconMap.get(iconId);
 		String iconDirName = AppFiles.getIconDir();
 		String iconFullFileName = iconDirName + "\\" + iconFileName;
-		iconFile = new File(iconFullFileName);
+		File iconFile = new File(iconFullFileName);
 		image = null;
 		try {
 			image = ImageIO.read(iconFile);
@@ -149,35 +157,7 @@ public class Icon {
 	}
 
 	/*
-	 * writes the image to a text file and returns the link URL in string format
-	 * as needed by VAADIN's GoogleMapMarker *
-	 */
-	/*
-	 * TODO remove public String getIconUrl() {
-	 * 
-	 * // TODO String tmpDir = AppFiles.getIconDir(); String tmpDir =
-	 * "/VAADIN/"; String suffix = "." +
-	 * FilenameUtils.getExtension(iconFile.getName()); String prefix =
-	 * FilenameUtils.getBaseName(iconFile.getName());
-	 * 
-	 * File file = null;
-	 * 
-	 * try {
-	 * 
-	 * file = File.createTempFile(prefix, suffix, new
-	 * File(AppFiles.getTempDir())); FileOutputStream fos = new
-	 * FileOutputStream(file); ImageIO.write(image, "png", fos); } catch
-	 * (IOException e) { throw new RuntimeException(
-	 * "Error in Icon.getIconUrl: Cannot write tempory file" + tmpDir +
-	 * AppFiles.getTempDir(), e); } String path = file.getPath();
-	 * 
-	 * // TODO temporary solution to be fixed path = "/VAADIN/" + prefix +
-	 * suffix;
-	 * 
-	 * return path;
-	 * 
-	 * }
-	 * 
+	 * returns the URL of the icon 
 	 */
 	public String getIconUrl() {
 		String iconUrl = "/icon/" + iconId;
@@ -186,15 +166,17 @@ public class Icon {
 		}
 		return iconUrl;
 	}
-
-	// TODO unfinished, remove
-
+	
+	/*
+	 * Generates a dynamic icon based on the state of the icon
+	 */
 	public byte[] getIcon() {
 
 		if (text != null) {
 			addText();
 		}
 
+		scaleFactor = defaultScaleFactor;
 		if (scaleFactor != null) {
 			scale();
 		}
@@ -207,8 +189,7 @@ public class Icon {
 			imageInByte = baos.toByteArray();
 			baos.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new RuntimeException("Cannot generate Icon=" + getBaseFileName() + "\n", e);
 		}
 
 		return imageInByte;

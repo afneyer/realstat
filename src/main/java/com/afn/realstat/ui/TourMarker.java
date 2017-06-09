@@ -16,8 +16,9 @@ public class TourMarker extends GoogleMapMarker {
 	private AfnGoogleMap googleMap;
 	private TourListMarkerClickListener clickListener;
 	private boolean isInTour = false;
-	private String blankInUrl;
-	private String blankOutUrl;
+
+	private Icon blankInIcon;
+	private Icon blankOutIcon;
 
 	public TourMarker(MyTourStop mts, AfnGoogleMap map) {
 		super();
@@ -37,42 +38,28 @@ public class TourMarker extends GoogleMapMarker {
 
 		this.setDraggable(true);
 		this.setAnimationEnabled(false);
-		this.blankOutUrl = new Icon( Icon.markerButtonGreen).getIconUrl();
-		this.blankInUrl = new Icon( Icon.markerButtonRed).getIconUrl();
-		this.setIconUrl(blankOutUrl);
+		this.blankInIcon = new Icon( Icon.markerButtonRed);
+		this.blankOutIcon = new Icon( Icon.markerButtonGreen);
+		this.setDraggable(false);
 
 	}
-	/* TOTO remove
-	public String getOutIconUrl() {
-		return blankOutUrl;
-	}
-	
-	public String getInIconUrl() {
-		String inIconUrl = blankInUrl;
-		int seq = myTourStop.getSequence();
-		String text = Integer.toString(seq);
-		if ( seq != 0) {
-			inIconUrl = new Icon( Icon.markerButtonGreen, text ).getIconUrl();
-		}
-		return inIconUrl;
-	}
-	*/
 	
 	@Override
 	public String getIconUrl() {
-		String iconUrl = null;
-	
+		
+		Icon icon = null;
 		if (isInTour) {
-			iconUrl = blankInUrl;
+			icon = blankInIcon;
 			int seq = myTourStop.getSequence();
 			String text = Integer.toString(seq);
 			if ( seq != 0) {
-				iconUrl = new Icon( Icon.markerButtonRed, text ).getIconUrl();
+				icon = new Icon(blankInIcon);
+				icon.setText(text);
 			}
 		} else {
-			iconUrl = blankOutUrl;
+			icon = blankOutIcon;
 		}
-		return iconUrl;
+		return icon.getIconUrl();
 	}
 
 	public boolean isInTour() {
