@@ -242,75 +242,7 @@ public class GoogleMapUI extends UI {
 		clearMarkersButton.setWidth(100, Unit.PERCENTAGE);
 	}
 
-	// TODO delete
-	protected void tourDateSelector() {
-		// create a window to upload a pdf-file and select a tour date
-		Window popUp = new Window("Sub-window");
-		VerticalLayout subContent = new VerticalLayout();
-		popUp.setContent(subContent);
 
-		// Center it in the browser window
-		popUp.center();
-
-		// Open it in the UI
-		addWindow(popUp);
-		// Put some components in it
-		// subContent.addComponent(new Label("Select Tour Date"));
-
-		// Create the selection component for tour dates
-		// TODO hide this function in MyTour?
-		TourListRepository tleRepo = TourListEntry.getRepo();
-		List<Date> tlDates = tleRepo.findAllDisctintDatesNewestFirst();
-
-		ListSelect<Date> select = new ListSelect<Date>("Select tour date");
-
-		subContent.addComponent(select);
-
-		select.setItemCaptionGenerator(d -> {
-			SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
-			String ds = df.format(d);
-			return ds;
-		});
-
-		// Add some items
-		select.setItems(tlDates);
-
-		// Show 6 items and a scroll-bar if there are more
-		select.setRows(6);
-
-		select.addValueChangeListener(event -> {
-			Set<Date> dates = event.getValue();
-			Date date = dates.iterator().next();
-			if (date != null) {
-				MyTour myTour = new MyTour(date);
-				// tourListView.setItems(myTour.getTourList());
-				addMarkersForTour(myTour);
-				popUp.close();
-			}
-
-		});
-
-	}
-
-	private void addMarkersForTour(MyTour myTour) {
-
-		List<MyTourStop> mtsList = myTour.getSelected();
-		for (MyTourStop mts : mtsList) {
-			addMarkerForTourStop(mts);
-		}
-		googleMap.centerOnTourMarkers();
-		System.out.println("Done with Marking");
-	}
-
-	private TourMarker addMarkerForTourStop(MyTourStop mts) {
-		TourMarker mrkr = null;
-		Point loc = mts.getLocation();
-		if (loc != null) {
-			mrkr = new TourMarker(mts, googleMap);
-			googleMap.addMarker(mrkr);
-		}
-		return mrkr;
-	}
 
 	// Make this null safe TODO
 
