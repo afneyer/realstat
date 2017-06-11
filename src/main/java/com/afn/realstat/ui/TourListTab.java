@@ -2,6 +2,8 @@ package com.afn.realstat.ui;
 
 import java.awt.Color;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -20,12 +22,15 @@ import com.afn.realstat.util.MapDirection;
 import com.google.maps.model.EncodedPolyline;
 import com.vaadin.data.provider.DataProvider;
 import com.vaadin.data.provider.ListDataProvider;
+import com.vaadin.server.SerializablePredicate;
+import com.vaadin.server.Sizeable.Unit;
 import com.vaadin.shared.data.sort.SortDirection;
 import com.vaadin.tapio.googlemaps.client.LatLon;
 import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapPolyline;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
+import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Grid;
@@ -60,23 +65,40 @@ public class TourListTab {
 		tourPage.setSizeFull();
 
 		VerticalLayout tourDisplay = new VerticalLayout();
-		tourDisplay.setSizeFull();
+		// tourDisplay.setHeight(100, Unit.PERCENTAGE);
+		tourDisplay.setWidth(460,Unit.PIXELS);
 		tourDisplay.setMargin(false);
 
 		tourPage.addComponent(tourDisplay);
-		tourPage.setExpandRatio(tourDisplay, 1.0f);
+		
 
 		tourDisplayControl = new HorizontalLayout();
+		tourDisplayControl.setMargin(false);
 		tourDisplay.addComponent(tourDisplayControl);
 
 		tourListSelector = getTourSelector();
 		tourDisplayControl.addComponent(tourListSelector);
 
+		VerticalLayout tourControls = new VerticalLayout();
+		tourControls.setMargin(false);
+		tourDisplayControl.addComponent(tourControls);
+
+		HorizontalLayout tourControlButtons = new HorizontalLayout();
+		tourControlButtons.setMargin(false);
+		tourControls.addComponent(tourControlButtons);
+
+		HorizontalLayout tourOptions = new HorizontalLayout();
+		tourOptions.setMargin(false);
+		tourControls.addComponent(tourOptions);
+
+		CheckBox showRouted = getShowSelectedCheckBox();
+		tourOptions.addComponent(showRouted);
+
 		routeTourButton = getRouteTourButton();
-		tourDisplayControl.addComponent(routeTourButton);
+		tourControlButtons.addComponent(routeTourButton);
 
 		printTourButton = getPrintPdfButton();
-		tourDisplayControl.addComponent(printTourButton);
+		tourControlButtons.addComponent(printTourButton);
 
 		@SuppressWarnings("serial")
 		Button tourFile = new Button("Import", new Button.ClickListener() {
@@ -85,19 +107,20 @@ public class TourListTab {
 				selectAndShowPropertiesForTour();
 			}
 		});
-		tourDisplayControl.addComponent(tourFile);
-		// tourFile.setWidth(100, Unit.PERCENTAGE);
+		tourControlButtons.addComponent(tourFile);
 		tourFile.setDescription("testDescription");
 
 		// initialize tourList view
 		tourListView = new Grid<MyTourStop>();
 		tourListView.addStyleName("h3rows");
-		Grid.Column<MyTourStop, String> propInfo = tourListView.addColumn(MyTourStop::htmlString, new HtmlRenderer());
-		tourListView.addColumn(MyTourStop::getStringSeq);
-		propInfo.setWidth(400.0);
+		Grid.Column<MyTourStop, String> colPropertyInfo = tourListView.addColumn(MyTourStop::htmlString, new HtmlRenderer());
+		colPropertyInfo.setWidth(350.0);
+		Grid.Column<MyTourStop, String> colStringSeq = tourListView.addColumn(MyTourStop::getStringSeq);
+		colStringSeq.setWidth(50);
+		
 
 		tourListView.setSelectionMode(SelectionMode.MULTI);
-		tourListView.setSizeFull();
+		tourListView.setHeight(100, Unit.PERCENTAGE);
 
 		MultiSelectionModel<MyTourStop> selectionModel = (MultiSelectionModel<MyTourStop>) tourListView
 				.getSelectionModel();
@@ -133,9 +156,8 @@ public class TourListTab {
 		map.setSizeFull();
 
 		tourPage.addComponent(map);
-
 		tourPage.setExpandRatio(map, 1.0f);
-		tourPage.setExpandRatio(tourDisplay, 1.0f);
+		// tourPage.setExpandRatio(tourDisplay, 1.0f);
 		// initialize tourList view
 	}
 
@@ -160,15 +182,20 @@ public class TourListTab {
 		select.addSelectionListener(event -> {
 			Date date = event.getValue();
 			if (date != null) {
-				
+
 				map.removeAllMarkers();
+				if (tourPolyLine != null) {
+					map.removePolyline(tourPolyLine);
+					if (myTour != null) {
+						myTour.clearSequence();
+					}
+				}
 				myTour = new MyTour(date);
 
 				ListDataProvider<MyTourStop> dataProvider = DataProvider.ofCollection(myTour.getTourList());
-
 				dataProvider.setSortOrder(MyTourStop::getPrice, SortDirection.ASCENDING);
-
 				tourListView.setDataProvider(dataProvider);
+
 				addMarkersForTour(myTour);
 
 				printTourButton.setPdfFileGetter(myTour::getPdfFile);
@@ -195,9 +222,8 @@ public class TourListTab {
 			EncodedPolyline polyline = dir.route(myTour.getTourDate());
 			int seq[] = dir.getWaypointSequence();
 			myTour.setSequence(seq);
-	        map.refresh();
-			// todo not needed?
-			// tourListView.getDataProvider().refreshAll();
+			map.refresh();
+
 			tourPolyLine = GeoLocation.convert(polyline);
 			tourPolyLine.setStrokeColor("#C7320D");
 			tourPolyLine.setStrokeWeight(5);
@@ -216,6 +242,55 @@ public class TourListTab {
 		showPdf.setEnabled(false);
 		return showPdf;
 	};
+
+	private CheckBox getShowSelectedCheckBox() {
+		String label = "Show Selected Only";
+		CheckBox checkBox = new CheckBox(label);
+
+		checkBox.addValueChangeListener(event -> {
+			Boolean checked = event.getValue();
+
+			if (myTour != null) {
+				if (checked) {
+					showSelected();
+				} else {
+					showAll();
+
+				}
+			}
+		});
+
+		return checkBox;
+	}
+	
+	private void showAll() {
+		
+		ArrayList<MyTourStop> selected = new ArrayList<MyTourStop>(myTour.getSelected());
+		ListDataProvider<MyTourStop> dataProvider = DataProvider.ofCollection(myTour.getTourList());
+		dataProvider.setSortOrder(MyTourStop::getPrice, SortDirection.ASCENDING);
+		tourListView.setDataProvider(dataProvider);
+		
+		for ( MyTourStop mts : selected ) {
+			tourListView.select(mts);
+		}		
+		map.refresh();
+		map.removeAllMarkers();
+		addMarkersForTour(myTour);
+		
+	}
+	
+	private void showSelected() {
+		ArrayList<MyTourStop> selected = new ArrayList<MyTourStop>(myTour.getSelected());
+		ListDataProvider<MyTourStop> dataProvider = DataProvider.ofCollection(myTour.getSelected());
+		dataProvider.setSortOrder(MyTourStop::getSequence, SortDirection.ASCENDING);
+		tourListView.setDataProvider(dataProvider);
+		
+		for ( MyTourStop mts : selected ) {
+			tourListView.select(mts);
+		}
+		map.refresh();
+		hideExcludedMarkers();
+	}
 
 	private void addMarkersForTour(MyTour myTour) {
 
@@ -241,6 +316,18 @@ public class TourListTab {
 		return mrkr;
 	}
 
+	private void hideExcludedMarkers() {
+		List<MyTourStop> mtsList = myTour.getTourList();
+		for (MyTourStop mts : mtsList) {
+			TourMarker tm = mts.getTourMarker();
+			if (!tm.isInTour()) {
+				map.removeMarker(mts.getTourMarker());
+			}
+		}
+		map.centerOnTourMarkers();
+	}
+	
+	
 	protected void selectAndShowPropertiesForTour() {
 
 		// create a window to upload a pdf-file

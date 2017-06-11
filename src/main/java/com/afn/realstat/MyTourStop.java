@@ -31,6 +31,7 @@ public class MyTourStop implements Comparable<MyTourStop> {
 
 	public String htmlString() {
 		String html = "";
+		html += "<style>.ellipsis { text-overflow: ellipsis; }</style>";
 		html += "<p style=\"text-align:left;\">";
 		html += getStreet() + ", " + getCity();
 		html += "<span style=\"float:right;\">";

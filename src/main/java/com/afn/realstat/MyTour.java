@@ -274,4 +274,8 @@ public class MyTour implements PdfFileGetter {
 		doc.add(table);
 	}
 
+	public void setSelected(List<MyTourStop> selected) {
+		this.selectedList = new ArrayList<MyTourStop>( selected );	
+	}
+
 }
