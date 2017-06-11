@@ -97,9 +97,7 @@ public class AfnGoogleMap extends GoogleMap {
 	public void centerOnTourMarkers() {
 
 		Collection<TourMarker> markers = getTourMarkers();
-
 		Collection<GoogleMapMarker> gMarkers = Collections.unmodifiableCollection(markers);
-
 		this.centerOnMarkers(gMarkers);
 
 	}

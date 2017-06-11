@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import com.afn.realstat.ui.MyTourView;
 import com.afn.realstat.ui.ShowPdfButton.PdfFileGetter;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
@@ -30,6 +31,7 @@ public class MyTour implements PdfFileGetter {
 	private int[] sequence;
 
 	public MyTour(Date tourDate) {
+		
 		TourListRepository tlRepo = TourListEntry.getRepo();
 		this.tourDate = tourDate;
 		List<TourListEntry> tleList = tlRepo.findByTourDate(tourDate);

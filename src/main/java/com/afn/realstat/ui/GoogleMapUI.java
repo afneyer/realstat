@@ -278,21 +278,6 @@ public class GoogleMapUI extends UI {
 
 	}
 
-	protected void addMarkersForTourList(List<MyTourStop> list) {
-
-		// TODO change to the following
-		// List<RealProperty> rpList = ptService.getRealPropertiesForAgent(agt);
-		for (MyTourStop mts : list) {
-			Address adr = mts.getPropertyAdr();
-			addMarkerForAddress(adr);
-		}
-		// }
-
-		googleMap.centerOnTourMarkers();
-		System.out.println("Done with Marking");
-
-	}
-
 	private GoogleMapMarker addMarkerForAddress(Address adr) {
 		Point loc = adrMgr.getLocation(adr);
 		if (adr != null) {
