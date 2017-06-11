@@ -11,7 +11,6 @@ import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapMarker;
 @SuppressWarnings("serial")
 public class TourMarker extends GoogleMapMarker {
 
-	private MyTour myTour;
 	private MyTourStop myTourStop;
 	private AfnGoogleMap googleMap;
 	private TourListMarkerClickListener clickListener;
@@ -23,7 +22,6 @@ public class TourMarker extends GoogleMapMarker {
 	public TourMarker(MyTourStop mts, AfnGoogleMap map) {
 		super();
 
-		this.myTour = mts.getTour();
 		this.myTourStop = mts;
 		mts.setMarker(this);
 		this.googleMap = map;
@@ -90,10 +88,6 @@ public class TourMarker extends GoogleMapMarker {
 			isInTour = false;
 			googleMap.refresh();
 		}
-	}
-
-	public MyTour getTour() {
-		return myTour;
 	}
 
 	public MyTourStop getMyTourStop() {
