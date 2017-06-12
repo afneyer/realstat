@@ -29,6 +29,7 @@ public class MyTour implements PdfFileGetter {
 	private ArrayList<MyTourStop> tourList;
 	private ArrayList<MyTourStop> selectedList;
 	private int[] sequence;
+	private MyTourView myTourView;
 
 	public MyTour(Date tourDate) {
 		
@@ -44,20 +45,30 @@ public class MyTour implements PdfFileGetter {
 		selectedList = new ArrayList<MyTourStop>();
 	}
 
-	public boolean selectEntry(MyTourStop tourListEntry) {
-		boolean changed = false;
-		if (!selectedList.contains(tourListEntry)) {
-			changed = selectedList.add(tourListEntry);
+	public void selectEntry(MyTourStop mts) {
+		
+		if (!selectedList.contains(mts)) {
+			
+			// add it to the selected list
+			selectedList.add(mts);
+			
+			// add it to the tour and map view
+			MyTourView view = mts.getTour().getMyTourView();
+			view.getListView().select(mts);
+			view.getMapView().refresh();
 		}
-		return changed;
+
 	}
 
-	public boolean deselectEntry(MyTourStop tourListEntry) {
-		boolean changed = false;
-		if (selectedList.contains(tourListEntry)) {
-			changed = selectedList.remove(tourListEntry);
+	public void deselectEntry(MyTourStop mts) {
+
+		if (selectedList.contains(mts)) {
+			selectedList.remove(mts);
+			MyTourView view = mts.getTour().getMyTourView();
+			view.getListView().deselect(mts);
+			view.getMapView().refresh();
 		}
-		return changed;
+
 	}
 
 	public Date getTourDate() {
@@ -154,6 +165,14 @@ public class MyTour implements PdfFileGetter {
 		}
 
 		return file;
+	}
+
+	public MyTourView getMyTourView() {
+		return myTourView;
+	}
+
+	public void setMyTourView(MyTourView myTourView) {
+		this.myTourView = myTourView;
 	}
 
 	private void addPdfTourList(Document doc) {

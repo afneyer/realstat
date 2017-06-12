@@ -68,7 +68,7 @@ public class AfnGoogleMap extends GoogleMap {
 	 * that don't refresh the client (e.g. change icon).
 	 *
 	 */
-	protected void refresh() {
+	public void refresh() {
 
 		// if there is a dummy Marker, remove it
 		if (dummyMarker != null) {

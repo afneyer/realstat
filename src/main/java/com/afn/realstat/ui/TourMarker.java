@@ -14,7 +14,6 @@ public class TourMarker extends GoogleMapMarker {
 	private MyTourStop myTourStop;
 	private AfnGoogleMap googleMap;
 	private TourListMarkerClickListener clickListener;
-	private boolean isInTour = false;
 
 	private Icon blankInIcon;
 	private Icon blankOutIcon;
@@ -46,7 +45,7 @@ public class TourMarker extends GoogleMapMarker {
 	public String getIconUrl() {
 		
 		Icon icon = null;
-		if (isInTour) {
+		if (isInTour()) {
 			icon = blankInIcon;
 			int seq = myTourStop.getSequence();
 			String text = Integer.toString(seq);
@@ -61,32 +60,14 @@ public class TourMarker extends GoogleMapMarker {
 	}
 
 	public boolean isInTour() {
-		return isInTour;
+		return myTourStop.isSelected();
 	}
 
-	public boolean toggleTour() {
-		if (isInTour) {
-			excludeFromTour();
-			return false;
-		} else {
-			includeInTour();
-			return true;
-		}
-	}
-
-	public void includeInTour() {
-		// change icon
-		if (!isInTour) {
-			isInTour = true;
-			googleMap.refresh();
-		}
-	}
-
-	public void excludeFromTour() {
-
+	public void toggleTour() {
 		if (isInTour()) {
-			isInTour = false;
-			googleMap.refresh();
+			myTourStop.deselect();
+		} else {
+			myTourStop.select();
 		}
 	}
 

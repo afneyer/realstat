@@ -100,7 +100,7 @@ public class TourListTab {
 		// initialize tourList view
 		myTour = new MyTour(new Date());
 		myTourView = new MyTourView(myTour);
-		tourListView = myTourView.getListView();
+		tourListView = myTourView.createListView();
 
 		tourDisplay.addComponent(tourListView);
 		tourDisplay.setExpandRatio(tourListView, 1.0f);
@@ -146,11 +146,10 @@ public class TourListTab {
 					}
 				}
 				myTour = new MyTour(date);
-				myTourView.setTour(myTour);
-				// TODO remove tourListView = myTourView.getListView();
-				// TODO remove map = myTourView.getMapView();		
 				
-
+				// replace the tour on the view with the new one
+				myTourView.setTour(myTour);
+			
 				// TODO move to view
 				ListDataProvider<MyTourStop> dataProvider = DataProvider.ofCollection(myTour.getTourList());
 				dataProvider.setSortOrder(MyTourStop::getPrice, SortDirection.ASCENDING);

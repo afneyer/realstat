@@ -30,10 +30,11 @@ public class MyTourView {
 
 	public MyTourView( MyTour myTour ) {
 		this.myTour = myTour;
-		this.map = getMapView();
+		myTour.setMyTourView(this);
+		this.map = createMapView();
 	}
 
-	public Grid<MyTourStop> getListView() {
+	public Grid<MyTourStop> createListView() {
 		
 		tourListView = new Grid<MyTourStop>();
 		tourListView.addStyleName("h3rows");
@@ -50,20 +51,22 @@ public class MyTourView {
 		selectionModel.addMultiSelectionListener(event -> {
 			Set<MyTourStop> added = event.getAddedSelection();
 			for (MyTourStop mts : added) {
-				myTour.selectEntry(mts);
-				TourMarker tm = map.getMarker(mts);
+				mts.select();
+				/* TourMarker tm = map.getMarker(mts);
 				if (tm != null) {
 					tm.includeInTour();
 				}
+				*/
 			}
 
 			Set<MyTourStop> removed = event.getRemovedSelection();
 			for (MyTourStop mts : removed) {
-				myTour.deselectEntry(mts);
+				mts.deselect();
+				/*
 				TourMarker tm = map.getMarker(mts);
 				if (tm != null) {
 					tm.excludeFromTour();
-				}
+				}*/
 			}
 		});
 
@@ -71,10 +74,18 @@ public class MyTourView {
 		return tourListView;
 	} 
 	
-	public AfnGoogleMap getMapView() {
+	public Grid<MyTourStop> getListView() {
+		return tourListView;
+	}
+	
+	public AfnGoogleMap createMapView() {
 		map = new AfnGoogleMap();
 		map.setCenter(new LatLon(37.83, -122.226));
 		map.setZoom(13);
+		return map;
+	}
+	
+	public AfnGoogleMap getMapView() {
 		return map;
 	}
 
@@ -108,7 +119,6 @@ public class MyTourView {
 		for ( MyTourStop mts : selected ) {
 			tourListView.select(mts);
 		}		
-		map.refresh();
 		map.removeAllMarkers();
 		this.addMarkersForTour();
 		
@@ -124,7 +134,6 @@ public class MyTourView {
 		for ( MyTourStop mts : selected ) {
 			tourListView.select(mts);
 		}
-		map.refresh();
 		hideExcludedMarkers();
 	}
 
@@ -165,6 +174,13 @@ public class MyTourView {
 	
 	public void setTour( MyTour tour ) {
 		myTour = tour;
+		tour.setMyTourView(this);
+	}
+
+	public void refresh() {
+		 tourListView.getDataProvider().refreshAll();
+		 map.refresh();
+		
 	}
 
 }
