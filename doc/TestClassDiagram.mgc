@@ -32,7 +32,7 @@
         <Communication destinationClassName="com.afn.realstat.ui.AfnGoogleMap"/>
         <Communication destinationClassName="com.afn.realstat.MyTourStop"/>
     </Class>
-    <Class name="com.afn.realstat.ui.MyTourView" x="537" y="321">
+    <Class name="com.afn.realstat.ui.MyTourView" x="414" y="308">
         <AttributesDisplayFilter public-accepted="true"
             private-accepted="true" protected-accepted="true"
             default-accepted="true" static-accepted="false"/>
@@ -59,13 +59,17 @@
             default-accepted="false" static-accepted="false"
             accessors-accepted="false" constructors-accepted="false"/>
         <Association
+            destinationClassName="com.afn.realstat.ui.MyTourView"
+            endpointName="myTourView" kind="Simple"/>
+        <Association
             destinationClassName="com.afn.realstat.ui.TourListMarkerClickListener"
             endpointName="clickListener" kind="Simple"/>
         <Association destinationClassName="com.afn.realstat.MyTourStop"
             endpointName="myTourStop" kind="Simple"/>
+        <Communication destinationClassName="com.afn.realstat.ui.MyTourView"/>
         <Communication destinationClassName="com.afn.realstat.MyTourStop"/>
     </Class>
-    <Class name="com.afn.realstat.ui.AfnGoogleMap" x="613" y="75">
+    <Class name="com.afn.realstat.ui.AfnGoogleMap" x="735" y="210">
         <AttributesDisplayFilter public-accepted="true"
             private-accepted="true" protected-accepted="true"
             default-accepted="true" static-accepted="false"/>
@@ -90,7 +94,7 @@
             endpointName="tour" kind="Simple"/>
         <Communication destinationClassName="com.afn.realstat.MyTour"/>
     </Class>
-    <Class name="com.afn.realstat.ui.TourListTab" x="313" y="57">
+    <Class name="com.afn.realstat.ui.TourListTab" x="304" y="55">
         <AttributesDisplayFilter public-accepted="true"
             private-accepted="true" protected-accepted="true"
             default-accepted="true" static-accepted="false"/>
