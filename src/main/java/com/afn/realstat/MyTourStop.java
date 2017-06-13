@@ -234,12 +234,4 @@ public class MyTourStop implements Comparable<MyTourStop> {
 		return tour.getSelected().contains(this);
 	}
 
-	public void select() {
-		tour.selectEntry(this);	
-	}
-	
-	public void deselect() {
-		tour.deselectEntry(this);
-	}
-
 }

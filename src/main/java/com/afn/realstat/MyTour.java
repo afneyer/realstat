@@ -45,31 +45,7 @@ public class MyTour implements PdfFileGetter {
 		selectedList = new ArrayList<MyTourStop>();
 	}
 
-	public void selectEntry(MyTourStop mts) {
-		
-		if (!selectedList.contains(mts)) {
-			
-			// add it to the selected list
-			selectedList.add(mts);
-			
-			// add it to the tour and map view
-			MyTourView view = mts.getTour().getMyTourView();
-			view.getListView().select(mts);
-			view.getMapView().refresh();
-		}
-
-	}
-
-	public void deselectEntry(MyTourStop mts) {
-
-		if (selectedList.contains(mts)) {
-			selectedList.remove(mts);
-			MyTourView view = mts.getTour().getMyTourView();
-			view.getListView().deselect(mts);
-			view.getMapView().refresh();
-		}
-
-	}
+	
 
 	public Date getTourDate() {
 		return tourDate;

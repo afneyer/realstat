@@ -51,28 +51,20 @@ public class MyTourView {
 		selectionModel.addMultiSelectionListener(event -> {
 			Set<MyTourStop> added = event.getAddedSelection();
 			for (MyTourStop mts : added) {
-				mts.select();
-				/* TourMarker tm = map.getMarker(mts);
-				if (tm != null) {
-					tm.includeInTour();
-				}
-				*/
+				selectEntry(mts);
 			}
 
 			Set<MyTourStop> removed = event.getRemovedSelection();
 			for (MyTourStop mts : removed) {
-				mts.deselect();
-				/*
-				TourMarker tm = map.getMarker(mts);
-				if (tm != null) {
-					tm.excludeFromTour();
-				}*/
+				deselectEntry(mts);
 			}
 		});
 
 		tourListView.addItemClickListener(event -> Notification.show("Value: " + event.getItem()));
 		return tourListView;
 	} 
+	
+
 	
 	public Grid<MyTourStop> getListView() {
 		return tourListView;
@@ -87,6 +79,33 @@ public class MyTourView {
 	
 	public AfnGoogleMap getMapView() {
 		return map;
+	}
+	
+	public void selectEntry(MyTourStop mts) {
+		
+		List <MyTourStop> selected = myTour.getSelected();
+		if (! selected.contains(mts)) {
+			
+			// add it to the selected list
+			selected.add(mts);
+			
+			// add it to the tour and map view
+			getListView().select(mts);
+			getMapView().refresh();
+		}
+
+	}
+
+	public void deselectEntry(MyTourStop mts) {
+
+		List <MyTourStop> selected = myTour.getSelected();
+		if (selected.contains(mts)) {
+			selected.remove(mts);
+			MyTourView view = mts.getTour().getMyTourView();
+			view.getListView().deselect(mts);
+			view.getMapView().refresh();
+		}
+
 	}
 
 	public CheckBox getShowSelectedCheckBox() {
@@ -152,7 +171,7 @@ public class MyTourView {
 		Point loc = mts.getLocation();
 		if (loc != null) {
 
-			mrkr = new TourMarker(mts, map);
+			mrkr = new TourMarker(mts, this);
 
 			map.addMarker(mrkr);
 

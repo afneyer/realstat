@@ -12,18 +12,20 @@ import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapMarker;
 public class TourMarker extends GoogleMapMarker {
 
 	private MyTourStop myTourStop;
-	private AfnGoogleMap googleMap;
+	private MyTourView myTourView;
+	
 	private TourListMarkerClickListener clickListener;
 
 	private Icon blankInIcon;
 	private Icon blankOutIcon;
 
-	public TourMarker(MyTourStop mts, AfnGoogleMap map) {
+	public TourMarker(MyTourStop mts, MyTourView view) {
 		super();
 
 		this.myTourStop = mts;
 		mts.setMarker(this);
-		this.googleMap = map;
+		
+		this.myTourView = view;
 
 		Point location = mts.getLocation();
 		// TODO re-factor conversion from point to LatLon
@@ -65,11 +67,12 @@ public class TourMarker extends GoogleMapMarker {
 
 	public void toggleTour() {
 		if (isInTour()) {
-			myTourStop.deselect();
+			myTourView.deselectEntry(this.myTourStop);
 		} else {
-			myTourStop.select();
+			myTourView.selectEntry(this.myTourStop);
 		}
 	}
+
 
 	public MyTourStop getMyTourStop() {
 		return myTourStop;
