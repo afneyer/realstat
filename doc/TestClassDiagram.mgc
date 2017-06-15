@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ClassDiagram>
     <Class name="com.afn.realstat.ui.TourListMarkerClickListener"
-        x="776" y="637">
+        x="701" y="592">
         <AttributesDisplayFilter public-accepted="true"
             private-accepted="true" protected-accepted="true"
             default-accepted="true" static-accepted="false"/>
@@ -50,7 +50,7 @@
         <Communication destinationClassName="com.afn.realstat.ui.AfnGoogleMap"/>
         <Communication destinationClassName="com.afn.realstat.MyTourStop"/>
     </Class>
-    <Class name="com.afn.realstat.ui.TourMarker" x="522" y="626">
+    <Class name="com.afn.realstat.ui.TourMarker" x="473" y="594">
         <AttributesDisplayFilter public-accepted="true"
             private-accepted="true" protected-accepted="true"
             default-accepted="true" static-accepted="false"/>
@@ -69,7 +69,7 @@
         <Communication destinationClassName="com.afn.realstat.ui.MyTourView"/>
         <Communication destinationClassName="com.afn.realstat.MyTourStop"/>
     </Class>
-    <Class name="com.afn.realstat.ui.AfnGoogleMap" x="735" y="210">
+    <Class name="com.afn.realstat.ui.AfnGoogleMap" x="718" y="213">
         <AttributesDisplayFilter public-accepted="true"
             private-accepted="true" protected-accepted="true"
             default-accepted="true" static-accepted="false"/>
@@ -79,7 +79,7 @@
             accessors-accepted="false" constructors-accepted="false"/>
         <Communication destinationClassName="com.afn.realstat.MyTourStop"/>
     </Class>
-    <Class name="com.afn.realstat.MyTourStop" x="156" y="573">
+    <Class name="com.afn.realstat.MyTourStop" x="165" y="551">
         <AttributesDisplayFilter public-accepted="true"
             private-accepted="true" protected-accepted="true"
             default-accepted="true" static-accepted="false"/>

@@ -58,7 +58,7 @@ public class TourListTab {
 		tourPage.setSizeFull();
 
 		VerticalLayout tourDisplay = new VerticalLayout();
-		// tourDisplay.setHeight(100, Unit.PERCENTAGE);
+		tourDisplay.setHeight(100, Unit.PERCENTAGE);
 		tourDisplay.setWidth(460, Unit.PIXELS);
 		tourDisplay.setMargin(false);
 
@@ -101,6 +101,8 @@ public class TourListTab {
 		myTour = new MyTour(new Date());
 		myTourView = new MyTourView(myTour);
 		tourListView = myTourView.createListView();
+		tourListView.setHeight(100, Unit.PERCENTAGE);
+		tourListView.setWidth(460, Unit.PIXELS);
 
 		tourDisplay.addComponent(tourListView);
 		tourDisplay.setExpandRatio(tourListView, 1.0f);
@@ -184,7 +186,7 @@ public class TourListTab {
 
 			tourPolyLine = GeoLocation.convert(polyline);
 			tourPolyLine.setStrokeColor("#C7320D");
-			tourPolyLine.setStrokeWeight(5);
+			tourPolyLine.setStrokeWeight(4);
 			map.addPolyline(tourPolyLine);
 		});
 
@@ -198,7 +200,7 @@ public class TourListTab {
 		Button tourFile = new Button("Import", new Button.ClickListener() {
 			@Override
 			public void buttonClick(ClickEvent event) {
-				selectAndShowPropertiesForTour();
+				importAdReviewPdf();
 			}
 		});
 		return tourFile;
@@ -247,15 +249,12 @@ public class TourListTab {
 	
 	*/
 
-	protected void selectAndShowPropertiesForTour() {
+	protected void importAdReviewPdf() {
 
 		// create a window to upload a pdf-file
 		Window popUp = new Window("Import AdReview");
 		VerticalLayout subContent = new VerticalLayout();
 		popUp.setContent(subContent);
-
-		// Put some components in it
-		// subContent.addComponent(new Label("Tour Upload and Date Selection"));
 
 		FileUploader receiver = new FileUploader();
 		receiver.setAfterUploadSucceeded(new AfterUploadSucceeded() {

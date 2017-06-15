@@ -41,10 +41,9 @@ public class MyTourView {
 		Grid.Column<MyTourStop, String> colPropertyInfo = tourListView.addColumn(MyTourStop::htmlString, new HtmlRenderer());
 		colPropertyInfo.setWidth(350.0);
 		Grid.Column<MyTourStop, String> colStringSeq = tourListView.addColumn(MyTourStop::getStringSeq);
-		colStringSeq.setWidth(50);
+		// colStringSeq.setWidth(100, Unit.PERCENTAGE);
 		
 		tourListView.setSelectionMode(SelectionMode.MULTI);
-		tourListView.setHeight(100, Unit.PERCENTAGE);
 
 		MultiSelectionModel<MyTourStop> selectionModel = (MultiSelectionModel<MyTourStop>) tourListView
 				.getSelectionModel();
