@@ -92,10 +92,19 @@
 			<artifactId>super-csv</artifactId>
 			<version>2.4.0</version>
 		</dependency>
+		
 		<dependency>
 			<groupId>com.skovalenko.geocoder.address_parser</groupId>
 			<artifactId>us_address_parser</artifactId>
 			<version>1.0</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>yago_naga</groupId>
+			<artifactId>java_tools</artifactId>
+			<version>1.0</version>
+			<scope>system</scope> 
+			<systemPath>${basedir}/src_external/yago_naga/javatools.jar</systemPath> 			
 		</dependency>
 
 		<dependency>
