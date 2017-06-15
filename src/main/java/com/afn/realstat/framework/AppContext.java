@@ -8,7 +8,6 @@ import java.util.Set;
 import javax.persistence.EntityManager;
 import javax.persistence.metamodel.Attribute;
 import javax.persistence.metamodel.Metamodel;
-import javax.persistence.metamodel.SingularAttribute;
 import javax.sql.DataSource;
 
 import org.springframework.beans.BeansException;

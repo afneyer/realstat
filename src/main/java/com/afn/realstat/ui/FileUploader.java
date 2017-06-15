@@ -1,22 +1,11 @@
 package com.afn.realstat.ui;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
-import java.sql.Blob;
-import java.sql.SQLException;
 
-import org.atmosphere.interceptor.AtmosphereResourceStateRecovery.B;
-
-import com.afn.realstat.AddressRepository;
 import com.afn.realstat.AppFiles;
-import com.afn.realstat.Artifact;
-import com.afn.realstat.ArtifactRepository;
-import com.afn.realstat.TourListRepository;
 import com.vaadin.server.Page;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Upload.Receiver;

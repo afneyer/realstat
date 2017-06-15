@@ -2,7 +2,6 @@ package com.afn.realstat.ui;
 
 import org.springframework.data.geo.Point;
 
-import com.afn.realstat.MyTour;
 import com.afn.realstat.MyTourStop;
 import com.afn.realstat.util.Icon;
 import com.vaadin.tapio.googlemaps.client.LatLon;

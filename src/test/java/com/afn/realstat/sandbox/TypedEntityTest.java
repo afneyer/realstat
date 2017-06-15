@@ -3,7 +3,6 @@ package com.afn.realstat.sandbox;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +14,6 @@ import com.afn.realstat.AbstractEntityRepository;
 import com.afn.realstat.Agent;
 import com.afn.realstat.AgentRepository;
 import com.afn.realstat.Application;
-import com.afn.realstat.Customer;
-import com.afn.realstat.CustomerRepository;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = Application.class, webEnvironment = SpringBootTest.WebEnvironment.NONE)

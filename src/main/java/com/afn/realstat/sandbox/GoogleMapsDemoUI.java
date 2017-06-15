@@ -57,7 +57,6 @@ public class GoogleMapsDemoUI extends UI {
         "Maaria is a district of Turku", maariaMarker);
     ;
     private Button componentToMaariaInfoWindowButton;
-    private final String apiKey = "";
 
     @WebServlet(value = "/*", asyncSupported = true)
     @VaadinServletConfiguration(productionMode = false, ui = GoogleMapsDemoUI.class, widgetset = "com.vaadin.tapio.googlemaps.demo.DemoWidgetset")
@@ -356,7 +355,8 @@ public class GoogleMapsDemoUI extends UI {
             });
         buttonLayoutRow2.addComponent(addKmlLayerButton);
 
-        Button clearMarkersButton = new Button("Remove all markers",
+        @SuppressWarnings("unused")
+		Button clearMarkersButton = new Button("Remove all markers",
             new Button.ClickListener() {
                 @Override
                 public void buttonClick(ClickEvent clickEvent) {

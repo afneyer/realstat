@@ -28,6 +28,7 @@ import ch.qos.logback.classic.Logger;
  */
 public class MapDirection {
 
+	@SuppressWarnings("unused")
 	private static final Logger log = (Logger) LoggerFactory.getLogger("app");
 
 	private Address start;
@@ -90,7 +91,6 @@ public class MapDirection {
 	}
 
 	public int[] getWaypointSequence() {
-		// TODO Auto-generated method stub
 		return order;
 	}
 }

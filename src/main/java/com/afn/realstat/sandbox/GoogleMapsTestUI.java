@@ -15,7 +15,6 @@ import com.vaadin.tapio.googlemaps.client.LatLon;
 import com.vaadin.tapio.googlemaps.client.events.MapClickListener;
 import com.vaadin.tapio.googlemaps.client.events.MarkerClickListener;
 import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapMarker;
-import com.vaadin.ui.Button;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
@@ -40,9 +39,6 @@ public class GoogleMapsTestUI extends UI {
 	private final String inIconUrl = "VAADIN/house-32Red.ico";
 	private final String outIconUrl = "VAADIN/star32.png";
 	private final String emptyIcon = "VAADIN/emptyIcon.jpg";
-
-	private Button changeIcon;
-	private final String apiKey = "";
 
 	@WebServlet(value = "/*", asyncSupported = true)
 	@VaadinServletConfiguration(productionMode = false, ui = GoogleMapsTestUI.class, widgetset = "com.vaadin.tapio.googlemaps.demo.DemoWidgetset")

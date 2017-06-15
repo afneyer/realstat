@@ -8,8 +8,6 @@ import com.afn.realstat.AfnDateUtil;
 import com.afn.realstat.AppParamManager;
 import com.afn.realstat.framework.SpringApplicationContext;
 import com.google.maps.GeoApiContext;
-import com.google.maps.model.GeocodingResult;
-import com.google.maps.model.Geometry;
 
 import ch.qos.logback.classic.Logger;
 
@@ -24,6 +22,7 @@ import ch.qos.logback.classic.Logger;
  */
 public class GoogleMapApi {
 
+	@SuppressWarnings("unused")
 	private static final Logger log = (Logger) LoggerFactory.getLogger("app");
 
 	private final static String apiKey = "AIzaSyCSgBJHB0XMVHlGaMrTgL-YO2_pHhPtuKc";

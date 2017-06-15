@@ -8,10 +8,9 @@ import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.URL;
+
 import javax.imageio.ImageIO;
 
 import org.junit.Test;

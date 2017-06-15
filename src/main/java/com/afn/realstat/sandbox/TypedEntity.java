@@ -1,6 +1,5 @@
 package com.afn.realstat.sandbox;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.afn.realstat.AbstractEntity;

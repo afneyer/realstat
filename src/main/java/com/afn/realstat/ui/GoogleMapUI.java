@@ -1,39 +1,21 @@
 package com.afn.realstat.ui;
 
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
-import java.util.Set;
 import java.util.function.Function;
 
-import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
-import org.eclipse.jetty.servlet.DefaultServlet;
 // import org.hsqldb.lib.Iterator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.geo.Point;
-import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.afn.realstat.Address;
 import com.afn.realstat.AddressManager;
 import com.afn.realstat.Agent;
 import com.afn.realstat.AgentRepository;
-import com.afn.realstat.MyTour;
-import com.afn.realstat.MyTourStop;
 import com.afn.realstat.PropertyTransactionService;
 import com.afn.realstat.QAgent;
 import com.afn.realstat.RealProperty;
-import com.afn.realstat.TourListEntry;
-import com.afn.realstat.TourListRepository;
-import com.afn.realstat.sandbox.GoogleMapsDemoUI;
 import com.querydsl.core.types.dsl.StringPath;
 import com.vaadin.annotations.Push;
 import com.vaadin.annotations.Theme;
@@ -54,7 +36,6 @@ import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.ListSelect;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.UI;

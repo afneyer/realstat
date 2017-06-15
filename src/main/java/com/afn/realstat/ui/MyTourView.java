@@ -1,23 +1,29 @@
 package com.afn.realstat.ui;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
 import org.springframework.data.geo.Point;
 
+import com.afn.realstat.Address;
 import com.afn.realstat.MyTour;
 import com.afn.realstat.MyTourStop;
+import com.afn.realstat.util.GeoLocation;
+import com.afn.realstat.util.MapDirection;
+import com.google.maps.model.EncodedPolyline;
 import com.vaadin.data.provider.DataProvider;
 import com.vaadin.data.provider.ListDataProvider;
-import com.vaadin.server.Sizeable.Unit;
 import com.vaadin.shared.data.sort.SortDirection;
 import com.vaadin.tapio.googlemaps.client.LatLon;
 import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapPolyline;
+import com.vaadin.ui.Button;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.Grid.SelectionMode;
 import com.vaadin.ui.Notification;
+import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.components.grid.MultiSelectionModel;
 import com.vaadin.ui.renderers.HtmlRenderer;
 
@@ -28,10 +34,12 @@ public class MyTourView {
 	private AfnGoogleMap map;
 	private GoogleMapPolyline tourPolyLine = null;
 
-	public MyTourView( MyTour myTour ) {
-		this.myTour = myTour;
+	public MyTourView() {
+		
+		myTour = new MyTour(new Date());
 		myTour.setMyTourView(this);
 		this.map = createMapView();
+		this.tourListView = createListView();
 	}
 
 	public Grid<MyTourStop> createListView() {
@@ -40,8 +48,7 @@ public class MyTourView {
 		tourListView.addStyleName("h3rows");
 		Grid.Column<MyTourStop, String> colPropertyInfo = tourListView.addColumn(MyTourStop::htmlString, new HtmlRenderer());
 		colPropertyInfo.setWidth(350.0);
-		Grid.Column<MyTourStop, String> colStringSeq = tourListView.addColumn(MyTourStop::getStringSeq);
-		// colStringSeq.setWidth(100, Unit.PERCENTAGE);
+		tourListView.addColumn(MyTourStop::getStringSeq);
 		
 		tourListView.setSelectionMode(SelectionMode.MULTI);
 
@@ -190,15 +197,57 @@ public class MyTourView {
 		map.centerOnTourMarkers();
 	}
 	
-	public void setTour( MyTour tour ) {
+	public void removeTour() {
+		map.removeAllMarkers();
+		if (tourPolyLine != null) {
+			map.removePolyline(tourPolyLine);
+			if (myTour != null) {
+				myTour.clearSequence();
+			}
+		}
+	}
+	
+	public void replaceTour( MyTour tour ) {
+		if (myTour != null) {
+			removeTour();
+		}
 		myTour = tour;
 		tour.setMyTourView(this);
+		showAll();
 	}
 
 	public void refresh() {
 		 tourListView.getDataProvider().refreshAll();
 		 map.refresh();
 		
+	}
+	
+	public Button getRouteTourButton() {
+		Button routeTour = new Button("Route", (ClickListener) event -> {
+			if (tourPolyLine != null) {
+				map.removePolyline(tourPolyLine);
+				myTour.clearSequence();
+			}
+			Address start = new Address("4395 Piedmont Ave. #309", "Oakland", "94611");
+			Address end = start;
+
+			// move this into myTour;
+			List<Address> routeList = myTour.getSelectedAddresses();
+			MapDirection dir = new MapDirection(start, end, routeList);
+			EncodedPolyline polyline = dir.route(myTour.getTourDate());
+			int seq[] = dir.getWaypointSequence();
+			myTour.setSequence(seq);
+			map.refresh();
+
+			tourPolyLine = GeoLocation.convert(polyline);
+			tourPolyLine.setStrokeColor("#C7320D");
+			tourPolyLine.setStrokeWeight(4);
+			map.addPolyline(tourPolyLine);
+		});
+
+		routeTour.setDescription("Click to route tour");
+		routeTour.setEnabled(false);
+		return routeTour;
 	}
 
 }

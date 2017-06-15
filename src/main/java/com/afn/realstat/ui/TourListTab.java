@@ -1,30 +1,18 @@
 package com.afn.realstat.ui;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.springframework.data.geo.Point;
-
 import com.afn.realstat.AdReviewTourList;
-import com.afn.realstat.Address;
 import com.afn.realstat.MyTour;
 import com.afn.realstat.MyTourStop;
 import com.afn.realstat.TourListEntry;
 import com.afn.realstat.TourListRepository;
 import com.afn.realstat.ui.FileUploader.AfterUploadSucceeded;
-import com.afn.realstat.util.GeoLocation;
-import com.afn.realstat.util.MapDirection;
-import com.google.maps.model.EncodedPolyline;
-import com.vaadin.data.provider.DataProvider;
-import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.server.Sizeable.Unit;
-import com.vaadin.shared.data.sort.SortDirection;
-import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapPolyline;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Component;
@@ -48,8 +36,6 @@ public class TourListTab {
 	private Button routeTourButton = null;
 	private ShowPdfButton printTourButton = null;
 
-	private GoogleMapPolyline tourPolyLine = null;
-
 	public TourListTab() {
 		
 		// initialize tourPage
@@ -67,6 +53,15 @@ public class TourListTab {
 		tourDisplayControl = new HorizontalLayout();
 		tourDisplayControl.setMargin(false);
 		tourDisplay.addComponent(tourDisplayControl);
+		
+		// initialize tourList view
+		myTourView = new MyTourView();
+		tourListView = myTourView.getListView();
+		tourListView.setHeight(100, Unit.PERCENTAGE);
+		tourListView.setWidth(460, Unit.PIXELS);
+
+		tourDisplay.addComponent(tourListView);
+		tourDisplay.setExpandRatio(tourListView, 1.0f);
 
 		tourListSelector = getTourSelector();
 		tourDisplayControl.addComponent(tourListSelector);
@@ -86,7 +81,7 @@ public class TourListTab {
 		CheckBox showRouted = getShowSelectedCheckBox();
 		tourOptions.addComponent(showRouted);
 
-		routeTourButton = getRouteTourButton();
+		routeTourButton = myTourView.getRouteTourButton();
 		tourControlButtons.addComponent(routeTourButton);
 
 		printTourButton = getPrintPdfButton();
@@ -97,15 +92,6 @@ public class TourListTab {
 		tourControlButtons.addComponent(importTourFile);
 		importTourFile.setDescription("testDescription");
 
-		// initialize tourList view
-		myTour = new MyTour(new Date());
-		myTourView = new MyTourView(myTour);
-		tourListView = myTourView.createListView();
-		tourListView.setHeight(100, Unit.PERCENTAGE);
-		tourListView.setWidth(460, Unit.PIXELS);
-
-		tourDisplay.addComponent(tourListView);
-		tourDisplay.setExpandRatio(tourListView, 1.0f);
 
 		// initialize tourMapView
 		map = myTourView.getMapView();
@@ -140,24 +126,14 @@ public class TourListTab {
 			Date date = event.getValue();
 			if (date != null) {
 
-				map.removeAllMarkers();
-				if (tourPolyLine != null) {
-					map.removePolyline(tourPolyLine);
-					if (myTour != null) {
-						myTour.clearSequence();
-					}
-				}
 				myTour = new MyTour(date);
 				
 				// replace the tour on the view with the new one
-				myTourView.setTour(myTour);
+				myTourView.replaceTour(myTour);
 			
-				// TODO move to view
-				ListDataProvider<MyTourStop> dataProvider = DataProvider.ofCollection(myTour.getTourList());
-				dataProvider.setSortOrder(MyTourStop::getPrice, SortDirection.ASCENDING);
-				tourListView.setDataProvider(dataProvider);
-
 				myTourView.addMarkersForTour();
+				
+				// enable the printTour button
 				printTourButton.setPdfFileGetter(myTour::getPdfFile);
 				printTourButton.setEnabled(true);
 				routeTourButton.setEnabled(true);
@@ -167,33 +143,7 @@ public class TourListTab {
 		return select;
 	}
 
-	private Button getRouteTourButton() {
-		Button routeTour = new Button("Route", (ClickListener) event -> {
-			if (tourPolyLine != null) {
-				map.removePolyline(tourPolyLine);
-				myTour.clearSequence();
-			}
-			Address start = new Address("4395 Piedmont Ave. #309", "Oakland", "94611");
-			Address end = start;
 
-			// move this into myTour;
-			List<Address> routeList = myTour.getSelectedAddresses();
-			MapDirection dir = new MapDirection(start, end, routeList);
-			EncodedPolyline polyline = dir.route(myTour.getTourDate());
-			int seq[] = dir.getWaypointSequence();
-			myTour.setSequence(seq);
-			map.refresh();
-
-			tourPolyLine = GeoLocation.convert(polyline);
-			tourPolyLine.setStrokeColor("#C7320D");
-			tourPolyLine.setStrokeWeight(4);
-			map.addPolyline(tourPolyLine);
-		});
-
-		routeTour.setDescription("Click to route tour");
-		routeTour.setEnabled(false);
-		return routeTour;
-	}
 
 	private Button getImportTourFileButton() {
 		@SuppressWarnings("serial")
@@ -232,22 +182,6 @@ public class TourListTab {
 		});
 		return checkBox;
 	}
-
-
-	/* TODO remove
-
-	private void hideExcludedMarkers() {
-		List<MyTourStop> mtsList = myTour.getTourList();
-		for (MyTourStop mts : mtsList) {
-			TourMarker tm = mts.getTourMarker();
-			if (!tm.isInTour()) {
-				map.removeMarker(mts.getTourMarker());
-			}
-		}
-		map.centerOnTourMarkers();
-	}
-	
-	*/
 
 	protected void importAdReviewPdf() {
 

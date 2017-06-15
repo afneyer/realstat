@@ -1,7 +1,5 @@
 package com.afn.realstat.sandbox;
 
-import java.io.File;
-
 import org.junit.Test;
 
 import com.afn.realstat.AppFiles;
