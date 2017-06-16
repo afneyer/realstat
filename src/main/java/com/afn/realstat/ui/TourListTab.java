@@ -4,6 +4,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.data.geo.Point;
+
 import com.afn.realstat.AdReviewTourList;
 import com.afn.realstat.MyTour;
 import com.afn.realstat.MyTourStop;
@@ -35,6 +37,8 @@ public class TourListTab {
 
 	private Button routeTourButton = null;
 	private ShowPdfButton printTourButton = null;
+	
+
 
 	public TourListTab() {
 		

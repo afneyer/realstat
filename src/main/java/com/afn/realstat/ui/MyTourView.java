@@ -33,6 +33,9 @@ public class MyTourView {
 	private MyTour myTour;
 	private AfnGoogleMap map;
 	private GoogleMapPolyline tourPolyLine = null;
+	
+	private Point startLocation;
+	private Point endLocation;
 
 	public MyTourView() {
 		
@@ -48,7 +51,8 @@ public class MyTourView {
 		tourListView.addStyleName("h3rows");
 		Grid.Column<MyTourStop, String> colPropertyInfo = tourListView.addColumn(MyTourStop::htmlString, new HtmlRenderer());
 		colPropertyInfo.setWidth(350.0);
-		tourListView.addColumn(MyTourStop::getStringSeq);
+		colPropertyInfo.setCaption("Description");
+		tourListView.addColumn(MyTourStop::getStringSeq).setCaption("Seq");
 		
 		tourListView.setSelectionMode(SelectionMode.MULTI);
 
@@ -228,8 +232,11 @@ public class MyTourView {
 				map.removePolyline(tourPolyLine);
 				myTour.clearSequence();
 			}
-			Address start = new Address("4395 Piedmont Ave. #309", "Oakland", "94611");
-			Address end = start;
+			
+			Point startLoc = map.getStartLocation();
+			Point endLoc = map.setEndLocation();
+			Address start = getStartLocation();
+			Address end = getEndLocation();
 
 			// move this into myTour;
 			List<Address> routeList = myTour.getSelectedAddresses();
@@ -248,6 +255,14 @@ public class MyTourView {
 		routeTour.setDescription("Click to route tour");
 		routeTour.setEnabled(false);
 		return routeTour;
+	}
+
+	public Point getStartLocation() {
+		return startLocation;
+	}
+
+	public Point getEndLocation() {
+		return endLocation;
 	}
 
 }
