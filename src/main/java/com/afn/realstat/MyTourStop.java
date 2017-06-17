@@ -14,19 +14,34 @@ public class MyTourStop implements Comparable<MyTourStop> {
 
 	public static final Logger log = LoggerFactory.getLogger("app");
 	public static final Class<MyTourStop> classType = MyTourStop.class;
+	
 	public static TourListRepository repo;
+	
+	public enum MarkerType { 
+		normal, 
+		start, 
+		end; 
+	}
 
 	private TourListEntry tle;
 	private MyTour tour;
 	private int sequence;
 	private TourMarker tourMarker;
-
+	
+	
+	private MarkerType markerType;
+	
 	public MyTourStop() {
 	}
 
-	public MyTourStop(MyTour tour, TourListEntry tle) {
+	public MyTourStop(MyTour tour, TourListEntry tle, MarkerType markerType) {
 		this.tle = tle;
 		this.tour = tour;
+		this.markerType = markerType;
+	}
+	
+	public MyTourStop(MyTour tour, TourListEntry tle) {
+		this(tour,tle,MarkerType.normal);
 	}
 
 	public String htmlString() {
@@ -232,6 +247,14 @@ public class MyTourStop implements Comparable<MyTourStop> {
 
 	public boolean isSelected() {
 		return tour.getSelected().contains(this);
+	}
+
+	public boolean isTourStart() {
+		return markerType == MarkerType.start;
+	}
+	
+	public boolean isTourEnd() {
+		return markerType == MarkerType.end;
 	}
 
 }

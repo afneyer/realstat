@@ -84,5 +84,13 @@ public class TourMarker extends GoogleMapMarker {
 	public TourListMarkerClickListener getTourListMarkerClickListener() {
 		return clickListener;
 	}
+	
+	public boolean isStartMarker() {
+		return getMyTourStop().isTourStart();
+	}
+	
+	public boolean isEndMarker() {
+		return getMyTourStop().isTourEnd();
+	}
 
 }

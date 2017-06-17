@@ -3,11 +3,13 @@ package com.afn.realstat.util;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.geo.Point;
 
+import com.afn.realstat.Address;
 import com.google.maps.GeocodingApi;
 import com.google.maps.model.AddressComponent;
 import com.google.maps.model.AddressComponentType;
 import com.google.maps.model.GeocodingResult;
 import com.google.maps.model.Geometry;
+import com.google.maps.model.LatLng;
 
 import ch.qos.logback.classic.Logger;
 
@@ -49,55 +51,38 @@ public class MapLocation {
 		}
 
 	}
+	
+	public MapLocation(Point point) {
+		
+		GoogleMapApi api = new GoogleMapApi();
 
-	/* TODO remove
-	private void updateCallData() {
-
-		// if last call is yesterday, set it today and reset the number of calls
-		// made today to zero
-		Date lastCallDate = apmMgr.getDateVal("lastCall", "MAP");
-		if (lastCallDate == null) {
-			// lastCallDate = AfnDateUtil.dateYesterday();
+		if (!GoogleMapApi.apiLimitReached()) {
+			try {
+				GoogleMapApi.updateCallData();
+				System.out.println("Call number " + numCallsToday + " today to geo-coder for point: " + point);
+				LatLng location = GeoLocation.convertToLatLng(point);
+				results = GeocodingApi.reverseGeocode(api.getContext(), location).await();
+				if (results != null && results.length != 0) {
+					geo = results[0].geometry;
+				}
+			} catch (Exception e) {
+				log.error("Error in MapLocation: Cannot convert point =" + point + " to Address" + "Exception = " + e);
+			}
+		} else {
+			log.error("Error executing Google Map API, mostly likely exceeded daily maximum");
 		}
-
-		numCallsToday = new Integer(apmMgr.getVal("callsToday", "MAP"));
-
-		Date today = AfnDateUtil.dateToday();
-		if (lastCallDate.before(today)) {
-			lastCall = today;
-			numCallsToday = 0;
-		}
-
-		// update call parameters
-		numCallsToday++;
-		apmMgr.setVal("callsToday", "MAP", Integer.toString(numCallsToday));
-		apmMgr.setVal("lastCall", "MAP", lastCall);
-		System.out.println("numCallsToday = " + numCallsToday);
-		System.out.println("lastCall = " + lastCall);
+		
 	}
-	*/
+	
+	public Address getAddress() {
+		String streetUnit = this.getStreetNbr() + " " + this.getStreet(); 
+		return new Address(streetUnit, getCity(), getZip(), getLocation());
+	}
 
 	/*
-	public static boolean apiLimitReached() {
+	TOD
+	O Move to Timer function
 
-		if (numCallsToday == null || lastCall == null) {
-			numCallsToday = 0;
-			lastCall = new Date();
-		}
-
-		if (numCallsToday >= maxCallsPerDay) {
-			return true;
-		}
-		return false;
-	}
-
-	public static Integer apiLimit() {
-		return maxCallsPerDay;
-	}
-	*/
-
-	// TODO Move to Timer function
-	/*
 	private void sleepInMilliseconds(long millis) {
 		try {
 			TimeUnit.MILLISECONDS.sleep(millis);

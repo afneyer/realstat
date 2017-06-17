@@ -8,6 +8,7 @@ import java.util.List;
 
 import com.afn.realstat.MyTourStop;
 import com.afn.realstat.util.Icon;
+import com.afn.realstat.util.MapLocation;
 import com.google.maps.model.EncodedPolyline;
 import com.google.maps.model.LatLng;
 import com.vaadin.tapio.googlemaps.GoogleMap;
@@ -16,21 +17,20 @@ import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapMarker;
 import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapPolyline;
 
 @SuppressWarnings("serial")
-public class AfnGoogleMap extends GoogleMap {
+public class TourMap extends GoogleMap {
 
 	private GoogleMapMarker dummyMarker;
+	private GoogleMapMarker startMarker;
+	private GoogleMapMarker endMarker;
+	private MapLocation startLocation;
+	private MapLocation endLocatin;
 
-	public AfnGoogleMap(String apiKey, String clientId, String language) {
+	public TourMap(String apiKey, String clientId, String language) {
 		super(apiKey, clientId, language);
 	}
 
-	public AfnGoogleMap() {
+	public TourMap() {
 		this(null, null, null);
-	}
-
-	@Override
-	public AfnGoogleMapState getState() {
-		return (AfnGoogleMapState) super.getState();
 	}
 
 	public List<TourMarker> getTourMarkers() {
@@ -171,5 +171,16 @@ public class AfnGoogleMap extends GoogleMap {
 			removeMarker(marker);
 		}
 	}
+
+	public MapLocation getStartLocation() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public MapLocation setEndLocation() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 
 }

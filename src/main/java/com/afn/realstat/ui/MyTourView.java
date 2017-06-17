@@ -12,6 +12,7 @@ import com.afn.realstat.MyTour;
 import com.afn.realstat.MyTourStop;
 import com.afn.realstat.util.GeoLocation;
 import com.afn.realstat.util.MapDirection;
+import com.afn.realstat.util.MapLocation;
 import com.google.maps.model.EncodedPolyline;
 import com.vaadin.data.provider.DataProvider;
 import com.vaadin.data.provider.ListDataProvider;
@@ -31,11 +32,11 @@ public class MyTourView {
 
 	private Grid<MyTourStop> tourListView = null;
 	private MyTour myTour;
-	private AfnGoogleMap map;
+	private TourMap map;
 	private GoogleMapPolyline tourPolyLine = null;
 	
-	private Point startLocation;
-	private Point endLocation;
+	private MapLocation startLocation;
+	private MapLocation endLocation;
 
 	public MyTourView() {
 		
@@ -80,14 +81,14 @@ public class MyTourView {
 		return tourListView;
 	}
 	
-	public AfnGoogleMap createMapView() {
-		map = new AfnGoogleMap();
+	public TourMap createMapView() {
+		map = new TourMap();
 		map.setCenter(new LatLon(37.83, -122.226));
 		map.setZoom(13);
 		return map;
 	}
 	
-	public AfnGoogleMap getMapView() {
+	public TourMap getMapView() {
 		return map;
 	}
 	
@@ -233,10 +234,11 @@ public class MyTourView {
 				myTour.clearSequence();
 			}
 			
-			Point startLoc = map.getStartLocation();
-			Point endLoc = map.setEndLocation();
-			Address start = getStartLocation();
-			Address end = getEndLocation();
+			// TODO
+			MapLocation startLoc = map.getStartLocation();
+			MapLocation endLoc = map.setEndLocation();
+			Address start = startLoc.getAddress();
+			Address end = endLoc.getAddress();
 
 			// move this into myTour;
 			List<Address> routeList = myTour.getSelectedAddresses();
@@ -257,11 +259,11 @@ public class MyTourView {
 		return routeTour;
 	}
 
-	public Point getStartLocation() {
+	public MapLocation getStartLocation() {
 		return startLocation;
 	}
 
-	public Point getEndLocation() {
+	public MapLocation getEndLocation() {
 		return endLocation;
 	}
 

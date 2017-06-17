@@ -31,7 +31,7 @@ public class TourListTab {
 	private Grid<MyTourStop> tourListView = null;
 	private MyTour myTour;
 	private MyTourView myTourView;
-	private AfnGoogleMap map;
+	private TourMap map;
 	private Component tourListSelector;
 	private HorizontalLayout tourDisplayControl;
 

@@ -7,14 +7,18 @@ import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.geo.Point;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.web.WebAppConfiguration;
 
 import com.afn.realstat.util.MapLocation;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = Application.class, webEnvironment = SpringBootTest.WebEnvironment.NONE)
+// @SpringBootTest(classes = Application.class, webEnvironment = SpringBootTest.WebEnvironment.NONE)
+@SpringBootTest(classes = Application.class)
 @ActiveProfiles("dev")
+@WebAppConfiguration
 public class MapLocationTest {
 	
 	public static final Logger log = LoggerFactory.getLogger("app");
@@ -66,5 +70,14 @@ public class MapLocationTest {
 		log.warn(mapLoc.getFormattedAddress());
 	}
 	
+	@Test
+	public void testReverseGeocodingApi() {
+		MapLocation mapLoc = new MapLocation(new Point(-122.220519,37.816977));
+		Address address = mapLoc.getAddress();
+		assertEquals("112",address.getStreetNbr());
+		assertEquals("INDIAN", address.getStreetName());
+		assertEquals("PIEDMONT", address.getCity());
+		assertEquals("94610", address.getZip());
+	}
 	
 }

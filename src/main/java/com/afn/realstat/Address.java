@@ -55,7 +55,13 @@ public class Address extends AbstractEntity {
 	public Address(String inStreetUnit, String inCity, String inZip) {
 		this(inStreetUnit, null, inCity, inZip);
 	}
-
+	
+	public Address(String inStreetUnit, String inCity, String inZip, Point inLocation) {
+		location = inLocation;
+		AddressParser adrPrsr = new AddressParser(inStreetUnit, null, inCity, inZip);
+		setFields(adrPrsr);
+	}
+	
 	private void setFields(AddressParser prsdAdr) {
 		setStreetNbr(prsdAdr.getStreetNbr());
 		setStreetPreDir(prsdAdr.getStreetPreDir());
@@ -70,7 +76,6 @@ public class Address extends AbstractEntity {
 		setZip4(prsdAdr.getZip4());
 		setCounty(prsdAdr.getCounty());
 		setCountry(prsdAdr.getCountry());
-		setMapLocCalls(0);
 		setMapLocationFields();
 	}
 

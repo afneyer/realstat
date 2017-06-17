@@ -3,6 +3,8 @@ package com.afn.realstat.util;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.data.geo.Point;
+
 import com.google.maps.model.EncodedPolyline;
 import com.google.maps.model.LatLng;
 import com.vaadin.tapio.googlemaps.client.LatLon;
@@ -29,5 +31,15 @@ public class GeoLocation {
 	public static LatLng convert(LatLon latLon) {
 		LatLng latLng = new LatLng(latLon.getLat(), latLon.getLon());
 		return latLng;
+	}
+	
+	public static LatLng convertToLatLng(Point p) {
+		return new LatLng(p.getY(), p.getX());
+		
+	}
+	
+	public static Point convertToPoint(LatLng latLng) {
+		return new Point(latLng.lng, latLng.lat);
+		
 	}
 }
