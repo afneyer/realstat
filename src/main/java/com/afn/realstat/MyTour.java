@@ -295,9 +295,11 @@ public class MyTour implements PdfFileGetter {
 		doc.add(table);
 	}
 
+	/* TODO remove
 	public void setSelected(List<MyTourStop> selected) {
 		this.selectedList = new ArrayList<MyTourStop>( selected );	
 	}
+	*/
 
 	public Address getStartAddress() {
 		return startAddress;

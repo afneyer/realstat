@@ -251,14 +251,15 @@ public class MyTourView {
 			List<Address> routeList = myTour.getSelectedAddresses();
 			MapDirection dir = new MapDirection(start, end, routeList);
 			EncodedPolyline polyline = dir.route(myTour.getTourDate());
-			int seq[] = dir.getWaypointSequence();
+			int seq[] = dir.getAddressSequence();
 			myTour.setSequence(seq);
-			map.refresh();
-
+			
 			tourPolyLine = GeoLocation.convert(polyline);
 			tourPolyLine.setStrokeColor("#C7320D");
 			tourPolyLine.setStrokeWeight(4);
 			map.addPolyline(tourPolyLine);
+			
+			refresh();
 		});
 
 		routeTour.setDescription("Click to route tour");
@@ -331,8 +332,9 @@ public class MyTourView {
 	
 	private TextArea getStartEndTextArea() {
 		TextArea textArea = new TextArea();
+		textArea.setStyleName("startEndText");
 		textArea.setReadOnly(true);
-		textArea.setHeight(3,Unit.EM);
+		textArea.setHeight(3.5f,Unit.EM);
 		return textArea;
 	}
 

@@ -2,7 +2,9 @@ package com.afn.realstat.util;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.joda.time.Instant;
 import org.slf4j.LoggerFactory;
@@ -90,7 +92,18 @@ public class MapDirection {
 		return polyLine;
 	}
 
+	/*
 	public int[] getWaypointSequence() {
 		return order;
+	}
+	*/
+	
+	public int[] getAddressSequence() {
+		int[] adrSeq = new int[order.length];
+		for (int i=0; i<order.length; i++) {
+			int addressIndex = order[i];
+			adrSeq[addressIndex] = i;
+		}	
+		return adrSeq;
 	}
 }
