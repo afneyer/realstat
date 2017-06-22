@@ -85,7 +85,6 @@ public class VaadinUI extends UI {
 	}
 
 	// tag::listCustomers[]
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	void listCustomers(String text) {
 		if (StringUtils.isEmpty(text)) {
 			// TODO fix grid.setContainerDataSource(

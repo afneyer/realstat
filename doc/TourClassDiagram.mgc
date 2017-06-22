@@ -1,20 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ClassDiagram>
-    <Class name="com.afn.realstat.ui.TourListMarkerClickListener"
-        x="701" y="592">
-        <AttributesDisplayFilter public-accepted="true"
-            private-accepted="true" protected-accepted="true"
-            default-accepted="true" static-accepted="false"/>
-        <MethodDisplayFilter public-accepted="true"
-            private-accepted="false" protected-accepted="false"
-            default-accepted="false" static-accepted="false"
-            accessors-accepted="false" constructors-accepted="false"/>
-        <Association
-            destinationClassName="com.afn.realstat.ui.TourMarker"
-            endpointName="marker" kind="Simple"/>
-        <Communication destinationClassName="com.afn.realstat.ui.TourMarker"/>
-    </Class>
-    <Class name="com.afn.realstat.MyTour" x="154" y="329">
+    <Class name="com.afn.realstat.MyTour" x="172" y="51">
         <AttributesDisplayFilter public-accepted="true"
             private-accepted="true" protected-accepted="true"
             default-accepted="true" static-accepted="false"/>
@@ -29,10 +15,10 @@
             endpointName="myTourView" kind="Simple"/>
         <Association destinationClassName="com.afn.realstat.MyTourStop"
             endpointName="tourList" kind="Simple"/>
-        <Communication destinationClassName="com.afn.realstat.ui.AfnGoogleMap"/>
+        <Communication destinationClassName="com.afn.realstat.TourListEntry"/>
         <Communication destinationClassName="com.afn.realstat.MyTourStop"/>
     </Class>
-    <Class name="com.afn.realstat.ui.MyTourView" x="414" y="308">
+    <Class name="com.afn.realstat.TourListEntry" x="170" y="496">
         <AttributesDisplayFilter public-accepted="true"
             private-accepted="true" protected-accepted="true"
             default-accepted="true" static-accepted="false"/>
@@ -40,17 +26,8 @@
             private-accepted="false" protected-accepted="false"
             default-accepted="false" static-accepted="false"
             accessors-accepted="false" constructors-accepted="false"/>
-        <Association destinationClassName="com.afn.realstat.MyTour"
-            endpointName="myTour" kind="Simple"/>
-        <Association
-            destinationClassName="com.afn.realstat.ui.AfnGoogleMap"
-            endpointName="map" kind="Simple"/>
-        <Communication destinationClassName="com.afn.realstat.MyTour"/>
-        <Communication destinationClassName="com.afn.realstat.ui.TourMarker"/>
-        <Communication destinationClassName="com.afn.realstat.ui.AfnGoogleMap"/>
-        <Communication destinationClassName="com.afn.realstat.MyTourStop"/>
     </Class>
-    <Class name="com.afn.realstat.ui.TourMarker" x="473" y="594">
+    <Class name="com.afn.realstat.ui.TourMap" x="874" y="209">
         <AttributesDisplayFilter public-accepted="true"
             private-accepted="true" protected-accepted="true"
             default-accepted="true" static-accepted="false"/>
@@ -62,14 +39,21 @@
             destinationClassName="com.afn.realstat.ui.MyTourView"
             endpointName="myTourView" kind="Simple"/>
         <Association
-            destinationClassName="com.afn.realstat.ui.TourListMarkerClickListener"
-            endpointName="clickListener" kind="Simple"/>
-        <Association destinationClassName="com.afn.realstat.MyTourStop"
-            endpointName="myTourStop" kind="Simple"/>
+            destinationClassName="com.afn.realstat.ui.TourStartEndMarker"
+            endpointName="endMarker" kind="Simple">
+            <Point x="1173" y="349"/>
+        </Association>
+        <Association
+            destinationClassName="com.afn.realstat.ui.TourStartEndMarker"
+            endpointName="startMarker" kind="Simple">
+            <Point x="904" y="351"/>
+        </Association>
+        <Communication destinationClassName="com.afn.realstat.MyTour"/>
+        <Communication destinationClassName="com.afn.realstat.ui.TourStartEndMarker"/>
         <Communication destinationClassName="com.afn.realstat.ui.MyTourView"/>
         <Communication destinationClassName="com.afn.realstat.MyTourStop"/>
     </Class>
-    <Class name="com.afn.realstat.ui.AfnGoogleMap" x="718" y="213">
+    <Class name="com.afn.realstat.ui.TourStartEndMarker" x="854" y="428">
         <AttributesDisplayFilter public-accepted="true"
             private-accepted="true" protected-accepted="true"
             default-accepted="true" static-accepted="false"/>
@@ -77,9 +61,50 @@
             private-accepted="false" protected-accepted="false"
             default-accepted="false" static-accepted="false"
             accessors-accepted="false" constructors-accepted="false"/>
+        <Association destinationClassName="com.afn.realstat.ui.TourMap"
+            endpointName="tourMap" kind="Simple">
+            <Point x="990" y="361"/>
+        </Association>
+        <Association
+            destinationClassName="com.afn.realstat.ui.TourStartEndMarker.TourMarkerType"
+            endpointName="tourMarkerType" kind="Simple"/>
+        <Communication destinationClassName="com.afn.realstat.ui.TourMap"/>
+    </Class>
+    <Class name="com.afn.realstat.ui.TourMarker" x="498" y="379">
+        <AttributesDisplayFilter public-accepted="true"
+            private-accepted="true" protected-accepted="true"
+            default-accepted="true" static-accepted="false"/>
+        <MethodDisplayFilter public-accepted="true"
+            private-accepted="false" protected-accepted="false"
+            default-accepted="false" static-accepted="false"
+            accessors-accepted="false" constructors-accepted="false"/>
+        <Association destinationClassName="com.afn.realstat.ui.TourMap"
+            endpointName="tourMap" kind="Simple"/>
+        <Association destinationClassName="com.afn.realstat.MyTourStop"
+            endpointName="myTourStop" kind="Simple"/>
+        <Communication destinationClassName="com.afn.realstat.ui.TourMap"/>
+        <Communication destinationClassName="com.afn.realstat.ui.MyTourView"/>
         <Communication destinationClassName="com.afn.realstat.MyTourStop"/>
     </Class>
-    <Class name="com.afn.realstat.MyTourStop" x="165" y="551">
+    <Class name="com.afn.realstat.ui.MyTourView" x="498" y="110">
+        <AttributesDisplayFilter public-accepted="true"
+            private-accepted="true" protected-accepted="true"
+            default-accepted="true" static-accepted="false"/>
+        <MethodDisplayFilter public-accepted="true"
+            private-accepted="false" protected-accepted="false"
+            default-accepted="false" static-accepted="false"
+            accessors-accepted="false" constructors-accepted="false"/>
+        <Association destinationClassName="com.afn.realstat.MyTour"
+            endpointName="myTour" kind="Simple"/>
+        <Association destinationClassName="com.afn.realstat.ui.TourMap"
+            endpointName="map" kind="Simple"/>
+        <Communication destinationClassName="com.afn.realstat.MyTour"/>
+        <Communication destinationClassName="com.afn.realstat.TourListEntry"/>
+        <Communication destinationClassName="com.afn.realstat.ui.TourMap"/>
+        <Communication destinationClassName="com.afn.realstat.ui.TourMarker"/>
+        <Communication destinationClassName="com.afn.realstat.MyTourStop"/>
+    </Class>
+    <Class name="com.afn.realstat.MyTourStop" x="171" y="266">
         <AttributesDisplayFilter public-accepted="true"
             private-accepted="true" protected-accepted="true"
             default-accepted="true" static-accepted="false"/>
@@ -90,11 +115,25 @@
         <Association
             destinationClassName="com.afn.realstat.ui.TourMarker"
             endpointName="tourMarker" kind="Simple"/>
+        <Association
+            destinationClassName="com.afn.realstat.TourListEntry"
+            endpointName="tle" kind="Simple"/>
         <Association destinationClassName="com.afn.realstat.MyTour"
             endpointName="tour" kind="Simple"/>
         <Communication destinationClassName="com.afn.realstat.MyTour"/>
+        <Communication destinationClassName="com.afn.realstat.TourListEntry"/>
     </Class>
-    <Class name="com.afn.realstat.ui.TourListTab" x="304" y="55">
+    <Class name="com.afn.realstat.ui.TourStartEndMarker.TourMarkerType"
+        x="1222" y="429">
+        <AttributesDisplayFilter public-accepted="true"
+            private-accepted="true" protected-accepted="true"
+            default-accepted="true" static-accepted="false"/>
+        <MethodDisplayFilter public-accepted="true"
+            private-accepted="false" protected-accepted="false"
+            default-accepted="false" static-accepted="false"
+            accessors-accepted="false" constructors-accepted="false"/>
+    </Class>
+    <Class name="com.afn.realstat.ui.TourListTab" x="508" y="-80">
         <AttributesDisplayFilter public-accepted="true"
             private-accepted="true" protected-accepted="true"
             default-accepted="true" static-accepted="false"/>
@@ -107,8 +146,7 @@
             endpointName="myTourView" kind="Simple"/>
         <Association destinationClassName="com.afn.realstat.MyTour"
             endpointName="myTour" kind="Simple"/>
-        <Association
-            destinationClassName="com.afn.realstat.ui.AfnGoogleMap"
+        <Association destinationClassName="com.afn.realstat.ui.TourMap"
             endpointName="map" kind="Simple"/>
         <Communication destinationClassName="com.afn.realstat.ui.MyTourView"/>
     </Class>

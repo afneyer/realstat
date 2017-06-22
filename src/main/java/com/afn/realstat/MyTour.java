@@ -30,13 +30,34 @@ public class MyTour implements PdfFileGetter {
 	private ArrayList<MyTourStop> selectedList;
 	private int[] sequence;
 	private MyTourView myTourView;
+	
+	private Address startAddress;
+	private Address endAddress;
 
-	public MyTour(Date tourDate) {
+	public MyTour(Date tourDate, Address inStartAddress, Address inEndAddress) {
+		
+		// TODO get the default start and end location from the user
+		Address defaultStartAddress = new Address("4395 Piedmont Ave", "Oakland", "94611");
+		Address defaultEndAddress = new Address("342 Highland Ave", "Piedmont", "94611");
+		
+		this.tourDate = tourDate;
+	
+		if (inStartAddress != null) {
+			startAddress = inStartAddress;
+		} else {
+			startAddress = defaultStartAddress;
+		}
+		if (inEndAddress != null) {
+			endAddress = inEndAddress;
+		} else {
+			endAddress = defaultEndAddress;
+		}
 		
 		TourListRepository tlRepo = TourListEntry.getRepo();
-		this.tourDate = tourDate;
+		
 		List<TourListEntry> tleList = tlRepo.findByTourDate(tourDate);
 		tourList = new ArrayList<MyTourStop>();
+		
 		for (TourListEntry tle : tleList) {
 			MyTourStop myStop = new MyTourStop(this, tle);
 			tourList.add(myStop);
@@ -44,7 +65,10 @@ public class MyTour implements PdfFileGetter {
 
 		selectedList = new ArrayList<MyTourStop>();
 	}
-
+	
+	public MyTour(Date tourDate) {
+		this(tourDate, null, null);
+	}
 	
 
 	public Date getTourDate() {
@@ -273,6 +297,22 @@ public class MyTour implements PdfFileGetter {
 
 	public void setSelected(List<MyTourStop> selected) {
 		this.selectedList = new ArrayList<MyTourStop>( selected );	
+	}
+
+	public Address getStartAddress() {
+		return startAddress;
+	}
+	
+	public Address getEndAddress() {
+		return endAddress;
+	}
+
+	public void setStartAddress(Address adr) {
+		startAddress  = adr;	
+	}
+
+	public void setEndAddress(Address adr) {
+		endAddress = adr;
 	}
 
 }

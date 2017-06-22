@@ -41,10 +41,9 @@ public class Address extends AbstractEntity {
 	@Column(columnDefinition = "BLOB")
 	/* @Lob(type = LobType.BLOB) */
 	private Point location;
-	private Integer mapLocCalls;
+	private Integer mapLocCalls = new Integer(0);
 
 	public Address() {
-		mapLocCalls = new Integer(0);
 	}
 
 	public Address(String inStreet, String inUnit, String inCity, String inZip) {

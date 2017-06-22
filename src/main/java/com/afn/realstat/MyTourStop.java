@@ -1,6 +1,7 @@
 package com.afn.realstat;
 
 import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.lang3.text.WordUtils;
 import org.slf4j.Logger;
@@ -14,34 +15,20 @@ public class MyTourStop implements Comparable<MyTourStop> {
 
 	public static final Logger log = LoggerFactory.getLogger("app");
 	public static final Class<MyTourStop> classType = MyTourStop.class;
-	
+
 	public static TourListRepository repo;
-	
-	public enum MarkerType { 
-		normal, 
-		start, 
-		end; 
-	}
 
 	private TourListEntry tle;
 	private MyTour tour;
 	private int sequence;
 	private TourMarker tourMarker;
-	
-	
-	private MarkerType markerType;
-	
+
 	public MyTourStop() {
 	}
 
-	public MyTourStop(MyTour tour, TourListEntry tle, MarkerType markerType) {
+	public MyTourStop(MyTour tour, TourListEntry tle) {
 		this.tle = tle;
 		this.tour = tour;
-		this.markerType = markerType;
-	}
-	
-	public MyTourStop(MyTour tour, TourListEntry tle) {
-		this(tour,tle,MarkerType.normal);
 	}
 
 	public String htmlString() {
@@ -161,7 +148,6 @@ public class MyTourStop implements Comparable<MyTourStop> {
 		this.sequence = sequence;
 		// update the marker to include the sequence number
 	}
-	
 
 	public String getStringSeq() {
 		if (sequence == 0) {
@@ -202,7 +188,8 @@ public class MyTourStop implements Comparable<MyTourStop> {
 	}
 
 	/*
-	 * Tour stops are equal if the belong to the same tour and have the same sequence
+	 * Tour stops are equal if the belong to the same tour and have the same
+	 * sequence
 	 */
 	@Override
 	public boolean equals(Object o) {
@@ -213,8 +200,8 @@ public class MyTourStop implements Comparable<MyTourStop> {
 		}
 
 		/*
-		 * Check if o is an instance of MyTourStop or not "null instanceof [type]"
-		 * also returns false
+		 * Check if o is an instance of MyTourStop or not
+		 * "null instanceof [type]" also returns false
 		 */
 		if (!(o instanceof MyTourStop)) {
 			return false;
@@ -225,6 +212,7 @@ public class MyTourStop implements Comparable<MyTourStop> {
 
 		// Compare the data members and return accordingly
 		boolean equals = this.tour.equals(c.tour) && this.tle.equals(c.tle);
+		
 		return equals;
 	}
 
@@ -246,15 +234,21 @@ public class MyTourStop implements Comparable<MyTourStop> {
 	}
 
 	public boolean isSelected() {
-		return tour.getSelected().contains(this);
+		return getTour().getSelected().contains(this);
 	}
 
-	public boolean isTourStart() {
-		return markerType == MarkerType.start;
+	public void deselect() {
+		List<MyTourStop> selected = getTour().getSelected();
+		if (selected.contains(this)) {
+			selected.remove(this);
+		}
 	}
 	
-	public boolean isTourEnd() {
-		return markerType == MarkerType.end;
+	public void select() {
+		List<MyTourStop> selected = getTour().getSelected();
+		if (!selected.contains(this)) {
+			selected.add(this);
+		}
 	}
 
 }

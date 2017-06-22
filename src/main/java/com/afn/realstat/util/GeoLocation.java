@@ -39,7 +39,14 @@ public class GeoLocation {
 	}
 	
 	public static Point convertToPoint(LatLng latLng) {
-		return new Point(latLng.lng, latLng.lat);
-		
+		return new Point(latLng.lng, latLng.lat);		
+	}
+
+	public static Point convertToPoint(LatLon latLon) {
+		return new Point(latLon.getLon(), latLon.getLat());
+	}
+	
+	public static LatLon convertToLatLon(Point p) {
+		return new LatLon(p.getY(), p.getX());
 	}
 }

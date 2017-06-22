@@ -1,26 +1,17 @@
 package com.afn.realstat.ui;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-
-import org.springframework.data.geo.Point;
-
 import com.afn.realstat.AdReviewTourList;
-import com.afn.realstat.MyTour;
 import com.afn.realstat.MyTourStop;
-import com.afn.realstat.TourListEntry;
-import com.afn.realstat.TourListRepository;
 import com.afn.realstat.ui.FileUploader.AfterUploadSucceeded;
 import com.vaadin.server.Sizeable.Unit;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.CheckBox;
-import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Notification;
+import com.vaadin.ui.TextArea;
 import com.vaadin.ui.Upload;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
@@ -28,20 +19,16 @@ import com.vaadin.ui.Window;
 public class TourListTab {
 
 	private HorizontalLayout tourPage;
-	private Grid<MyTourStop> tourListView = null;
-	private MyTour myTour;
+	private TourListView tourListView = null;
 	private MyTourView myTourView;
-	private TourMap map;
 	private Component tourListSelector;
 	private HorizontalLayout tourDisplayControl;
 
 	private Button routeTourButton = null;
 	private ShowPdfButton printTourButton = null;
-	
-
 
 	public TourListTab() {
-		
+
 		// initialize tourPage
 		tourPage = new HorizontalLayout();
 		tourPage.setMargin(false);
@@ -57,17 +44,26 @@ public class TourListTab {
 		tourDisplayControl = new HorizontalLayout();
 		tourDisplayControl.setMargin(false);
 		tourDisplay.addComponent(tourDisplayControl);
-		
+
 		// initialize tourList view
 		myTourView = new MyTourView();
 		tourListView = myTourView.getListView();
 		tourListView.setHeight(100, Unit.PERCENTAGE);
 		tourListView.setWidth(460, Unit.PIXELS);
 
+		HorizontalLayout startEndDisplay = new HorizontalLayout();
+
+		TextArea start = myTourView.getStartTextArea();
+		TextArea end = myTourView.getEndTextArea();
+
+		startEndDisplay.addComponent(start);
+		startEndDisplay.addComponent(end);
+		tourDisplay.addComponent(startEndDisplay);
+
 		tourDisplay.addComponent(tourListView);
 		tourDisplay.setExpandRatio(tourListView, 1.0f);
 
-		tourListSelector = getTourSelector();
+		tourListSelector = myTourView.getTourSelector();
 		tourDisplayControl.addComponent(tourListSelector);
 
 		VerticalLayout tourControls = new VerticalLayout();
@@ -82,13 +78,13 @@ public class TourListTab {
 		tourOptions.setMargin(false);
 		tourControls.addComponent(tourOptions);
 
-		CheckBox showRouted = getShowSelectedCheckBox();
-		tourOptions.addComponent(showRouted);
+		CheckBox showSelected = myTourView.getShowSelectedCheckBox();
+		tourOptions.addComponent(showSelected);
 
 		routeTourButton = myTourView.getRouteTourButton();
 		tourControlButtons.addComponent(routeTourButton);
 
-		printTourButton = getPrintPdfButton();
+		printTourButton = myTourView.getPrintPdfButton();
 		tourControlButtons.addComponent(printTourButton);
 
 		Button importTourFile = getImportTourFileButton();
@@ -96,9 +92,8 @@ public class TourListTab {
 		tourControlButtons.addComponent(importTourFile);
 		importTourFile.setDescription("testDescription");
 
-
 		// initialize tourMapView
-		map = myTourView.getMapView();
+		TourMap map = myTourView.getMapView();
 		map.setSizeFull();
 
 		tourPage.addComponent(map);
@@ -106,48 +101,6 @@ public class TourListTab {
 		// tourPage.setExpandRatio(tourDisplay, 1.0f);
 		// initialize tourList view
 	}
-
-	
-	private Component getTourSelector() {
-
-		// Create the selection component for tour dates
-		TourListRepository tleRepo = TourListEntry.getRepo();
-		List<Date> tlDates = tleRepo.findAllDisctintDatesNewestFirst();
-
-		ComboBox<Date> select = new ComboBox<>("Select Date");
-		select.setItems(tlDates);
-
-		select.setItemCaptionGenerator(d -> {
-			SimpleDateFormat df = new SimpleDateFormat("MMM dd, yyyy");
-			String ds = df.format(d);
-			return ds;
-		});
-
-		// Add the dates
-		select.setItems(tlDates);
-
-		select.addSelectionListener(event -> {
-			Date date = event.getValue();
-			if (date != null) {
-
-				myTour = new MyTour(date);
-				
-				// replace the tour on the view with the new one
-				myTourView.replaceTour(myTour);
-			
-				myTourView.addMarkersForTour();
-				
-				// enable the printTour button
-				printTourButton.setPdfFileGetter(myTour::getPdfFile);
-				printTourButton.setEnabled(true);
-				routeTourButton.setEnabled(true);
-
-			}
-		});
-		return select;
-	}
-
-
 
 	private Button getImportTourFileButton() {
 		@SuppressWarnings("serial")
@@ -158,33 +111,6 @@ public class TourListTab {
 			}
 		});
 		return tourFile;
-	}
-
-	private ShowPdfButton getPrintPdfButton() {
-		ShowPdfButton showPdf = new ShowPdfButton();
-		showPdf.setCaption("Print");
-		showPdf.setDescription("Click to print the selected tour");
-		showPdf.setEnabled(false);
-		return showPdf;
-	};
-
-	private CheckBox getShowSelectedCheckBox() {
-		String label = "Show Selected Only";
-		CheckBox checkBox = new CheckBox(label);
-
-		checkBox.addValueChangeListener(event -> {
-			Boolean checked = event.getValue();
-
-			if (myTour != null) {
-				if (checked) {
-					myTourView.showSelected();
-				} else {
-					myTourView.showAll();
-
-				}
-			}
-		});
-		return checkBox;
 	}
 
 	protected void importAdReviewPdf() {

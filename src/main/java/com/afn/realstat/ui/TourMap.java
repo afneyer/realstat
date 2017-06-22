@@ -6,9 +6,11 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import com.afn.realstat.Address;
+import com.afn.realstat.MyTour;
 import com.afn.realstat.MyTourStop;
+import com.afn.realstat.ui.TourStartEndMarker.TourMarkerType;
 import com.afn.realstat.util.Icon;
-import com.afn.realstat.util.MapLocation;
 import com.google.maps.model.EncodedPolyline;
 import com.google.maps.model.LatLng;
 import com.vaadin.tapio.googlemaps.GoogleMap;
@@ -20,19 +22,37 @@ import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapPolyline;
 public class TourMap extends GoogleMap {
 
 	private GoogleMapMarker dummyMarker;
-	private GoogleMapMarker startMarker;
-	private GoogleMapMarker endMarker;
-	private MapLocation startLocation;
-	private MapLocation endLocatin;
+	private TourStartEndMarker startMarker;
+	private TourStartEndMarker endMarker;
+	private MyTourView myTourView;
 
-	public TourMap(String apiKey, String clientId, String language) {
+	private TourMap(String apiKey, String clientId, String language) {
 		super(apiKey, clientId, language);
 	}
 
-	public TourMap() {
+	public TourMap(MyTourView tourView) {
 		this(null, null, null);
+		this.myTourView = tourView;
+		addStartEndMarkers();
 	}
 
+
+	/**
+	 * Adds start and end markers using the default addresses for the user
+	 */
+	public void addStartEndMarkers() {
+
+		startMarker = new TourStartEndMarker(TourMarkerType.start, getTour().getStartAddress(), this);
+		addMarker(startMarker);
+		addMarkerDragListener(new StartEndMarkerDragListener(startMarker));
+		// TODO
+
+		endMarker = new TourStartEndMarker(TourMarkerType.end, getTour().getEndAddress(), this);
+		addMarker(endMarker);
+		addMarkerDragListener(new StartEndMarkerDragListener(endMarker));
+
+	}
+	
 	public List<TourMarker> getTourMarkers() {
 		List<TourMarker> markerList = new ArrayList<TourMarker>();
 
@@ -58,6 +78,10 @@ public class TourMap extends GoogleMap {
 			}
 		}
 		return null;
+	}
+	
+	public void addMarker(TourMarker marker) {
+		super.addMarker(marker);
 	}
 
 	/**
@@ -95,11 +119,15 @@ public class TourMap extends GoogleMap {
 	 * @param map
 	 */
 	public void centerOnTourMarkers() {
-
-		Collection<TourMarker> markers = getTourMarkers();
-		Collection<GoogleMapMarker> gMarkers = Collections.unmodifiableCollection(markers);
+	
+		Collection<GoogleMapMarker> tourMarkers = Collections.unmodifiableCollection(getTourMarkers());
+		
+		Collection<GoogleMapMarker> gMarkers = new ArrayList<GoogleMapMarker>();
+		gMarkers.add(startMarker);
+		gMarkers.add(endMarker);
+		gMarkers.addAll(tourMarkers);
+		
 		this.centerOnMarkers(gMarkers);
-
 	}
 
 	/**
@@ -171,16 +199,46 @@ public class TourMap extends GoogleMap {
 			removeMarker(marker);
 		}
 	}
-
-	public MapLocation getStartLocation() {
-		// TODO Auto-generated method stub
-		return null;
+	
+	public void removeTourMarkers() {
+		Collection<GoogleMapMarker> markers = new ArrayList<GoogleMapMarker>(this.getMarkers());
+		for (GoogleMapMarker marker : markers) {
+			if (marker instanceof TourMarker) {
+				removeMarker(marker);
+			}
+		}
 	}
 
-	public MapLocation setEndLocation() {
-		// TODO Auto-generated method stub
-		return null;
+	public Address getStartAddress() {
+		return startMarker.getAddress();
+	}
+	
+	public Address getEndAddress() {
+		return endMarker.getAddress();
 	}
 
+	public TourStartEndMarker getStartMarker() {
+		return startMarker;
+	}
+
+	public void setStartMarker(TourStartEndMarker startMarker) {
+		this.startMarker = startMarker;
+	}
+
+	public TourStartEndMarker getEndMarker() {
+		return endMarker;
+	}
+
+	public void setEndMarker(TourStartEndMarker endMarker) {
+		this.endMarker = endMarker;
+	}
+	
+	public MyTourView getTourView() {
+		return myTourView;
+	}
+	
+	public MyTour getTour() {
+		return getTourView().getTour();
+	}
 
 }

@@ -80,8 +80,7 @@ public class MapLocation {
 	}
 
 	/*
-	TOD
-	O Move to Timer function
+	TODO Move to Timer function
 
 	private void sleepInMilliseconds(long millis) {
 		try {

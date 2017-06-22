@@ -37,6 +37,8 @@ public class Icon {
 	public static Integer markerButtonGreen = 2;
 	public static Integer markerButtonRed = 3;
 	public static Integer emptyIcon = 4;
+	public static Integer startIcon = 5;
+	public static Integer endIcon = 6;
 
 	// State of the Icon
 	private Integer iconId = null;
@@ -52,6 +54,9 @@ public class Icon {
 		aMap.put(markerButtonGreen, "markerButtonGreen.png");
 		aMap.put(markerButtonRed, "markerButtonRed.png");
 		aMap.put(emptyIcon, "emptyIcon.jpg");
+		aMap.put(startIcon, "markerButtonRed.png");
+		aMap.put(endIcon, "markerButtonRed.png");
+		
 		iconMap = Collections.unmodifiableMap(aMap);
 	}
 

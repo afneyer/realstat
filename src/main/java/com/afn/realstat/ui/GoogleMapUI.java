@@ -73,7 +73,7 @@ public class GoogleMapUI extends UI {
 	// "com.vaadin.tapio.googlemaps.demo.DemoWidgetset")
 	@VaadinServletConfiguration(productionMode = false, ui = GoogleMapUI.class)
 	public static class Servlet extends VaadinServlet {
-		/*
+		/* TODO
 		@Override
 		protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 			String url = req.getRequestURI();
