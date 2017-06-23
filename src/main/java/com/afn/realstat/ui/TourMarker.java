@@ -9,7 +9,6 @@ import com.afn.realstat.util.Icon;
 import com.afn.realstat.util.MapLocation;
 import com.vaadin.tapio.googlemaps.client.LatLon;
 import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapMarker;
-import com.vaadin.ui.Grid;
 
 @SuppressWarnings("serial")
 public class TourMarker extends GoogleMapMarker {

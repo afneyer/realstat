@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.geo.Point;
 
 import com.afn.realstat.framework.SpringApplicationContext;
-import com.afn.realstat.ui.TourMarker;
 
 public class MyTourStop implements Comparable<MyTourStop> {
 
@@ -228,6 +227,7 @@ public class MyTourStop implements Comparable<MyTourStop> {
 		List<MyTourStop> selected = getTour().getSelected();
 		if (selected.contains(this)) {
 			selected.remove(this);
+			sequence = 0;
 		}
 	}
 	

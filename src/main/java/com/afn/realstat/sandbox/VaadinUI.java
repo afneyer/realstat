@@ -1,11 +1,13 @@
-package com.afn.realstat;
+package com.afn.realstat.sandbox;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 
+import com.afn.realstat.Customer;
+import com.afn.realstat.CustomerEditor;
+import com.afn.realstat.CustomerRepository;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Widgetset;
-import com.vaadin.server.FontAwesome;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.ui.Button;
@@ -23,7 +25,7 @@ public class VaadinUI extends UI {
 
 	private final CustomerEditor editor;
 
-	final Grid grid;
+	final Grid<Customer> grid;
 
 	final TextField filter;
 
@@ -32,9 +34,9 @@ public class VaadinUI extends UI {
 	@Autowired
 	public VaadinUI(CustomerRepository repo, CustomerEditor editor) {
 		this.editor = editor;
-		this.grid = new Grid();
+		this.grid = new Grid<Customer>();
 		this.filter = new TextField();
-		this.addNewBtn = new Button("New customer", FontAwesome.PLUS);
+		this.addNewBtn = new Button("New customer");
 	}
 
 	@Override
@@ -52,25 +54,6 @@ public class VaadinUI extends UI {
 		grid.setHeight(300, Unit.PIXELS);
 		grid.setColumns("id", "firstName", "lastName");
 
-		// TODO fix filter.setInputPrompt("Filter by last name");
-
-		// Hook logic to components
-
-		// Replace listing with filtered content when user changes filter
-		// TODO fix filter.addTextChangeListener(e -> listCustomers(e.getText()));
-
-		// Connect selected Customer to editor or hide if none is selected
-		/* TODO fix
-		grid.addSelectionListener(e -> {
-			if (e.getSelected().isEmpty()) {
-				editor.setVisible(false);
-			}
-			else {
-				editor.editCustomer((Customer) grid.getSelectedRow());
-			}
-		});
-		*/
-
 		// Instantiate and edit new Customer the new button is clicked
 		addNewBtn.addClickListener(e -> editor.editCustomer(new Customer("", "")));
 
@@ -87,14 +70,9 @@ public class VaadinUI extends UI {
 	// tag::listCustomers[]
 	void listCustomers(String text) {
 		if (StringUtils.isEmpty(text)) {
-			// TODO fix grid.setContainerDataSource(
-			//		new BeanItemContainer(Customer.class, repo.findAll()));
 		}
 		else {
-			// TODO fix grid.setContainerDataSource(new BeanItemContainer(Customer.class,
-			// TODO fix		repo.findByLastNameStartsWithIgnoreCase(text)));
 		}
 	}
-	// end::listCustomers[]
 
 }

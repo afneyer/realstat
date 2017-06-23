@@ -7,7 +7,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import com.afn.realstat.ui.MyTourView;
 import com.afn.realstat.ui.ShowPdfButton.PdfFileGetter;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;

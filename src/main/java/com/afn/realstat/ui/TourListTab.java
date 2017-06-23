@@ -1,14 +1,12 @@
 package com.afn.realstat.ui;
 
 import com.afn.realstat.AdReviewTourList;
-import com.afn.realstat.MyTourStop;
 import com.afn.realstat.ui.FileUploader.AfterUploadSucceeded;
 import com.vaadin.server.Sizeable.Unit;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.Component;
-import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.TextArea;
