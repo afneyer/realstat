@@ -41,8 +41,7 @@ public class AppParamTest {
 		assertEquals("2000", apMgr.getVal("maxCallsPerDay", "MAP"));
 		assertEquals("0", apMgr.getVal("callsToday","MAP"));
 	    assertEquals("2017-03-01T10:00:00.000", apMgr.getVal("lastCall","MAP"));
-	    Date d2 = apMgr.getDateVal("lastCall", "MAP");
-	    
+	  
 	    long paramCount1 = apRepo.count();
 	    
 	    // initialize a second time and count

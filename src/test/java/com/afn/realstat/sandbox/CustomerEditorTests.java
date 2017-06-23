@@ -1,4 +1,4 @@
-package com.afn.realstat;
+package com.afn.realstat.sandbox;
 
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Matchers.argThat;

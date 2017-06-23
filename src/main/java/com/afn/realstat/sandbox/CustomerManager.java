@@ -1,4 +1,4 @@
-package com.afn.realstat;
+package com.afn.realstat.sandbox;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -9,6 +9,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import com.afn.realstat.AbstractEntityManager;
+import com.afn.realstat.AddressRepository;
 
 @Component
 public class CustomerManager extends AbstractEntityManager<Customer> {
@@ -28,6 +31,6 @@ public class CustomerManager extends AbstractEntityManager<Customer> {
 	EntityManagerFactory emf;
 
 	public CustomerManager(CustomerRepository cRepo) {
-		repo = cRepo;
+		// repo = cRepo;
 	}
 }

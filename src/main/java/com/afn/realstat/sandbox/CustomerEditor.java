@@ -1,4 +1,4 @@
-package com.afn.realstat;
+package com.afn.realstat.sandbox;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -38,7 +38,7 @@ public class CustomerEditor extends VerticalLayout {
 	TextField lastName = new TextField("Last name");
 
 	/* Action buttons */
-	Button save = new Button("Save", FontAwesome.SAVE);
+	public Button save = new Button("Save", FontAwesome.SAVE);
 	Button cancel = new Button("Cancel");
 	Button delete = new Button("Delete", FontAwesome.TRASH_O);
 	CssLayout actions = new CssLayout(save, cancel, delete);

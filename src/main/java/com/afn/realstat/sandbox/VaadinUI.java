@@ -3,9 +3,6 @@ package com.afn.realstat.sandbox;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 
-import com.afn.realstat.Customer;
-import com.afn.realstat.CustomerEditor;
-import com.afn.realstat.CustomerRepository;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Widgetset;
 import com.vaadin.server.VaadinRequest;

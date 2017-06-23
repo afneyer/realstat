@@ -22,6 +22,7 @@ public class ParseInt2 extends CellProcessorAdaptor {
 		super(next);
 	}
 
+	@SuppressWarnings("unchecked")
 	public Object execute(Object value, CsvContext context) {
 
 		validateInputNotNull(value, context); // throws an Exception if the

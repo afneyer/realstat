@@ -2,8 +2,6 @@ package com.afn.realstat;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.List;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +20,8 @@ public class AddressTestProd {
 	
 	@Test
 	public void removeDuplicates() {
-		List<Address> adrList = adrRepo.findAll();
+		// TODO write this test
+		// List<Address> adrList = adrRepo.findAll();
 	}
 
 	@Test

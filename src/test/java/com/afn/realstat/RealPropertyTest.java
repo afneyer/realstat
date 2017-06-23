@@ -22,6 +22,7 @@ public class RealPropertyTest {
 	public void testSpatial() {
  
 		Point p1 = new Point(37.816977, -122.220519);
+		p1.toString();
 		// get 4395 Piedmont Ave #309
 		/*
 		List<RealProperty> rpList = rpRepo.findByApnClean("13111653");

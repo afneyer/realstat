@@ -13,9 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import com.afn.realstat.Customer;
-import com.afn.realstat.CustomerRepository;
-
 /**
  * @author Andreas
  *

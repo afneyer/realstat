@@ -1,11 +1,11 @@
-package com.afn.realstat;
+package com.afn.realstat.sandbox;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
 import org.springframework.data.domain.Example;
 
-
+import com.afn.realstat.AbstractEntity;
 import com.afn.realstat.framework.SpringApplicationContext;
 
 @Entity

@@ -1,6 +1,8 @@
-package com.afn.realstat;
+package com.afn.realstat.sandbox;
 
 import java.util.List;
+
+import com.afn.realstat.AbstractEntityRepository;
 
 public interface CustomerRepository extends AbstractEntityRepository<Customer> {
 

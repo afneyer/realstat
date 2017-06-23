@@ -1,7 +1,5 @@
 package com.afn.realstat.sandbox;
 
-import org.eclipse.jetty.io.ManagedSelector;
-import org.eclipse.jetty.util.BlockingArrayQueue;
 import org.junit.Test;
 
 public class EvaluatorTest {
@@ -18,13 +16,6 @@ public class EvaluatorTest {
 		s="10abe-12:30";
 		test = s.matches("^[0-9\\-:]{1,12}$");
 		System.out.println(test);
-	}
-	
-	@Test
-	public void temp() {
-		BlockingArrayQueue b = null;
-		b.poll();
-		ManagedSelector p;
 	}
 
 }
