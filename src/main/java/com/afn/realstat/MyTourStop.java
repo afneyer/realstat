@@ -21,7 +21,6 @@ public class MyTourStop implements Comparable<MyTourStop> {
 	private TourListEntry tle;
 	private MyTour tour;
 	private int sequence;
-	private TourMarker tourMarker;
 
 	public MyTourStop() {
 	}
@@ -219,18 +218,6 @@ public class MyTourStop implements Comparable<MyTourStop> {
 	@Override
 	public int compareTo(MyTourStop mts) {
 		return (this.sequence - mts.sequence);
-	}
-
-	public void setMarker(TourMarker tourMarker) {
-		this.setTourMarker(tourMarker);
-	}
-
-	public TourMarker getTourMarker() {
-		return tourMarker;
-	}
-
-	public void setTourMarker(TourMarker tourMarker) {
-		this.tourMarker = tourMarker;
 	}
 
 	public boolean isSelected() {

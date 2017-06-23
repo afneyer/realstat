@@ -26,7 +26,6 @@ public class TourMarker extends GoogleMapMarker {
 		super();
 
 		this.myTourStop = mts;
-		mts.setMarker(this);
 
 		this.tourMap = map;
 
