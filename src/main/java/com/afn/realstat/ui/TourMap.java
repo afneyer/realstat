@@ -6,6 +6,8 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import org.springframework.data.geo.Point;
+
 import com.afn.realstat.Address;
 import com.afn.realstat.MyTour;
 import com.afn.realstat.MyTourStop;
@@ -43,9 +45,10 @@ public class TourMap extends GoogleMap {
 	public void addStartEndMarkers() {
 
 		startMarker = new TourStartEndMarker(TourMarkerType.start, getTour().getStartAddress(), this);
+		
+		// TODO move to TourStartEndMarker
 		addMarker(startMarker);
 		addMarkerDragListener(new StartEndMarkerDragListener(startMarker));
-		// TODO
 
 		endMarker = new TourStartEndMarker(TourMarkerType.end, getTour().getEndAddress(), this);
 		addMarker(endMarker);
@@ -79,6 +82,55 @@ public class TourMap extends GoogleMap {
 		}
 		return null;
 	}
+	
+	public void addMarkersForTour() {
+
+		List<MyTourStop> mtsList = getTourView().getTour().getTourList();
+		for (MyTourStop mts : mtsList) {
+			addMarkerForTourListEntry(mts);
+		}
+		centerOnTourMarkers();
+
+	}
+	
+	public void addMarkersForTourSelection() {
+		List<MyTourStop> mtsList = getTourView().getTour().getSelected();
+		for (MyTourStop mts : mtsList) {
+			addMarkerForTourListEntry(mts);
+		}
+		centerOnTourMarkers();
+	}
+
+	public TourMarker addMarkerForTourListEntry(MyTourStop mts) {
+		
+		TourMarker mrkr = null;
+		// all tour tourStops must have locations
+		Point loc = mts.getLocation();
+
+		if (loc != null) {
+			mrkr = new TourMarker(mts, this);
+			// TODO move to Marker Constructor
+			addMarker(mrkr);
+			addMarkerClickListener(new TourListMarkerClickListener(mrkr));
+
+		}
+		return mrkr;
+	}
+
+	/* TODO remove
+	private void hideExcludedMarkers() {
+		List<MyTourStop> mtsList = myTour.getTourList();
+		for (MyTourStop mts : mtsList) {
+			TourMarker tm = mts.getTourMarker();
+			if (!tm.isInTour()) {
+				map.removeMarker(mts.getTourMarker());
+			}
+		}
+		map.centerOnTourMarkers();
+	}
+	*/
+	
+	
 	
 	public void addMarker(TourMarker marker) {
 		super.addMarker(marker);

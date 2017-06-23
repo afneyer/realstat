@@ -94,7 +94,7 @@
   </dependency>  
   <association id="18">    
     <end type="SOURCE" refId="3" navigable="false">      
-      <attribute id="19" name="map"/>      
+      <attribute id="19" name="tourMap"/>      
       <multiplicity id="20" minimum="0" maximum="1"/>    
     </end>    
     <end type="TARGET" refId="7" navigable="true"/>    
@@ -110,97 +110,57 @@
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="24">    
-    <end type="SOURCE" refId="4" navigable="false">      
-      <attribute id="25" name="myTour"/>      
+    <end type="SOURCE" refId="1" navigable="false">      
+      <attribute id="25" name="myTourView"/>      
       <multiplicity id="26" minimum="0" maximum="1"/>    
     </end>    
-    <end type="TARGET" refId="1" navigable="true"/>    
+    <end type="TARGET" refId="3" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="27">    
     <end type="SOURCE" refId="3" navigable="false">      
-      <attribute id="28" name="endMarker"/>      
+      <attribute id="28" name="myTour"/>      
       <multiplicity id="29" minimum="0" maximum="1"/>    
-    </end>    
-    <end type="TARGET" refId="6" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="30">    
-    <end type="SOURCE" refId="1" navigable="false">      
-      <attribute id="31" name="myTourView"/>      
-      <multiplicity id="32" minimum="0" maximum="1"/>    
-    </end>    
-    <end type="TARGET" refId="3" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="33">    
-    <end type="SOURCE" refId="4" navigable="false">      
-      <attribute id="34" name="map"/>      
-      <multiplicity id="35" minimum="0" maximum="1"/>    
-    </end>    
-    <end type="TARGET" refId="7" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="36">    
-    <end type="SOURCE" refId="3" navigable="false">      
-      <attribute id="37" name="myTour"/>      
-      <multiplicity id="38" minimum="0" maximum="1"/>    
     </end>    
     <end type="TARGET" refId="1" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="39">    
+  <association id="30">    
     <end type="SOURCE" refId="1" navigable="false">      
-      <attribute id="40" name="tourList"/>      
-      <multiplicity id="41" minimum="0" maximum="2147483647"/>    
+      <attribute id="31" name="tourList"/>      
+      <multiplicity id="32" minimum="0" maximum="2147483647"/>    
     </end>    
     <end type="TARGET" refId="2" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="42">    
-    <end type="SOURCE" refId="5" navigable="false">      
-      <attribute id="43" name="myTourView"/>      
-      <multiplicity id="44" minimum="0" maximum="1"/>    
-    </end>    
-    <end type="TARGET" refId="3" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="45">    
-    <end type="SOURCE" refId="3" navigable="false">      
-      <attribute id="46" name="startMarker"/>      
-      <multiplicity id="47" minimum="0" maximum="1"/>    
-    </end>    
-    <end type="TARGET" refId="6" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <dependency id="48">    
+  <dependency id="33">    
     <end type="SOURCE" refId="7"/>    
     <end type="TARGET" refId="5"/>  
   </dependency>  
-  <association id="49">    
+  <association id="34">    
     <end type="SOURCE" refId="1" navigable="false">      
-      <attribute id="50" name="selectedList">        
+      <attribute id="35" name="selectedList">        
         <position height="18" width="66" x="25" y="345"/>      
       </attribute>      
-      <multiplicity id="51" minimum="0" maximum="2147483647"/>    
+      <multiplicity id="36" minimum="0" maximum="2147483647"/>    
     </end>    
     <end type="TARGET" refId="2" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="52">    
+  <association id="37">    
     <end type="SOURCE" refId="5" navigable="false">      
-      <attribute id="53" name="myTourStop">        
+      <attribute id="38" name="myTourStop">        
         <position height="18" width="65" x="231" y="496"/>      
       </attribute>      
-      <multiplicity id="54" minimum="0" maximum="1"/>    
+      <multiplicity id="39" minimum="0" maximum="1"/>    
     </end>    
     <end type="TARGET" refId="2" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="55">    
+  <association id="40">    
     <end type="SOURCE" refId="2" navigable="false">      
-      <attribute id="56" name="tourMarker"/>      
-      <multiplicity id="57" minimum="0" maximum="1"/>    
+      <attribute id="41" name="tourMarker"/>      
+      <multiplicity id="42" minimum="0" maximum="1"/>    
     </end>    
     <end type="TARGET" refId="5" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  

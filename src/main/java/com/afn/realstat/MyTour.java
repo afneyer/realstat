@@ -36,7 +36,7 @@ public class MyTour implements PdfFileGetter {
 
 	public MyTour(Date tourDate, Address inStartAddress, Address inEndAddress) {
 		
-		// TODO get the default start and end location from the user
+		// get the default start and end location from the user
 		Address defaultStartAddress = new Address("4395 Piedmont Ave", "Oakland", "94611");
 		Address defaultEndAddress = new Address("342 Highland Ave", "Piedmont", "94611");
 		
@@ -136,11 +136,6 @@ public class MyTour implements PdfFileGetter {
 			// Save the results and ensure that the document is properly closed:
 			String filePath = AppFiles.getTempDir();
 			
-			// Create new temp directory
-			// TODO move into AppFiles
-			
-			
-			
 			SimpleDateFormat format = new SimpleDateFormat("yyyy-mm-dd-hh-mm-ss.sss");
 			format.format(new Date());
 			String fileName = format.format(new Date()) + ".pdf";
@@ -196,6 +191,8 @@ public class MyTour implements PdfFileGetter {
 
 		// review this code for breaks
 		int pageSize = 12;
+		
+		addStartEndAddress(startAddress, doc, "Start");
 		List<MyTourStop> routedList = getRouted();
 		for (int i = 0; i < routedList.size(); i++) {
 
@@ -203,13 +200,13 @@ public class MyTour implements PdfFileGetter {
 			addMyTourStop(mts, doc);
 
 			// if necessary create new page
-			if ((i + 1) % pageSize == 0) {
-
+			if ((i + 2) % pageSize == 0) {
 				doc.add(new AreaBreak(AreaBreakType.NEXT_PAGE));
 				addHorizontalLine(doc);
 			}
 
 		}
+		addStartEndAddress(endAddress, doc, "End");
 
 	}
 
@@ -218,6 +215,82 @@ public class MyTour implements PdfFileGetter {
 		doc.add(p);
 	}
 
+	private void addStartEndAddress( Address adr, Document doc, String startEnd ) {
+		// add table for holding a tour list entry
+		UnitValue[] unitArray = { new UnitValue(UnitValue.PERCENT, 12f), new UnitValue(UnitValue.PERCENT, 25f),
+				new UnitValue(UnitValue.PERCENT, 25f), new UnitValue(UnitValue.PERCENT, 18f),
+				new UnitValue(UnitValue.PERCENT, 20f) };
+
+		Table table = new Table(unitArray);
+		table.setMargin(0);
+		table.setPadding(-10);
+		table.setProperty(Property.BORDER, Border.NO_BORDER);
+
+		Cell cell = null;
+		// add the first row of cells
+
+		// Cell 1
+		cell = new Cell().setBold().setFontSize(11).setBorder(Border.NO_BORDER).setHeight(15);		
+		cell.add(startEnd);
+		table.addCell(cell);
+
+		// Cell 2-3
+		cell = new Cell(1, 2).setBold().setFontSize(11).setBorder(Border.NO_BORDER);
+		cell.add(adr.getFullStreet());
+		table.addCell(cell);
+
+		// Cell 4
+		cell = new Cell().setBold().setFontSize(11).setTextAlignment(TextAlignment.CENTER).setBorder(Border.NO_BORDER)
+				.setHeight(15);
+		cell.add("");
+		table.addCell(cell);
+
+		// Cell 5
+		cell = new Cell().setBold().setFontSize(11).setTextAlignment(TextAlignment.RIGHT).setBorder(Border.NO_BORDER)
+				.setHeight(15);
+		cell.add("");
+		table.addCell(cell);
+
+		table.startNewRow();
+
+		// add second row of cells
+		table.startNewRow();
+
+		cell = new Cell().setBold().setFontSize(9).setBorder(Border.NO_BORDER).setHeight(13);
+		cell.add(adr.getCity());
+		table.addCell(cell);
+
+		cell = new Cell(1, 4).setFontSize(9).setBorder(Border.NO_BORDER).setHeight(13);
+		cell.add("");
+		table.addCell(cell);
+
+		// add third row of cells
+		table.startNewRow();
+
+		cell = new Cell().setFontSize(10).setBorder(Border.NO_BORDER).setBorderBottom(new SolidBorder(1)).setHeight(14);
+		cell.add(adr.getZip());
+		table.addCell(cell);
+
+		cell = new Cell().setFontSize(10).setBorder(Border.NO_BORDER).setBorderBottom(new SolidBorder(1)).setHeight(14);
+		cell.add("");
+		table.addCell(cell);
+
+		cell = new Cell().setFontSize(10).setBorder(Border.NO_BORDER).setBorderBottom(new SolidBorder(1)).setHeight(14);
+		cell.add("");
+		table.addCell(cell);
+
+		cell = new Cell().setFontSize(10).setBorder(Border.NO_BORDER).setBorderBottom(new SolidBorder(1)).setHeight(14);
+		cell.add("");
+		table.addCell(cell);
+
+		cell = new Cell().setFontSize(10).setBorder(Border.NO_BORDER).setBorderBottom(new SolidBorder(1))
+				.setTextAlignment(TextAlignment.RIGHT).setHeight(14);
+		cell.add("");
+		table.addCell(cell);
+
+		doc.add(table);
+	}
+	
 	private void addMyTourStop(MyTourStop mts, Document doc) {
 
 		// add table for holding a tour list entry
@@ -294,12 +367,6 @@ public class MyTour implements PdfFileGetter {
 
 		doc.add(table);
 	}
-
-	/* TODO remove
-	public void setSelected(List<MyTourStop> selected) {
-		this.selectedList = new ArrayList<MyTourStop>( selected );	
-	}
-	*/
 
 	public Address getStartAddress() {
 		return startAddress;
