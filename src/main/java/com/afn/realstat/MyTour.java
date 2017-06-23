@@ -23,17 +23,43 @@ import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.TextAlignment;
 import com.itextpdf.layout.property.UnitValue;
 
+/**
+ * MyTour is a tour created for a specific user. It consists of a start address, end address
+ * and a set of tour stops for a particular tour day.
+ * 
+ * Start and end addresses are initialized to the default for the user. Later the user can
+ * adjust them by moving them on the map.
+ * 
+ * MyTour also provides the functionality to show the tour as a PDF-File for printing.
+ * 
+ * @author Andreas
+ *
+ */
 public class MyTour implements PdfFileGetter {
 
 	private Date tourDate;
+	
+	// all stops of the tour
 	private ArrayList<MyTourStop> tourList;
+	
+	// user selected stops of the tour in the order selected
+	// sorting of this list must never change
 	private ArrayList<MyTourStop> selectedList;
-	private int[] sequence;
-	private MyTourView myTourView;
 	
 	private Address startAddress;
 	private Address endAddress;
+	
+	private String userName = "Kathleen Callahan";
 
+	/**
+	 * Sets up a tour for a specific date and creates all the stops included
+	 * in the tour for a specific day. Each tour stop is linked to a TourListEntry 
+	 * which is a database element that describes to the tour.
+	 * 
+	 * @param tourDate
+	 * @param inStartAddress
+	 * @param inEndAddress
+	 */
 	public MyTour(Date tourDate, Address inStartAddress, Address inEndAddress) {
 		
 		// get the default start and end location from the user
@@ -42,6 +68,7 @@ public class MyTour implements PdfFileGetter {
 		
 		this.tourDate = tourDate;
 	
+		// initialize start and end to the user default if they are not provided
 		if (inStartAddress != null) {
 			startAddress = inStartAddress;
 		} else {
@@ -53,6 +80,7 @@ public class MyTour implements PdfFileGetter {
 			endAddress = defaultEndAddress;
 		}
 		
+		// set up all tour list stop based on the generic tour list in the data base
 		TourListRepository tlRepo = TourListEntry.getRepo();
 		
 		List<TourListEntry> tleList = tlRepo.findByTourDate(tourDate);
@@ -107,15 +135,10 @@ public class MyTour implements PdfFileGetter {
 		return routedList;
 	}
 
-	public int[] getSequence() {
-		return sequence;
-	}
-
-	public void setSequence(int[] order) {
-		this.sequence = order;
-		for (int i = 0; i < order.length; i++) {
+	public void setSequence(int[] sequence) {
+		for (int i = 0; i < sequence.length; i++) {
 			MyTourStop mts = selectedList.get(i);
-			mts.setSequence(order[i] + 1);
+			mts.setSequence(sequence[i] + 1);
 		}
 	}
 
@@ -126,7 +149,7 @@ public class MyTour implements PdfFileGetter {
 	}
 
 	/*
-	 * Uses iText to create a pdf-file
+	 * Uses iText to create a PDF-file
 	 */
 	public File getPdfFile() {
 
@@ -162,14 +185,6 @@ public class MyTour implements PdfFileGetter {
 		return file;
 	}
 
-	public MyTourView getMyTourView() {
-		return myTourView;
-	}
-
-	public void setMyTourView(MyTourView myTourView) {
-		this.myTourView = myTourView;
-	}
-
 	private void addPdfTourList(Document doc) {
 		addPageHeader(doc);
 		addTourList(doc);
@@ -180,7 +195,6 @@ public class MyTour implements PdfFileGetter {
 		SimpleDateFormat format = new SimpleDateFormat("EEEE,  MMMM dd, yyyy");
 
 		String dateStr = format.format(getTourDate());
-		String userName = "Kathleen Callahan";
 		String title = "Tour for " + userName + " on " + dateStr;
 		doc.add(new Paragraph(title).setBold().setFontSize(16));
 		addHorizontalLine(doc);

@@ -48,14 +48,9 @@ public class MyTourView {
 
 		// create the tour
 		myTour = new MyTour(new Date());
-		myTour.setMyTourView(this);
 		
 		// create the map view and add start and end marker
 		tourMap = createMapView(this);
-
-		// create the tour
-		myTour = new MyTour(new Date());
-		myTour.setMyTourView(this);
 
 		tourListView = createListView();
 
@@ -188,7 +183,6 @@ public class MyTourView {
 			removeTour();
 		}
 		myTour = tour;
-		tour.setMyTourView(this);
 		showAll();
 	}
 
