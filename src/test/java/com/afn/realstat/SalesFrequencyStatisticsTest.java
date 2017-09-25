@@ -6,10 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.web.WebAppConfiguration;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = Application.class, webEnvironment = SpringBootTest.WebEnvironment.NONE)
-@ActiveProfiles("Prod")
+@SpringBootTest(classes = Application.class)
+@ActiveProfiles("prod")
+@WebAppConfiguration
 public class SalesFrequencyStatisticsTest {
 
 	@Autowired
@@ -32,7 +34,15 @@ public class SalesFrequencyStatisticsTest {
 	
 	@Test
 	public void testPropertiesOnMarketByCityZipBuildingType() {
-		sfs.propertiesOnMarketByCityZipBuildingType();
+		sfs.writePropertiesOnMarket();
+	}
+	
+	@Test
+	public void testPropertiesOnMarketQuery() {
+		String city = "OAKLAND";
+		String zip = "94611";
+		String buildingType = "DET";
+		sfs.propertiesOnMarket(city, zip, buildingType);
 	}
 	
 	@Test

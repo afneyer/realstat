@@ -16,6 +16,7 @@ import com.afn.realstat.AgentRepository;
 import com.afn.realstat.PropertyTransactionService;
 import com.afn.realstat.QAgent;
 import com.afn.realstat.RealProperty;
+import com.afn.realstat.ui.charts.ChartTab;
 import com.querydsl.core.types.dsl.StringPath;
 import com.vaadin.annotations.Push;
 import com.vaadin.annotations.Theme;
@@ -136,7 +137,10 @@ public class GoogleMapUI extends UI {
 		TourListTab tourListTab = new TourListTab();
 		com.vaadin.ui.Component tourListComp = tourListTab.getTourListPage();
 		tabs.addTab(tourListComp, "Tour");
-
+		
+		ChartTab chartTab = new ChartTab();
+		tabs.addTab(chartTab,"Charts");
+		
 		HorizontalLayout mapContent = new HorizontalLayout();
 		mapContent.setHeight(100, Unit.PERCENTAGE);
 		mapContent.setWidth(100, Unit.PERCENTAGE);

@@ -18,6 +18,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.afn.util.QueryResultTable;
+import com.querydsl.core.types.dsl.BooleanExpression;
 
 @Component
 public class SalesFrequencyStatistics {
@@ -186,9 +187,43 @@ public class SalesFrequencyStatistics {
 	}
 
 	/**
-	 * Computes Properties on the Market
+	 * Computes Number of Properties on the the Market in Weekly Increments (Sunday)
 	 */
-	public void propertiesOnMarketByCityZipBuildingType() {
+	public QueryResultTable propertiesOnMarket( String City, String zip4, String buildingType ) {
+		
+		LocalDate startDate = LocalDate.of(1998, 1, 4);
+		LocalDate endDate = LocalDate.now();
+
+		// iterate through all dates in intervals of a week
+		LocalDate date = startDate;
+
+		String ptQuery = onMarketQueryByDate(date);
+		QueryResultTable baseTable = new QueryResultTable(afnDataSource, ptQuery);
+		String[] dateCol = createDateCol(date, baseTable.getRowCount());
+		baseTable.addColumn(dateCol);
+
+		date = date.plus(1, ChronoUnit.WEEKS);
+
+		QueryResultTable qrt = null;
+		while (date.isBefore(endDate)) {
+
+			ptQuery = onMarketQueryByDate(date);
+			 qrt = new QueryResultTable(afnDataSource, ptQuery);
+			dateCol = createDateCol(date, qrt.getRowCount());
+			qrt.addColumn(dateCol);
+
+			baseTable.addQueryResultTable(qrt);
+
+			date = date.plus(1, ChronoUnit.WEEKS);
+		}
+		
+		return qrt;
+	}
+	
+	/**
+	 * Computes the number of properties on the market (each Sunday) for all available dates
+	 */
+	public QueryResultTable propertiesOnMarketByCityZipBuildingType() {
 
 		LocalDate startDate = LocalDate.of(1998, 1, 4);
 		LocalDate endDate = LocalDate.now();
@@ -215,7 +250,12 @@ public class SalesFrequencyStatistics {
 			date = date.plus(1, ChronoUnit.WEEKS);
 		}
 
-		CsvFileWriter.writeQueryTable(baseTable, getFile());
+		return baseTable;
+	}
+	
+	public void writePropertiesOnMarket() {
+		QueryResultTable qrt = propertiesOnMarketByCityZipBuildingType();
+		CsvFileWriter.writeQueryTable(qrt, getFile());
 	}
 
 	private String[] createDateCol(LocalDate date, int rowCount) {
@@ -240,6 +280,28 @@ public class SalesFrequencyStatistics {
 				+ "group by zip5, city, buildingType; \n";
 		System.out.println(ptQuery);
 		return ptQuery;
+	}
+	
+	/*
+	 * Counts properties on the market on a specific date
+	 */
+	public long onMarketQueryByDate(Date date, String zip5, String city, String buildingType) {
+		BooleanExpression predicate = QPropertyTransaction.propertyTransaction.offMarketDate.isNotNull()
+				.and(QPropertyTransaction.propertyTransaction.listDate.before(date)
+						.and(QPropertyTransaction.propertyTransaction.offMarketDate.after(date))
+								.or(QPropertyTransaction.propertyTransaction.offMarketDate.isNull()
+								.and(QPropertyTransaction.propertyTransaction.status.startsWith("ACT")))
+										);
+		if (zip5 != null) {
+			predicate = predicate.and(QPropertyTransaction.propertyTransaction.zip5.eq(zip5));
+		}
+		if (city != null) {
+			predicate = predicate.and(QPropertyTransaction.propertyTransaction.zip5.eq(city));
+		}
+		if (buildingType != null) {
+				predicate = predicate.and(QPropertyTransaction.propertyTransaction.zip5.eq(buildingType));
+			}
+		return ptRepo.count();
 	}
 
 	private File getFile() {

@@ -7,6 +7,8 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.data.geo.Point;
+
 import com.afn.realstat.ui.ShowPdfButton.PdfFileGetter;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
@@ -50,6 +52,9 @@ public class MyTour implements PdfFileGetter {
 	
 	private String userName = "Kathleen Callahan";
 
+	private Point defaultStartLocation;
+	private Point defaultEndLocation;
+
 	/**
 	 * Sets up a tour for a specific date and creates all the stops included
 	 * in the tour for a specific day. Each tour stop is linked to a TourListEntry 
@@ -64,6 +69,8 @@ public class MyTour implements PdfFileGetter {
 		// get the default start and end location from the user
 		Address defaultStartAddress = new Address("4395 Piedmont Ave", "Oakland", "94611");
 		Address defaultEndAddress = new Address("342 Highland Ave", "Piedmont", "94611");
+		defaultStartLocation = new Point(-122.220519,37.816977);
+		defaultEndLocation = new Point(-122.220519,37.816977);
 		
 		this.tourDate = tourDate;
 	
@@ -395,6 +402,14 @@ public class MyTour implements PdfFileGetter {
 
 	public void setEndAddress(Address adr) {
 		endAddress = adr;
+	}
+
+	public Point getDefaultStartLocation() {
+		return defaultStartLocation;
+	}
+
+	public Point getDefaultEndLocation() {
+		return defaultEndLocation;
 	}
 
 }

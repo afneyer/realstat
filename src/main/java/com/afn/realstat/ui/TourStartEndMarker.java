@@ -27,8 +27,19 @@ public class TourStartEndMarker extends GoogleMapMarker {
 		this.address = adr;
 		this.tourMarkerType = type;
 		this.tourMap = tourMap;
+		
+		
+		Point location = address.getLoc();
+		if (location == null) {
+			if (type == TourMarkerType.start) {
+				location = this.getTourMap().getTour().getDefaultStartLocation();
+			}
+			if (type == TourMarkerType.end) {
+				location = this.getTourMap().getTour().getDefaultEndLocation();
+			}
+		}
 
-		this.setPosition(GeoLocation.convertToLatLon(address.getLoc()));
+		this.setPosition(GeoLocation.convertToLatLon(location));
 
 		this.setAnimationEnabled(false);
 		if (tourMarkerType == TourMarkerType.start) {

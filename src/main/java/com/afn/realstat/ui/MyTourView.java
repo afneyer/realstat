@@ -6,6 +6,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import org.springframework.data.geo.Point;
+
 import com.afn.realstat.Address;
 import com.afn.realstat.MyTour;
 import com.afn.realstat.MyTourStop;
@@ -48,7 +50,7 @@ public class MyTourView {
 
 		// create the tour
 		myTour = new MyTour(new Date());
-		
+
 		// create the map view and add start and end marker
 		tourMap = createMapView(this);
 
@@ -95,7 +97,11 @@ public class MyTourView {
 
 	public TourMap createMapView(MyTourView myTourView) {
 		tourMap = new TourMap(myTourView);
-		tourMap.setCenter(GeoLocation.convertToLatLon(myTour.getStartAddress().getLoc()));
+		Point startLocation = myTour.getStartAddress().getLoc();
+		if (startLocation == null) {
+			startLocation = myTour.getDefaultStartLocation();
+		}
+		tourMap.setCenter(GeoLocation.convertToLatLon(startLocation));
 		tourMap.setZoom(13);
 		return tourMap;
 	}
@@ -103,8 +109,6 @@ public class MyTourView {
 	public TourMap getMapView() {
 		return tourMap;
 	}
-
-
 
 	public CheckBox getShowSelectedCheckBox() {
 		String label = "Show Selected Only";
@@ -129,7 +133,7 @@ public class MyTourView {
 
 		// Save of the selection
 		ArrayList<MyTourStop> selected = new ArrayList<MyTourStop>(myTour.getSelected());
-		
+
 		// Change out the data provider, this will clear the selection
 		ListDataProvider<MyTourStop> dataProvider = DataProvider.ofCollection(myTour.getTourList());
 		dataProvider.setSortOrder(MyTourStop::getPrice, SortDirection.ASCENDING);
@@ -139,7 +143,7 @@ public class MyTourView {
 		for (MyTourStop mts : selected) {
 			tourListView.select(mts);
 		}
-		
+
 		// re-add the markers
 		tourMap.removeTourMarkers();
 		tourMap.addMarkersForTour();
@@ -150,7 +154,7 @@ public class MyTourView {
 
 		// Save of the selection
 		ArrayList<MyTourStop> selected = new ArrayList<MyTourStop>(myTour.getSelected());
-		
+
 		// Change out the data provider
 		ListDataProvider<MyTourStop> dataProvider = DataProvider.ofCollection(myTour.getSelected());
 		dataProvider.setSortOrder(MyTourStop::getSequence, SortDirection.ASCENDING);
@@ -160,7 +164,7 @@ public class MyTourView {
 		for (MyTourStop mts : selected) {
 			tourListView.select(mts);
 		}
-		
+
 		tourMap.removeTourMarkers();
 		tourMap.addMarkersForTourSelection();
 		// hideExcludedMarkers();
@@ -212,12 +216,12 @@ public class MyTourView {
 			EncodedPolyline polyline = dir.route(myTour.getTourDate());
 			int seq[] = dir.getAddressSequence();
 			myTour.setSequence(seq);
-			
+
 			tourPolyLine = GeoLocation.convert(polyline);
 			tourPolyLine.setStrokeColor("#C7320D");
 			tourPolyLine.setStrokeWeight(4);
 			tourMap.addPolyline(tourPolyLine);
-			
+
 			refresh();
 		});
 
@@ -270,7 +274,7 @@ public class MyTourView {
 		printTour.setEnabled(false);
 		return printTour;
 	}
-	
+
 	public TextArea getStartTextArea() {
 		startTextArea = getStartEndTextArea();
 		startTextArea.setCaption("Tour Start");
@@ -286,12 +290,12 @@ public class MyTourView {
 		endTextArea.setValue(getAdrText(getMapView().getEndAddress()));
 		return endTextArea;
 	}
-	
+
 	private TextArea getStartEndTextArea() {
 		TextArea textArea = new TextArea();
 		textArea.setStyleName("startEndText");
 		textArea.setReadOnly(true);
-		textArea.setHeight(4.0f,Unit.EM);
+		textArea.setHeight(4.0f, Unit.EM);
 		return textArea;
 	}
 
